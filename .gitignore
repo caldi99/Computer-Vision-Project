@@ -39,3 +39,6 @@
 *.user
 x64/
 Project/x64/
+
+#Dataset
+Data/
