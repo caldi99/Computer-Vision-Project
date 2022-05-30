@@ -4,4 +4,5 @@
 int main()
 {
 	std::cout << "Pippo";	
+	std::cout << "Pippo";
 }
