@@ -1,4 +1,4 @@
-#include "../include/ImageDetection.h"
+#include "ImageDetection.h"
 
 cv::Mat ImageDetection::drawingBoundingBox(cv::Mat& image, std::string filename)
 {

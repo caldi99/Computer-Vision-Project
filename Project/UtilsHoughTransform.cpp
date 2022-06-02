@@ -1,10 +1,11 @@
 
-#include <vector>
+#include "UtilsHoughTransform.h"
 
 
-#include "../include/UtilsHoughTransform.h"
 
-
+UtilsHoughTransform::UtilsHoughTransform()
+{
+}
 
 void UtilsHoughTransform::generalizedHoughTransform(cv::Mat pattern, cv::Mat image)
 {
@@ -37,11 +38,29 @@ void UtilsHoughTransform::generalizedHoughTransform(cv::Mat pattern, cv::Mat ima
     std::vector<cv::Vec4f> position;
 
 
-    alg->setTemplate(pattern);
+    cv::Mat patternGray;
+    cv::cvtColor(pattern, patternGray, cv::COLOR_BGR2GRAY);
+
+    cv::imshow("keypoints", patternGray);
+    cv::waitKey(0);
+
+    cv::Mat imageGray;
+    cv::cvtColor(image, imageGray, cv::COLOR_BGR2GRAY);
 
 
 
-    alg->detect(image, position);
+    try {
+        alg->setTemplate(patternGray);
+    }
+    catch (cv::Exception e)
+    {
+
+    }
+    
+
+
+
+    alg->detect(imageGray, position);
 
 
     

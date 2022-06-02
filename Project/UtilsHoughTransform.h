@@ -11,7 +11,6 @@ class UtilsHoughTransform
 {
 public:
 	UtilsHoughTransform();
-	~UtilsHoughTransform();
 
 	void generalizedHoughTransform(cv::Mat pattern, cv::Mat img);
 
