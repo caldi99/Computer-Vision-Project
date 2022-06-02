@@ -16,22 +16,32 @@
 #include "../include/UtilsHoughTransform.h"
 
 
+void mainFrancesco();
+void mainSimone();
+
 using namespace std;
 using namespace cv;
+
+
 int main()
 {
-	// Read image
-	Mat img = imread("myhand.jpg");
+	
+	mainFrancesco();
 
-	Mat pattern = imread("myhand.jpg");
+	
+}
+
+void mainFrancesco()
+{
+	// Read image
+	Mat img = imread("../myhand.jpg");
+
+	Mat pattern = imread("../myhand.jpg");
 
 
 	UtilsHoughTransform util;
 
 	util.generalizedHoughTransform(pattern, img);
-
-
-	
 }
 
 
