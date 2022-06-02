@@ -8,7 +8,7 @@
 %the dataset downloaded from http://vision.soic.indiana.edu/projects/egohands/
 
 
-load('video');
+load('metadata.mat');
 
 %foreach possible folder
 for i=1 : length(video)    
