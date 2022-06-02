@@ -12,9 +12,13 @@ using namespace std;
 using namespace cv;
 int main()
 {
+
+
 	
 	// Read image
-	Mat img = imread("01.jpg");
+	//Mat img = imread("01.jpg");
+
+	Mat img = imread("patten.jpg");
 	
 	// Function that return an Image with bounding Box drawed
 	Mat imgWithBoundingbox = ImageDetection::drawingBoundingBox(img, "01.txt");
