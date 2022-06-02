@@ -49,7 +49,7 @@ void BagOfWords::prediction(cv::Mat img)
 	std::vector<cv::KeyPoint> keypoints;
 	detector->detectAndCompute(img, cv::noArray(), keypoints, descriptors);
 
-	
+	// TODO: Finisci
 
 
 }

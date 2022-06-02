@@ -1,6 +1,5 @@
 
 //OPENCV
-
 #include <opencv2/core/base.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -33,15 +32,17 @@ int main()
 
 void mainFrancesco()
 {
-	// Read image
-	Mat img = imread("../myhand.jpg");
+
+	
+	/*// Read image
+	Mat img = imread("../images/myhand.jpg");
 
 	Mat pattern = imread("../myhand.jpg");
 
 
 	UtilsHoughTransform util;
 
-	util.generalizedHoughTransform(pattern, img);
+	util.generalizedHoughTransform(pattern, img);*/
 }
 
 
