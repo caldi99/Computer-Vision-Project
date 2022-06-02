@@ -12,8 +12,8 @@
 #include <fstream>
 
 //MYLIB
-#include "ImageDetection.h"
-#include "UtilsHoughTransform.h"
+#include "../include/ImageDetection.h"
+#include "../include/UtilsHoughTransform.h"
 
 
 using namespace std;

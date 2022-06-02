@@ -1,4 +1,7 @@
-#include "BagOfWords.h"
+
+#pragma warning (disable : 4996)
+
+#include "../include/BagOfWords.h"
 
 BagOfWords::BagOfWords(std::string pathDirectory, int numberFiles, std::string extension)
 {
