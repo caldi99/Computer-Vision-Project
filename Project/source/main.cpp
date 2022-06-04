@@ -18,25 +18,34 @@
 #include "../include/ImageDetection.h"
 #include "../include/UtilsHoughTransform.h"
 #include "../include/ConvexHull.h"
+#include "../include/HandDetector.h"
 
 void mainFrancesco();
 void mainSimone();
+void mainTraining();
 
 using namespace std;
 using namespace cv;
 
 
-int main()
+int main3()
 {
 	
 	//mainFrancesco();
 
-	
+    mainTraining();
 }
 
 void mainTraining()
 {
+    /*Mat img = imread("../Data/HOG-object-detection-master/hand-pos/filename002.jpg");
+    namedWindow("pippo");
+    imshow("pippo", img);
+    waitKey();*/
 
+    HandDetector detector("../Data/HOG-object-detection-master/hand-pos/", "../Data/HOG-object-detection-master/eggs-neg/", 24, 24);
+    detector.trainHandDetector();
+    vector<Mat> img = detector.testHandDetector("../Data/HOG-object-detection-master/mani/");
 
 }
 

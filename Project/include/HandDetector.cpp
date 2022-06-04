@@ -1,5 +1,7 @@
 #include "HandDetector.h"
 
+#include <iostream>
+
 HandDetector::HandDetector(std::string pathPositiveImages, std::string pathNegativeImages, int detectorWidth, int detectorHeigth)
 {
 	//Load positive and negative images
@@ -25,6 +27,8 @@ void HandDetector::trainHandDetector()
 	std::vector<cv::Mat> hogsNegative = computeHOGs(windowSize, negativeImages);
 
 	std::vector<cv::Mat> hogsTotal;	
+	hogsTotal.clear();
+
 	hogsTotal.insert(hogsTotal.end(), hogsPositive.begin(), hogsPositive.end());
 	hogsTotal.insert(hogsTotal.end(), hogsNegative.begin(), hogsNegative.end());
 
@@ -34,7 +38,20 @@ void HandDetector::trainHandDetector()
 
 	std::vector<float> detector = getSVMDetector();
 
-	saveModel(detector,windowSize);		
+	cv::HOGDescriptor descriptor;
+	descriptor.winSize = windowSize;
+	try
+	{
+		descriptor.setSVMDetector(detector);
+	}
+	catch (cv::Exception e)
+	{
+		std::cout << e.msg << std::endl;
+	}
+	
+	descriptor.save(MODELNAME);
+
+	//saveModel(detector,windowSize);		
 }
 
 std::vector<cv::Mat> HandDetector::testHandDetector(cv::String pathTestImages)
@@ -85,6 +102,8 @@ cv::Mat HandDetector::convertToMachineLeaning(const std::vector<cv::Mat>& sample
 	
 	for (int i = 0; i < samples.size(); i++)
 	{
+		CV_Assert(samples[i].cols == 1 || samples[i].rows == 1);
+
 		if (samples.at(i).cols == 1)
 		{
 			cv::transpose(samples.at(i), transposed);
@@ -122,15 +141,16 @@ std::vector<cv::Mat> HandDetector::computeHOGs(const cv::Size windowSize, const 
 void HandDetector::trainSVM(cv::Mat trainingSet,float coef0, int degree, cv::TermCriteria terminationCriteria, 
 	int gamma, cv::ml::SVM::KernelTypes kernelType, float Nu, float P, float C, cv::ml::SVM::Types type)
 {
+
 	svm->setCoef0(coef0);
 	svm->setDegree(degree);
 	svm->setTermCriteria(terminationCriteria);
 	svm->setGamma(gamma);
-	svm->setKernel(kernelType);
+	svm->setKernel(cv::ml::SVM::LINEAR);
 	svm->setNu(Nu);
 	svm->setP(P); // for EPSILON_SVR, epsilon in loss function?
 	svm->setC(C); // From paper, soft classifier
-	svm->setType(type); // C_SVC; // EPSILON_SVR; // may be also NU_SVR; // do regression task
+	svm->setType(cv::ml::SVM::EPS_SVR); // C_SVC; // EPSILON_SVR; // may be also NU_SVR; // do regression task
 	svm->train(trainingSet, cv::ml::ROW_SAMPLE, cv::Mat(labels));
 }
 
@@ -140,14 +160,22 @@ std::vector<float> HandDetector::getSVMDetector()
 
 	//Get Support Vectors
 	cv::Mat supportVectors = svm->getSupportVectors();
-
+	const int sv_total = supportVectors.rows;
 	//Get Decision Function
 	cv::Mat alpha, svidx;
 	double rho = svm->getDecisionFunction(0, alpha, svidx);
+	
+	CV_Assert(alpha.total() == 1 && svidx.total() == 1 && sv_total == 1);
+	CV_Assert((alpha.type() == CV_64F && alpha.at<double>(0) == 1.) ||
+		(alpha.type() == CV_32F && alpha.at<float>(0) == 1.f));
+	CV_Assert(supportVectors.type() == CV_32F);
+
 
 	hogDetector.clear();
+	hogDetector.resize(supportVectors.cols + 1);
+
 	std::memcpy(&hogDetector.at(0), supportVectors.ptr(), supportVectors.cols * sizeof(hogDetector.at(0)));
-	hogDetector.at(supportVectors.cols) = (float)-rho;
+	hogDetector[supportVectors.cols] = (float)-rho;
 	
 	return hogDetector;
 }
