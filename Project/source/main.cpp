@@ -29,9 +29,15 @@ using namespace cv;
 int main()
 {
 	
-	mainFrancesco();
+	//mainFrancesco();
 
 	
+}
+
+void mainTraining()
+{
+
+
 }
 
 void mainFrancesco()

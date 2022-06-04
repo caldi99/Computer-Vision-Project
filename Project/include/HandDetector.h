@@ -17,12 +17,21 @@
 class HandDetector
 {
 public:
-	
+	const float COEF0 = 0.0;
+	const int DEGREE = 0.0;
+	const cv::TermCriteria TERMCRITERIA = cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 1000, 1e-3); // + OR | ??	
+	const int GAMMA = 0;
+	const cv::ml::SVM::KernelTypes KERNELTYPE = cv::ml::SVM::LINEAR;
+	const float NU = 0.5;
+	const float P = 0.1;
+	const float C = 0.01;
+	const cv::ml::SVM::Types TYPE = cv::ml::SVM::EPS_SVR;
+	const cv::String MODELNAME = "model.yml";
 
 	//TODO ALL POSITIVE IMAGES MUST BE OF SAME SIZE
 
 	/// <summary>
-	/// This Constructor creates a new Detector
+	/// This constructor creates a new Detector
 	/// </summary>
 	/// <param name="pathPositiveImages">Path of the folder where positive images are present</param>
 	/// <param name="pathNegativeImages">Path of the folder where negative images are present</param>
@@ -31,6 +40,13 @@ public:
 	HandDetector(cv::String pathPositiveImages, cv::String pathNegativeImages, int detectorWidth, int detectorHeigth);
 	
 
+	/// <summary>
+	/// This function train the hand detector
+	/// </summary>
+	void trainHandDetector();
+
+
+	std::vector<cv::Mat> testHandDetector(cv::String pathTestImages);
 
 
 private:
@@ -81,6 +97,10 @@ private:
 	void trainSVM(cv::Mat trainingSet,float coef0, int degree, cv::TermCriteria terminationCriteria,
 		int gamma, cv::ml::SVM::KernelTypes kernelType,float Nu,float P,float C, cv::ml::SVM::Types type);
 
+
+	std::vector<float> getSVMDetector();
+
+	void saveModel(std::vector<float>& detector, cv::Size& windowSize);
 };
 
 

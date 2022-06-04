@@ -17,6 +17,51 @@ HandDetector::HandDetector(std::string pathPositiveImages, std::string pathNegat
 	svm = cv::ml::SVM::create();
 }
 
+void HandDetector::trainHandDetector()
+{
+	cv::Size windowSize(detectorWidth, detectorHeigth);
+	
+	std::vector<cv::Mat> hogsPositive = computeHOGs(windowSize, positiveImages);
+	std::vector<cv::Mat> hogsNegative = computeHOGs(windowSize, negativeImages);
+
+	std::vector<cv::Mat> hogsTotal;	
+	hogsTotal.insert(hogsTotal.end(), hogsPositive.begin(), hogsPositive.end());
+	hogsTotal.insert(hogsTotal.end(), hogsNegative.begin(), hogsNegative.end());
+
+	cv::Mat traingSet =convertToMachineLeaning(hogsTotal);
+
+	trainSVM(traingSet, COEF0, DEGREE, TERMCRITERIA, GAMMA, KERNELTYPE, NU, P, C,TYPE);
+
+	std::vector<float> detector = getSVMDetector();
+
+	saveModel(detector,windowSize);		
+}
+
+std::vector<cv::Mat> HandDetector::testHandDetector(cv::String pathTestImages)
+{
+	//LOAD MODEL
+	cv::HOGDescriptor descriptor;
+	descriptor.load(MODELNAME);
+
+	std::vector<cv::Mat> testImages = loadImages(pathTestImages);
+
+	for (int i = 0; i < testImages.size(); i++)
+	{	
+		std::vector<cv::Rect> boundingBoxes;
+		std::vector<double> foundWeights;
+
+		descriptor.detectMultiScale(testImages.at(i), boundingBoxes, foundWeights);
+
+		for (int j = 0; j < boundingBoxes.size(); j++)
+		{
+			cv::Scalar color = cv::Scalar(255, 0, 0);
+			rectangle(testImages.at(i), boundingBoxes.at(j), color, testImages.at(i).cols / 400 + 1);
+		}
+	}
+	
+	return testImages;
+}
+
 std::vector<cv::Mat> HandDetector::loadImages(const cv::String& directoryName)
 {
 	std::vector<cv::Mat> images;
@@ -86,13 +131,36 @@ void HandDetector::trainSVM(cv::Mat trainingSet,float coef0, int degree, cv::Ter
 	svm->setP(P); // for EPSILON_SVR, epsilon in loss function?
 	svm->setC(C); // From paper, soft classifier
 	svm->setType(type); // C_SVC; // EPSILON_SVR; // may be also NU_SVR; // do regression task
-	
-
-
-	
 	svm->train(trainingSet, cv::ml::ROW_SAMPLE, cv::Mat(labels));
-
 }
+
+std::vector<float> HandDetector::getSVMDetector()
+{
+	std::vector<float> hogDetector;
+
+	//Get Support Vectors
+	cv::Mat supportVectors = svm->getSupportVectors();
+
+	//Get Decision Function
+	cv::Mat alpha, svidx;
+	double rho = svm->getDecisionFunction(0, alpha, svidx);
+
+	hogDetector.clear();
+	std::memcpy(&hogDetector.at(0), supportVectors.ptr(), supportVectors.cols * sizeof(hogDetector.at(0)));
+	hogDetector.at(supportVectors.cols) = (float)-rho;
+	
+	return hogDetector;
+}
+
+void HandDetector::saveModel(std::vector<float>& detector, cv::Size& windowSize)
+{
+	cv::HOGDescriptor descriptor;
+	descriptor.winSize = windowSize;
+	descriptor.setSVMDetector(detector);
+	descriptor.save(MODELNAME);
+}
+
+
 
 
 
