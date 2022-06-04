@@ -28,7 +28,7 @@ using namespace std;
 using namespace cv;
 
 
-int main3()
+int main()
 {
 	
 	//mainFrancesco();
