@@ -28,7 +28,7 @@ using namespace std;
 using namespace cv;
 
 
-int main()
+int mainF()
 {
 	
 	//mainFrancesco();
@@ -125,4 +125,21 @@ void mainSimone()
 	//Display image with bounding box
 	imshow("keypoints", imgWithBoundingbox);
 	waitKey(0);
+}
+
+void main()
+{
+    // main Daniela
+
+    // Read image
+    Mat img = imread("01.jpg");
+
+
+
+    // Function that return an Image with bounding Box drawed
+    Mat imgWithBoundingbox = ImageDet::drawingNegBoundingBoxx(img, "01.txt");
+
+    //Display image with bounding box
+    imshow("keypoints", imgWithBoundingbox);
+    waitKey(0);
 }

@@ -167,7 +167,7 @@ int test_trained_detector( String obj_det_filename, String test_dir )
     return 0;
 }
 
-int main2( int argc, char** argv )
+int main( int argc, char** argv )
 {
 
     String pos_dir = "../Data/HOG-object-detection-master/hand-pos/";
