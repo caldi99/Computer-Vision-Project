@@ -46,7 +46,8 @@ Dataset/
 
 #Python
 .ipynb_checkpoints/
-Python Script/
+__pycache__
+
 
 #Models
 *.yml
