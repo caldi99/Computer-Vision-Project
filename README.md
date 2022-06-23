@@ -44,7 +44,7 @@ In order to train the CNN you need to follow the following steps :
 
 - If we want to use google colab for the training process we need to follow the steps lists below : 
 	- Upload the file "dataset.zip" previusly created (or downloaded) in your private google drive and place it in a directory called "CV"
-	- Then, by using this link : (TODO LINK GOOGLE COLABORATORY) open the notebook that must be executed
+	- Then, by using this link : [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1A-JTjaJEgNs7xPRS_L-7kFzVeJf5zgdv?usp=sharing) open the notebook that must be executed
 	- After, opening the notebook upload on the root of the colab enviroment (/content/ folder) the following files/folders :
 		- python_scripts/fine_tune_cnn.py (file)
 		- python_scripts/config/ (folder and its content)
