@@ -46,10 +46,15 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 
 		//Resize the image
 		cv::Mat resized;
-		cv::resize(temp, resized, cv::Size(),cv::INTER_CUBIC); //to check what I use previously
+		cv::resize(temp, resized, cv::Size(cols,rows),cv::INTER_CUBIC);
 
 		//Apply Gaussian Smoothing
+		cv::Mat blurreed;
+		cv::filter2D(resized, blurreed, resized.depth(), KERNEL_PYRAMID);
 
+		//Check if the size of the window used for sliding window approach is contained into the image produced
+		if (img.cols < std::get<0>(minSize) || img.rows < std::get<1>(minSize))
+			break;
 	}
 
 
