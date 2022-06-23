@@ -42,3 +42,14 @@ Project/x64/
 
 #Dataset
 Data/
+Dataset/
+
+#Python
+.ipynb_checkpoints/
+Python Script/
+
+#Models
+*.yml
+*.h5
+*.pb
+*.pbtx

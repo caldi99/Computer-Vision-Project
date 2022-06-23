@@ -145,7 +145,7 @@ int test_trained_detector( String obj_det_filename, String test_dir )
     for( size_t i=0;i<files.size(); i++)
     {
         
-        Mat img = imread("../Data/HOG-object-detection-master/mani/black.jpg" );
+        Mat img = imread("../Data/HOG-object-detection-master/mani/frame_0187.jpg" );
 
        
 
