@@ -1,3 +1,5 @@
+%This file was entirely created by Francesco Caldivezzi
+
 %This script is used to save the annotations inside the same folder where
 %the image is in the format : LABEL X Y W H
 
