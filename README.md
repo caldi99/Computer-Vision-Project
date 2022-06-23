@@ -11,7 +11,6 @@ In order to achieve this, the main idea was to use for the :
 
 ### Creation of the dataset
 
-
 To create the dataset in order to train our model we need to follow the steps listed below:
 - Dowload the EgoHands Dataset from : http://vision.soic.indiana.edu/egohands_files/egohands_data.zip
 - Dowload the hand_over_face Dataset from : https://drive.google.com/file/d/1hHUvINGICvOGcaDgA5zMbzAIUv7ewDd3
@@ -20,7 +19,13 @@ To create the dataset in order to train our model we need to follow the steps li
 - Execute python_scripts/build.py i.e. : "python python_scripts/extract.py" or "cd python_scripts" and then "python build.py" and follow the *instructions* you will asked to execute some matlab code, please do it!!
 - Go inside the directory dataset/dataset/ and type "ctrl + a" on the keyboad, and rigth click and compress as a .zip file.
 
-Notice that, you can skip the above steps and download immediatly the "dataset.zip" file from : TODO LINK
+Notice that, you can skip the above steps and download immediatly the "dataset.zip" file from : https://drive.google.com/file/d/1AxwsNnBCtxB2LLJ1q_N-YbTov9zbgKMh/view?usp=sharing
+
+To create the dataset, it was done the following split :
+ - 10% Test Set
+ - 90% Traing Set and Validation Set in particular :
+	- 75 % Training Set
+	- 25 % Validation Set
 
 ## Training the Resnet50V2 to recognize hands
 
