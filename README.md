@@ -4,7 +4,7 @@
 In this project the goal is to detect and segment hands inside images.
 In order to achieve this, the main idea was to use for the :
 
-- detection : Sliding Window approach with a Resnet50V2 CNN pre trained able to distinguish between hands and not hands
+- detection : Sliding Window approach with a Resnet50V2 CNN pre trained able to distinguish between hands and not hands. Moreover, to avoid several overlappings a non maxima suppression is also implemented
 - segmentation : TODO
 
 ## Hand Detection
@@ -48,10 +48,10 @@ In order to train the CNN you need to follow the following steps :
 	- After, opening the notebook upload on the root of the colab enviroment (/content/ folder) the following files/folders :
 		- python_scripts/fine_tune_cnn.py (file)
 		- python_scripts/config/ (folder and its content)
-	- Moreover, execute all the code in the cells of the notebook *except the last one*
+	- Moreover, execute all the code in the cells of the notebook **except the last one**
 	- Finally a "model.h5" file will appear on the root of the colab enviroment, well, download such file
 
-Notice that, you can skip the training process and download immediatly the "model.h5" file, from : TODO LINK
+Notice that, you can skip the training process and download immediatly the "model.h5" file, from : https://drive.google.com/file/d/1vm2T1bqheUVgpB0QdJYq9mGdIplQ6f4H/view?usp=sharing
 
 ## Converting the .h5 into the model supported by OpenCV library
 
@@ -69,5 +69,5 @@ The last step is to convert the "model.h5" into .pb file in order to be able to 
 		- Optional : python_scripts/config/ (folder and its content) (if not already done)
 	- Run the last cell of the notebook, and finally download the file "model/model.pb"
 
-Notice that, you can skip this process and download immediatly the "model.pb" file from : TODO LINK
+Notice that, you can skip this process and download immediatly the "model.pb" file from : https://drive.google.com/file/d/12nhBovdFL4O7X1d0FZbZOiSmgfYZnWmj/view?usp=sharing
 

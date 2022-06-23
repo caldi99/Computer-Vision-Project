@@ -51,4 +51,4 @@ tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
                 as_text=True)'''
 
 print("MODEL SUMMARY : ")
-print(model.summary())
+model.summary()
