@@ -7,7 +7,7 @@
 
 //STL
 #include <vector>
-
+#include <tuple>
 
 /*
 *
@@ -57,6 +57,7 @@ private:
 	//FIELD MEMBER
 	std::vector<cv::Mat> images;
 
+	//Scale for the gaussianpyramid
 	const float SCALE_PYRAMID = 1.5;
 
 	//Kernel from cv::pyrDown() function
@@ -65,6 +66,11 @@ private:
 															6 / 256, 24 / 256, 36 / 256, 24 / 256, 6 / 256,
 															4 / 256, 16 / 256, 24 / 256, 16 / 256, 4 / 256,
 															1 / 256, 4 / 256, 6 / 256, 4 / 256, 1 / 256);
+
+	//Window size
+	const std::tuple<int, int> WINDOW_SIZE = std::make_tuple(112, 112);
+
+
 };
 
 

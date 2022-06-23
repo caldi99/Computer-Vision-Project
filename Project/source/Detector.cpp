@@ -27,6 +27,10 @@ std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
 {
 	std::vector<cv::Mat> pyramid = getGaussianPyramid(image);
 
+	// SLIDING WINDOW
+	// DETECTION FOR EACH WINDOW
+	// NON MAXIMA SUPPRESSION
+
 	return std::vector<cv::Range>();
 }
 
@@ -49,14 +53,15 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 		cv::resize(temp, resized, cv::Size(cols,rows),cv::INTER_CUBIC);
 
 		//Apply Gaussian Smoothing
-		cv::Mat blurreed;
-		cv::filter2D(resized, blurreed, resized.depth(), KERNEL_PYRAMID);
+		cv::Mat blurred;
+		cv::filter2D(resized, blurred, resized.depth(), KERNEL_PYRAMID);
 
 		//Check if the size of the window used for sliding window approach is contained into the image produced
-		if (img.cols < std::get<0>(minSize) || img.rows < std::get<1>(minSize))
+		if (blurred.cols < std::get<0>(WINDOW_SIZE) || blurred.rows < std::get<1>(WINDOW_SIZE))
 			break;
+
+		//Add image to the pyramid of images
+		pyramid.push_back(blurred);
 	}
-
-
 	return pyramid;
 }
