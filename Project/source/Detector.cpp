@@ -251,12 +251,17 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 		int i = idxs.at(last);
 		pickedIndices.push_back(i);
 
+		//Slice the idx vector
+		std::vector<int> idxsSliced = Utils::slice(idxs, 0, last);
 
-		//Find the largest(x, y) coordinates for the start of the bounding box and the smallest (x, y) coordinates for the end of the bounding box
+		//Slice the vectors
+		std::vector<float> x1Sliced = Utils::slice(x1, idxsSliced);
+		std::vector<float> x2Sliced = Utils::slice(x2, idxsSliced);
+		std::vector<float> y1Sliced = Utils::slice(y1, idxsSliced);
+		std::vector<float> y2Sliced = Utils::slice(y2, idxsSliced);
 
-		//float xx1 = std::max(x1.at(i), x1.at(idxs.a))
 
-
+		std::max(x1.at(i), x1Sliced);
 	}
 
 
