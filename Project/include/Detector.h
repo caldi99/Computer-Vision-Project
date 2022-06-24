@@ -107,7 +107,13 @@ private:
 	* @return : The corresponding Bounding Boxes with float coordinates
 	*/
 	std::vector<cv::Rect2f> convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes);
-
+	
+	/**
+	* This function convert a vector of rectangles specified with float values into a rectangle that uses int values
+	* @param boxesFloat : The Bounding Boxes specified in float coordinates
+	* @return : The corresponding Bounding Boxes with int coordinates
+	*/
+	std::vector<cv::Rect> convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat);
 
 	
 

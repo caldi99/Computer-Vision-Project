@@ -286,12 +286,9 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 		Utils::deleteElementPositions(idxs, thresholded);
 	}
 
-	//Slice boxesFloat
-	//convert to normal
-
-
-	//convert Rect 
-	return std::vector<cv::Rect>();
+	//Slice boxesFloat and convert to integer coordinates
+	std::vector<cv::Rect2f> slicedBoxesFloat = Utils::slice(boxesFloat, pickedIndices);
+	return convertBoxesToIntCoordinates(slicedBoxesFloat);	
 }
 
 std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes)
@@ -302,5 +299,15 @@ std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv:
 		boxesFloat.push_back(cv::Rect2f(boxes.at(i).x, boxes.at(i).y, boxes.at(i).width, boxes.at(i).height));
 
 	return boxesFloat;
+}
+
+std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat)
+{
+	std::vector<cv::Rect> boxes;
+
+	for (int i = 0; i < boxesFloat.size(); i++)
+		boxes.push_back(cv::Rect(boxesFloat.at(i).x, boxesFloat.at(i).y, boxesFloat.at(i).width, boxesFloat.at(i).height));
+
+	return boxes;
 }
 
