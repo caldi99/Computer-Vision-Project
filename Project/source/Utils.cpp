@@ -112,9 +112,15 @@ template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, 
 		vector.erase(vector.begin() + positions.at(i));	
 }
 
-//USAGES
+//USAGES : For each specific usage instace add a line of that instance here
 template std::vector<int> Utils::argSort(const std::vector<float>&);
 template std::vector<int> Utils::slice(std::vector<int>& vector,int,int);
 template std::vector<float> Utils::slice(std::vector<float>&, std::vector<int>&);
 template std::vector<cv::Rect2f> Utils::slice(std::vector<cv::Rect2f>&, std::vector<int>&);
-
+template std::vector<float> Utils::elementWiseMaximum(std::vector<float>&, float);
+template std::vector<float> Utils::elementWiseProduct(std::vector<float>& vector1, std::vector<float>& vector2);
+template std::vector<float> Utils::elementWiseDifference(std::vector<float>& vector1, std::vector<float>& vector2);
+template std::vector<float> Utils::elementWiseDivision(std::vector<float>& vector1, std::vector<float>& vector2);
+template std::vector<float> Utils::elementWiseSum(std::vector<float>& vector, float element);
+template std::vector<int> Utils::greater(std::vector<float>& vector, float threshold);
+template void Utils::deleteElementPositions(std::vector<float>& vector, std::vector<int>& positions);
