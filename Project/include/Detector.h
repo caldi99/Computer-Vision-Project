@@ -101,9 +101,6 @@ private:
 	*/
 	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> boxes, std::vector<float> probabilities = std::vector<float>());
 
-
-	
-
 	/**
 	* This function convert a vector of rectangles specified with integer values into a rectangle that uses float values
 	* @param boxes : The Bounding Boxes specified in integer coordinates

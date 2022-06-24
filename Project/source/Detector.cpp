@@ -260,9 +260,34 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 		std::vector<float> y1Sliced = Utils::slice(y1, idxsSliced);
 		std::vector<float> y2Sliced = Utils::slice(y2, idxsSliced);
 
+		//Find the largest coordinates for the start of the bounding box and the smallest (x,y) coordinates for the end of the bounding box
+		std::vector<float> xx1 = Utils::elementWiseMaximum(x1Sliced,x1[i]);
+		std::vector<float> xx2 = Utils::elementWiseMaximum(x2Sliced, x2[i]);
+		std::vector<float> yy1 = Utils::elementWiseMaximum(y1Sliced, y1[i]);
+		std::vector<float> yy2 = Utils::elementWiseMaximum(y2Sliced, y2[i]);
 
-		std::max(x1.at(i), x1Sliced);
+		//Compute width and heigth of the bounding boxes
+		std::vector<float> differenceXX2XX1 = Utils::elementWiseDifference(xx2, xx1);
+		std::vector<float> differenceYY2YY1 = Utils::elementWiseDifference(yy2, yy1);
+		std::vector<float> sum1 = Utils::elementWiseSum(differenceXX2XX1, 1.0f);
+		std::vector<float> sum2 = Utils::elementWiseSum(differenceYY2YY1, 1.0f);
+		std::vector<float> w = Utils::elementWiseMaximum(sum1, 0.0f);
+		std::vector<float> h = Utils::elementWiseMaximum(sum2, 0.0f);
+
+
+		//Compute overlapping ratio
+		std::vector<float> product = Utils::elementWiseProduct(w, h);
+		std::vector<float> areaSliced = Utils::slice(area, idxsSliced);
+		std::vector<float> overlap = Utils::elementWiseDivision(product, areaSliced);
+
+		//Update Idx
+		std::vector<int> thresholded = Utils::greater(overlap, THRESHOLD_OVERLAPPING);
+		thresholded.insert(thresholded.begin(), last);
+		Utils::deleteElementPositions(idxs, thresholded);
 	}
+
+	//Slice boxesFloat
+	//convert to normal
 
 
 	//convert Rect 

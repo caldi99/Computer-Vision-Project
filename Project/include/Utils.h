@@ -46,13 +46,13 @@ public:
 	static std::vector<T> slice(std::vector<T>& vector, std::vector<int>& indices);
 
 	/**
-	* This function compute the maximum between a vector of elements and an element
+	* This function compute the element wise maximum between a vector of elements and an element
 	* @param vector : The vector to compare
 	* @param element : The element to compare
-	* @return :	The maximum between vector and element
+	* @return :	The maximum vector of maximums
 	*/
 	template <typename T>
-	static T maximum(std::vector<T>& vector, T& element);
+	static std::vector<T> elementWiseMaximum(std::vector<T>& vector, T element);
 
 
 	/**
@@ -74,15 +74,39 @@ public:
 	static std::vector<T> elementWiseDifference(std::vector<T>& vector1, std::vector<T>& vector2);
 
 	/**
+	* This function compute the element wise divion between two vectors
+	* @param vector1 : 1st vector
+	* @param vector2 : 2nd vector
+	* @return : Element wise division vector
+	*/
+	template <typename T>
+	static std::vector<T> elementWiseDivision(std::vector<T>& vector1, std::vector<T>& vector2);
+
+	/**
 	* This function compute the element wise sum between one vector and one element
 	* @param vector1 : Vector
 	* @param element : Elemet to some to each component of the vector
 	* @return : Element wise sum vector
 	*/
 	template <typename T>
-	static std::vector<T> elementWiseSum(std::vector<T>& vector, T& element);
+	static std::vector<T> elementWiseSum(std::vector<T>& vector, T element);
 
+	/**
+	* This function return the vector of all the posistions of the elements greater than the threshold specified
+	* @param vector :
+	* @param threshold :
+	* @return : The positions of the elements of the vector greater than the threshold
+	*/
+	template<typename T>
+	static std::vector<int> greater(std::vector<T>& vector, T threshold);
 
+	/**
+	* This function remove from the vector provided all the elements in the positions specified by positions
+	* @param vector : The vector for which removing the elements
+	* @param positions : The positions of the elements that must be removed
+	*/
+	template<typename T>
+	static void deleteElementPositions(std::vector<T>& vector, std::vector<int>& positions);
 };
 
 #endif // !UTILS_H
