@@ -43,6 +43,11 @@ Project/x64/
 #Dataset
 Data/
 Dataset/
+testset/
+
+#model
+model/
+
 
 #Python
 .ipynb_checkpoints/

@@ -32,10 +32,10 @@ std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
 
 	std::tuple<int, int> dimensions = std::make_tuple(image.rows, image.cols);
 
-	for (int i = 0; i < pyramid.size(); i++)
-	{
-		std::vector<cv::Rect> boundingBoxesHands = getHandsBoundingBoxes(pyramid.at(i),dimensions);
-	}
+	std::vector<std::vector<cv::Rect>> allBoundingBoxesHands;
+	for (int i = 0; i < pyramid.size(); i++)	
+		allBoundingBoxesHands.push_back(getHandsBoundingBoxes(pyramid.at(i),dimensions));
+	
 
 	
 
@@ -102,16 +102,22 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<
 			if (isHand(inputCNN))
 			{							
 				//Need to convert bounding box coordinates to original image size
-				
-				
-				cv::Rect(row,col, std::get<0>(WINDOW_SIZE), std::get<1>(WINDOW_SIZE))
+				//(x1,y1)
+				std::tuple<int,int> x1y1 = convertCoordinates(std::tuple<int, int>(row,col), 
+											orginalDimensions, 
+											std::tuple<int, int>(image.rows,image.cols));
+				//(x2,y2)
+				std::tuple<int, int> x2y2 = convertCoordinates(std::tuple<int, int>(row + std::get<0>(WINDOW_SIZE), col + std::get<1>(WINDOW_SIZE)),
+					orginalDimensions,
+					std::tuple<int, int>(image.rows, image.cols));
+
+				//Add Bouding Boxes
+				boundingBoxesHands.push_back(cv::Rect(cv::Point(std::get<0>(x1y1), std::get<1>(x1y1)), 
+													cv::Point(std::get<0>(x2y2), std::get<1>(x2y2))));
 			}
 		}
 	}
-
-
-
-	return std::vector<cv::Range>();
+	return boundingBoxesHands;
 }
 
 cv::Mat Detector::prepareImageForCNN(cv::Mat image)
@@ -142,4 +148,19 @@ bool Detector::isHand(cv::Mat image)
 	//Here to check??
 
 	return false;
+}
+
+std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions)
+{
+	//Convert x coordinate
+	int newX = (std::get<0>(coordinatesToConvert) * std::get<0>(orginalDimensions)) / (std::get<0>(currentDimensions));
+	if (newX > std::get<0>(orginalDimensions))
+		newX = std::get<0>(orginalDimensions);
+
+	//Convert y coordinate
+	int newY = (std::get<1>(coordinatesToConvert) * std::get<1>(orginalDimensions)) / (std::get<1>(currentDimensions));
+	if (newY > std::get<1>(orginalDimensions))
+		newY = std::get<1>(orginalDimensions);
+
+	return std::tuple<int, int>(newX, newY);
 }
