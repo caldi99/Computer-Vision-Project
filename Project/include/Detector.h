@@ -89,20 +89,13 @@ private:
 
 	/**
 	* This function given the detections as input, return the non maxima suppression of them
-	* @param detections : The detections for which appling Non Maxima Suppression
-	* @param imageDimensions : Dimensions (rows, cols) of the image where the detections comes from
+	* @param boxes : The detections for which appling Non Maxima Suppression
+	* @param probabilities : List of probabilities if provided
 	* @return : The result of Non Maxima Suppression
 	*/
-	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> detections, std::tuple<int, int> imageDimensions);
+	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> boxes, std::vector<float> probabilities = std::vector<float>());
 
-	/**
-	* This function given two detections compute how much they overlap each other
-	* @param detection1 : 1st Detection bounding box
-	* @param detection2 : 2nd Detection bounding box	
-	* @param imageDimensions : Dimensions (rows, cols) of the image where the detections comes from
-	* @return : Percentage of intersection
-	*/
-	float computeIntersectionPercentage(cv::Rect detection1, cv::Rect detection2, std::tuple<int, int> imageDimensions);
+	
 
 
 	//FIELD MEMBER
