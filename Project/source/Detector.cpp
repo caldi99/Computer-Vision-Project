@@ -1,5 +1,11 @@
 #include "../include/Detector.h"
 
+#include <iostream>
+
+Detector::Detector()
+{
+}
+
 void Detector::readImages(cv::String pathImages)
 {
 	//Read all the paths of the images
@@ -15,12 +21,18 @@ std::vector<cv::Mat> Detector::detectHands()
 {
 	for (int i = 0; i < images.size(); i++)
 	{
+		//TODO: remove
+		cv::imshow("IMAGE", images.at(i));
+		cv::waitKey();
 		getBoudingBoxesDetections(images.at(i));
-
-
 	}
 
 
+}
+
+void Detector::setModel(cv::String pathModel)
+{
+	this->pathModel = pathModel;
 }
 
 std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
@@ -29,15 +41,23 @@ std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
 	std::vector<cv::Mat> pyramid = getGaussianPyramid(image);
 
 	//Get for each image in the pyramid the bounding boxes of the hands
-
 	std::tuple<int, int> dimensions = std::make_tuple(image.rows, image.cols);
 
-	std::vector<std::vector<cv::Rect>> allBoundingBoxesHands;
-	for (int i = 0; i < pyramid.size(); i++)	
-		allBoundingBoxesHands.push_back(getHandsBoundingBoxes(pyramid.at(i),dimensions));
-	
+	std::vector<cv::Rect> allBoundingBoxesHands;
+	for (int i = 0; i < pyramid.size(); i++)
+	{
+		std::vector<cv::Rect> boundingBoxes = getHandsBoundingBoxes(pyramid.at(i), dimensions, i + 1);
+	}
+		
+		allBoundingBoxesHands.insert()
 
+		allBoundingBoxesHands.push_back();
 	
+	for (int i = 0; i < allBoundingBoxesHands.size(); i++)
+	{
+		std::vector<cv::Rect> boundingBoxes
+	}
+
 
 	// SLIDING WINDOW
 	// DETECTION FOR EACH WINDOW
@@ -57,8 +77,8 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	while (true)
 	{
 		//Compute new rows and cols
-		int rows = image.rows / SCALE_PYRAMID;
-		int cols = image.cols / SCALE_PYRAMID;
+		int rows = temp.rows / SCALE_PYRAMID;
+		int cols = temp.cols / SCALE_PYRAMID;
 
 		//Resize the image
 		cv::Mat resized;
@@ -69,28 +89,40 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 		cv::filter2D(resized, blurred, resized.depth(), KERNEL_PYRAMID);
 
 		//Check if the size of the window used for sliding window approach is contained into the image produced
-		if (blurred.cols < std::get<0>(WINDOW_SIZE) || blurred.rows < std::get<1>(WINDOW_SIZE))
+		if (blurred.cols < std::get<0>(INITIAL_WINDOW_SIZE) || blurred.rows < std::get<1>(INITIAL_WINDOW_SIZE))
 			break;
 
+		//TODO : tochange with blurred below
+
 		//Add image to the pyramid of images
-		pyramid.push_back(blurred);
+		pyramid.push_back(resized);
+
+		temp = resized.clone();
 	}
 	return pyramid;
 }
 
-std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<int, int> orginalDimensions)
+std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<int, int> orginalDimensions,int positionPyramid)
 {
 	std::vector<cv::Rect> boundingBoxesHands;
 
-	for (int row = 0; row < image.rows - std::get<0>(WINDOW_SIZE); row += STRIDE_ROWS)
+	//Compute windows sizes for the current image in the pyramid according to the scale
+	int windowSizeHeigth = std::get<0>(INITIAL_WINDOW_SIZE) / std::pow(SCALE_PYRAMID, positionPyramid);
+	int windowSizeWidth = std::get<1>(INITIAL_WINDOW_SIZE) / std::pow(SCALE_PYRAMID, positionPyramid);
+
+	//Compute the Stride for the Rows and Cols
+	int strideRows = windowSizeHeigth * STRIDE_ROWS_FACTOR;
+	int strideCols = windowSizeWidth * STRIDE_ROWS_FACTOR;
+
+	for (int row = 0; row < image.rows - windowSizeHeigth; row += strideRows)
 	{
 		//Range of rows coordinates
-		cv::Range rowRange(row, row + std::get<0>(WINDOW_SIZE));
+		cv::Range rowRange(row, row + windowSizeHeigth);
 		
-		for (int col = 0; col < image.cols - std::get<1>(WINDOW_SIZE); col += STRIDE_COLS)
+		for (int col = 0; col < image.cols - windowSizeWidth; col += strideCols)
 		{			
 			//Range of cols coordinates
-			cv::Range colRange(row, row + std::get<0>(WINDOW_SIZE));
+			cv::Range colRange(col, col + windowSizeWidth);
 
 			//Get ROI
 			cv::Mat roi = image(rowRange, colRange);
@@ -100,14 +132,14 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<
 
 			//Get if what it is
 			if (isHand(inputCNN))
-			{							
+			{		
 				//Need to convert bounding box coordinates to original image size
 				//(x1,y1)
 				std::tuple<int,int> x1y1 = convertCoordinates(std::tuple<int, int>(row,col), 
 											orginalDimensions, 
 											std::tuple<int, int>(image.rows,image.cols));
 				//(x2,y2)
-				std::tuple<int, int> x2y2 = convertCoordinates(std::tuple<int, int>(row + std::get<0>(WINDOW_SIZE), col + std::get<1>(WINDOW_SIZE)),
+				std::tuple<int, int> x2y2 = convertCoordinates(std::tuple<int, int>(row + std::get<0>(INITIAL_WINDOW_SIZE), col + std::get<1>(INITIAL_WINDOW_SIZE)),
 					orginalDimensions,
 					std::tuple<int, int>(image.rows, image.cols));
 
@@ -133,7 +165,6 @@ cv::Mat Detector::prepareImageForCNN(cv::Mat image)
 	return outputImage;
 }
 
-//TODO
 bool Detector::isHand(cv::Mat image)
 {
 	//Read Model
@@ -143,11 +174,13 @@ bool Detector::isHand(cv::Mat image)
 	network.setInput(cv::dnn::blobFromImage(image,1.0 / 255.0, cv::Size(WIDTH_INPUT_CNN, HEIGHT_INPUT_CNN), true, false));
 
 	//Forward
-	cv::Mat output = network.forward();
+	cv::Mat output = network.forward();	
 
-	//Here to check??
-
-	return false;
+	//Check if it is an hand
+	if (output.at<float>(0, 0) > THREASHOLD_DETECTION)
+		return false;
+	else
+		return true;
 }
 
 std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions)
@@ -164,3 +197,5 @@ std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinat
 
 	return std::tuple<int, int>(newX, newY);
 }
+
+

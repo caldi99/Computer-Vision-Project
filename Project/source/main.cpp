@@ -5,6 +5,17 @@
 //NAMESPACES
 using namespace cv;
 
+
+int main()
+{
+	
+	Detector detector;
+	detector.readImages("../testset/rgb/");
+	detector.setModel("../model/model.pb");
+	detector.detectHands();
+}
+
+/*
 int main(int argc, char* argv[]) 
 {
 	const String keys =
@@ -30,4 +41,4 @@ int main(int argc, char* argv[])
 	//std::tuple<int, int>(x, x);
 
 	return 0;
-}
+}*/

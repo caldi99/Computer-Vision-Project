@@ -23,6 +23,8 @@ class Detector
 {
 public:
 	
+	Detector();
+
 	/**
 	* This function will read the images inside pathImages 
 	* @param pathImages : The path were the images are
@@ -63,9 +65,10 @@ private:
 	* This function return the list of bounding boxes where inside the image there is a hand
 	* @param image : The image for which we need to search the hands
 	* @param originalDimensions : The original dimensions of the image (rows,cols)
+	* @param positionPyramid : The position of the image in the pyramid
 	* @return : The Bounding Boxes of the image specified in the orginal dimension coordinates 
 	*/
-	std::vector<cv::Rect> getHandsBoundingBoxes(cv::Mat image,std::tuple<int,int> orginalDimensions);
+	std::vector<cv::Rect> getHandsBoundingBoxes(cv::Mat image,std::tuple<int,int> orginalDimensions,int positionPyramid);
 
 	/**
 	* This function given and input an image, it transform an image of size (224,224) and normalize it
@@ -129,15 +132,17 @@ private:
 															1 / 256, 4 / 256, 6 / 256, 4 / 256, 1 / 256);
 
 	//Window size
-	const std::tuple<int, int> WINDOW_SIZE = std::make_tuple(112, 112);
+	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(224, 224);
 
 	//Strides
-	const int STRIDE_ROWS = 25;
-	const int STRIDE_COLS = 25;
+	const float STRIDE_ROWS_FACTOR = 0.5;
+	const float STRIDE_COLS_FACTOR = 0.5;
 
 	//Input CNN
 	const int WIDTH_INPUT_CNN = 224;
 	const int HEIGHT_INPUT_CNN = 224;
+
+	const float THREASHOLD_DETECTION = 0.5;
 };
 
 
