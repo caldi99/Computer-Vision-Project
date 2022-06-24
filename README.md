@@ -71,3 +71,6 @@ The last step is to convert the "model.h5" into .pb file in order to be able to 
 
 Notice that, you can skip this process and download immediatly the "model.pb" file from : https://drive.google.com/file/d/12nhBovdFL4O7X1d0FZbZOiSmgfYZnWmj/view?usp=sharing
 
+## Detect Hands on images
+
+## Compute Intersection Over Union
