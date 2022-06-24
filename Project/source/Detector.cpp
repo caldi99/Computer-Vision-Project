@@ -188,7 +188,7 @@ bool Detector::isHand(cv::Mat image)
 	cv::Mat output = network.forward();	
 
 	//Check if it is an hand
-	if (output.at<float>(0, 0) > THREASHOLD_DETECTION)
+	if (output.at<float>(0, 0) > THRESHOLD_DETECTION)
 		return false;
 	else
 		return true;
@@ -209,7 +209,46 @@ std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinat
 	return std::tuple<int, int>(newX, newY);
 }
 
-std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> detections)
+std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> detections,std::tuple<int,int> imageDimensions)
 {
+	//For each couple of detections compute the intersection %
+	std::unordered_map<int, std::vector<cv::Rect>> hashMap;
+
+	for (int i = 0; i < detections.size(); i++)
+	{
+		for (int j = i + 1; j < detections.size(); j++)
+		{
+			if (computeIntersectionPercentage(detections.at(i), detections.at(j), imageDimensions) > THRESHOLD_OVERLAPPING)
+			{
+
+			}
+		}
+
+	}
+
+
 	return std::vector<cv::Rect>();
+}
+
+float Detector::computeIntersectionPercentage(cv::Rect detection1, cv::Rect detection2, std::tuple<int, int> imageDimensions)
+{
+	//The idea is compute how many pixels of the two rectangle overlap each other, divided by the size of one of the two rectangle (becuase they are equal)
+	cv::Mat container = cv::Mat::zeros(std::get<0>(imageDimensions), std::get<1>(imageDimensions), CV_8UC1);
+	
+	//Compute overlapping
+	cv::rectangle(container, detection1, 1, cv::FILLED);
+	for (int i = 0; i < detection2.height; i++)	
+		for (int j = 0; j < detection2.width; j++)
+			container.at<unsigned char>(i, j) += 1;
+	
+	//Count how many pixels overlap each other
+	float numberPixelsOverlapping = 0.0;
+	for (int i = 0; i < container.rows; i++)
+		for (int j = 0; j < container.cols; j++)
+			if (container.at<unsigned char>(i, j) == 2)
+				numberPixelsOverlapping += 1.0;
+	
+	//Save some memory
+	container.release();
+	return numberPixelsOverlapping / detection1.area();
 }

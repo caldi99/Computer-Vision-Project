@@ -9,6 +9,7 @@
 //STL
 #include <vector>
 #include <tuple>
+#include <unordered_map>
 
 /**
 * This class represent the Detector Module "definitions"
@@ -89,9 +90,19 @@ private:
 	/**
 	* This function given the detections as input, return the non maxima suppression of them
 	* @param detections : The detections for which appling Non Maxima Suppression
+	* @param imageDimensions : Dimensions (rows, cols) of the image where the detections comes from
 	* @return : The result of Non Maxima Suppression
 	*/
-	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> detections);
+	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> detections, std::tuple<int, int> imageDimensions);
+
+	/**
+	* This function given two detections compute how much they overlap each other
+	* @param detection1 : 1st Detection bounding box
+	* @param detection2 : 2nd Detection bounding box	
+	* @param imageDimensions : Dimensions (rows, cols) of the image where the detections comes from
+	* @return : Percentage of intersection
+	*/
+	float computeIntersectionPercentage(cv::Rect detection1, cv::Rect detection2, std::tuple<int, int> imageDimensions);
 
 
 	//FIELD MEMBER
@@ -125,7 +136,11 @@ private:
 	const int WIDTH_INPUT_CNN = 224;
 	const int HEIGHT_INPUT_CNN = 224;
 
-	const float THREASHOLD_DETECTION = 0.5;
+	//Threshold used to understand if a blob is an image or not
+	const float THRESHOLD_DETECTION = 0.5;
+
+	//Threshold used to understand how much two overlapping regions overlap each other
+	const float THRESHOLD_OVERLAPPING = 0.85;
 };
 
 
