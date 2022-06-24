@@ -1,0 +1,20 @@
+The images for the test set provided by the prof comes from the following dataset : 
+
+01.jpg - 20.jpg  : http://vision.soic.indiana.edu/projects/egohands/
+
+In particular the folders from which they comes from are :
+
+CARDS_LIVING_B_T : 01,08
+CARDS_OFFICE_B_S : 09,11
+CARDS_OFFICE_H_T : 12,16
+
+CHESS_COURTYARDD_B_T : 02,03,04,05
+CHESS_OFFICE_B_S : 06,07,15
+
+PUZZLE_OFFICE_B_H : 17,18
+PUZZLE_COURTYARD_B_S : 10,13,14
+
+JENGA_LIVING_ROOM_H_B : 19
+JENGA_COURTYARD_B_H : 20
+
+21.jpg - 30.jpg : https://drive.google.com/file/d/1hHUvINGICvOGcaDgA5zMbzAIUv7ewDd3/edit
