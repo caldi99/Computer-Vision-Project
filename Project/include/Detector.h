@@ -86,9 +86,9 @@ private:
 
 	/**
 	* This function convert (x,y) coordinates into a subsampled image into coordinates of original image
-	* @param coordinatesToConvert : Coordinates to be converted
-	* @param orginalDimensions : Original Dimensions of the image
-	* @param currentDimensions : Dimensions of the subsampled image
+	* @param coordinatesToConvert : Coordinates to be converted provided as (x,y)
+	* @param orginalDimensions : Original Dimensions of the image provided as (rangey,rangex) = (heigth,width) = (rows,cols)
+	* @param currentDimensions : Dimensions of the subsampled image provided as (rangey,rangex) = (heigth,width) = (rows,cols)
 	* @return : Coordinates converted 
 	*/
 	std::tuple<int, int> convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions);
@@ -125,11 +125,11 @@ private:
 	const float SCALE_PYRAMID = 1.5;
 
 	//Kernel from cv::pyrDown() function
-	const cv::Mat KERNEL_PYRAMID = (cv::Mat_<float>(5, 5) << 1 / 256, 4 / 256, 6 / 256, 4 / 256, 1 / 256,
-															4 / 256, 16 / 256, 24 / 256, 16 / 256, 4 / 256,
-															6 / 256, 24 / 256, 36 / 256, 24 / 256, 6 / 256,
-															4 / 256, 16 / 256, 24 / 256, 16 / 256, 4 / 256,
-															1 / 256, 4 / 256, 6 / 256, 4 / 256, 1 / 256);
+	const cv::Mat KERNEL_PYRAMID = (cv::Mat_<float>(5, 5) << 1.0 / 256.0, 4.0 / 256.0, 6.0 / 256.0, 4.0 / 256.0, 1.0 / 256.0,
+															4.0 / 256.0, 16.0 / 256.0, 24.0 / 256.0, 16.0 / 256.0, 4.0 / 256.0,
+															6.0 / 256.0, 24.0 / 256.0, 36.0 / 256.0, 24.0 / 256.0, 6.0 / 256.0,
+															4.0 / 256.0, 16.0 / 256.0, 24.0 / 256.0, 16.0 / 256.0, 4.0 / 256.0,
+															1.0 / 256.0, 4.0 / 256.0, 6.0 / 256.0, 4.0 / 256.0, 1.0 / 256.0);
 
 	//Window size
 	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(224, 224);
