@@ -10,21 +10,14 @@
 #include <vector>
 #include <tuple>
 
-/*
-*
-* ------------ y
-* |
-* |
-* |
-* x
+/**
+* This class represent the Detector Module "definitions"
+* @author : Francesco Caldivezzi
 */
-
 class Detector 
 {
 public:
 	
-	Detector();
-
 	/**
 	* This function will read the images inside pathImages 
 	* @param pathImages : The path were the images are
@@ -32,6 +25,7 @@ public:
 	void readImages(cv::String pathImages);
 
 	/**
+	* //TODO : MODIFY THE RETURN TYPE
 	* This function will return a vector of images where each image has inside of it the bounding boxes drawn
 	*/
 	std::vector<cv::Mat> detectHands();
@@ -77,7 +71,6 @@ private:
 	*/
 	cv::Mat prepareImageForCNN(cv::Mat image);
 
-
 	/**
 	* This function given as input an image in the correct format, it will return if it is an hand or not
 	* @return : True if it is an hand, false otherwise
@@ -93,22 +86,12 @@ private:
 	*/
 	std::tuple<int, int> convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/**
+	* This function given the detections as input, return the non maxima suppression of them
+	* @param detections : The detections for which appling Non Maxima Suppression
+	* @return : The result of Non Maxima Suppression
+	*/
+	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> detections);
 
 
 	//FIELD MEMBER

@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-Detector::Detector()
-{
-}
+/**
+* This file represent the Detector module "implementation"
+* @author : Francesco Caldivezzi
+*/
 
 void Detector::readImages(cv::String pathImages)
 {
@@ -208,4 +209,7 @@ std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinat
 	return std::tuple<int, int>(newX, newY);
 }
 
-
+std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> detections)
+{
+	return std::vector<cv::Rect>();
+}
