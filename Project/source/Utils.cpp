@@ -1,5 +1,10 @@
 #include "../include/Utils.h"
 
+/**
+* This file represent the Utils module "implementation"
+* @author : Francesco Caldivezzi
+*/
+
 template <typename T> std::vector<int>  Utils::argSort(const std::vector<T>& vector) 
 {
 	std::vector<int> indices(vector.size());
@@ -123,4 +128,4 @@ template std::vector<float> Utils::elementWiseDifference(std::vector<float>& vec
 template std::vector<float> Utils::elementWiseDivision(std::vector<float>& vector1, std::vector<float>& vector2);
 template std::vector<float> Utils::elementWiseSum(std::vector<float>& vector, float element);
 template std::vector<int> Utils::greater(std::vector<float>& vector, float threshold);
-template void Utils::deleteElementPositions(std::vector<float>& vector, std::vector<int>& positions);
+template void Utils::deleteElementPositions(std::vector<int>& vector, std::vector<int>& positions);
