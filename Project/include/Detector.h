@@ -11,6 +11,12 @@
 #include <tuple>
 #include <unordered_map>
 
+
+//MYLIB
+#include "Utils.h"
+
+//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
+
 /**
 * This class represent the Detector Module "definitions"
 * @author : Francesco Caldivezzi
@@ -95,8 +101,18 @@ private:
 	*/
 	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> boxes, std::vector<float> probabilities = std::vector<float>());
 
+
 	
 
+	/**
+	* This function convert a vector of rectangles specified with integer values into a rectangle that uses float values
+	* @param boxes : The Bounding Boxes specified in integer coordinates
+	* @return : The corresponding Bounding Boxes with float coordinates
+	*/
+	std::vector<cv::Rect2f> convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes);
+
+
+	
 
 	//FIELD MEMBER
 	 
@@ -138,4 +154,5 @@ private:
 
 
 #endif // !DETECTOR_H
+
 

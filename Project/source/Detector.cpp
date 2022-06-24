@@ -216,16 +216,61 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 	if (boxes.empty())
 		return nms;
 
-	//Need to convert to float?? for better precision??
+	//Convert Bounding Boxes to float coordinates
+	std::vector<cv::Rect2f> boxesFloat = convertBoxesToFloatCoordinates(boxes);	
+	
 	//Get x1s,x2s,y1s,y2s of bounding boxes
-	std::vector<int> x1, x2, y1, y2;
-	for (int i = 0; i < boxes.size(); i++)
+	std::vector<float> x1, x2, y1, y2, area, idxsFloat;
+	for (int i = 0; i < boxesFloat.size(); i++)
 	{
+		x1.push_back(boxesFloat.at(i).x);
+		y1.push_back(boxesFloat.at(i).y);
+		x2.push_back(boxesFloat.at(i).x + boxesFloat.at(i).width);
+		y2.push_back(boxesFloat.at(i).y + boxesFloat.at(i).height);
+	}
+
+	//Compute area of the bounding boxes
+	for (int i = 0; i < boxesFloat.size(); i++)
+		area.push_back((x2.at(i) - x1.at(i) + 1) * (x2.at(i) - x1.at(i) + 1));
+		
+	//If probabilities are present, then use them as idx
+	if (!probabilities.empty())	
+		idxsFloat.insert(idxsFloat.end(), probabilities.begin(), probabilities.end());
+	else //Otherwise use y2 as idx
+		idxsFloat.insert(idxsFloat.end(), y2.begin(), y2.end());
+	
+	std::vector<int> idxs, pickedIndices;
+
+	//Sort the indixes
+	idxs = Utils::argSort(idxsFloat);
+
+	while (!idxs.empty())
+	{
+		//Grab last index in the indexes list and add the index value to the list of picked indices
+		int last = idxs.size() - 1;
+		int i = idxs.at(last);
+		pickedIndices.push_back(i);
+
+
+		//Find the largest(x, y) coordinates for the start of the bounding box and the smallest (x, y) coordinates for the end of the bounding box
+
+		//float xx1 = std::max(x1.at(i), x1.at(idxs.a))
+
 
 	}
 
 
 	//convert Rect 
 	return std::vector<cv::Rect>();
+}
+
+std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes)
+{
+	std::vector<cv::Rect2f> boxesFloat;
+
+	for (int i = 0; i < boxes.size(); i++)
+		boxesFloat.push_back(cv::Rect2f(boxes.at(i).x, boxes.at(i).y, boxes.at(i).width, boxes.at(i).height));
+
+	return boxesFloat;
 }
 
