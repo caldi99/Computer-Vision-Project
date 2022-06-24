@@ -1,7 +1,6 @@
 #include "../include/Utils.h"
 
-template <typename T>
-std::vector<int>  Utils::argSort(const std::vector<T>& vector) 
+template <typename T> std::vector<int>  Utils::argSort(const std::vector<T>& vector) 
 {
 	std::vector<int> indices(vector.size());
 
@@ -14,25 +13,23 @@ std::vector<int>  Utils::argSort(const std::vector<T>& vector)
 	return indices;
 }
 
-template<typename T>
-std::vector<T> Utils::slice(std::vector<T>& vector, int start, int end)
+template<typename T> std::vector<T> Utils::slice(std::vector<T>& vector, int start, int end)
 {
 	// Starting and Ending iterators
-	auto start = vector.begin() + start;
-	auto end = vector.begin() + end + 1;
+	auto s = vector.begin() + start;
+	auto e = vector.begin() + end + 1;
 
 	// To store the sliced vector
-	std::vector<T> result(end - start + 1);
+	std::vector<T> result(e - s + 1);
 
 	// Copy vector using copy function()
-	std::copy(start, end, result.begin());
+	std::copy(s, e, result.begin());
 
 	// Return the final sliced vector
 	return result;	
 }
 
-template<typename T>
-std::vector<T> Utils::slice(std::vector<T>& vector, std::vector<int>& indices)
+template<typename T> std::vector<T> Utils::slice(std::vector<T>& vector, std::vector<int>& indices)
 {
 	std::vector<T> ret;
 	for (int i = 0; i < indices.size(); i++)	
@@ -40,20 +37,18 @@ std::vector<T> Utils::slice(std::vector<T>& vector, std::vector<int>& indices)
 	return ret;
 }
 
-template<typename T>
-std::vector<T> Utils::elementWiseMaximum(std::vector<T>& vector, T element)
+template<typename T>  std::vector<T> Utils::elementWiseMaximum(std::vector<T>& vector, T element)
 {
 	std::vector<T> ret;
 	for (int i = 0; i < vector.size(); i++)
 		if (vector.at(i) < element)
-			ret.push_back(element)
+			ret.push_back(element);
 		else
 			ret.push_back(vector.at(i));
 	return ret;
 }
 
-template<typename T>
-std::vector<T> Utils::elementWiseProduct(std::vector<T>& vector1, std::vector<T>& vector2)
+template<typename T>  std::vector<T> Utils::elementWiseProduct(std::vector<T>& vector1, std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
 		throw std::exception("VECTORS OF DIFFERENT SIZES");
@@ -64,8 +59,7 @@ std::vector<T> Utils::elementWiseProduct(std::vector<T>& vector1, std::vector<T>
 	return ret;
 }
 
-template<typename T>
-std::vector<T> Utils::elementWiseDifference(std::vector<T>& vector1, std::vector<T>& vector2)
+template<typename T>  std::vector<T> Utils::elementWiseDifference(std::vector<T>& vector1, std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
 		throw std::exception("VECTORS OF DIFFERENT SIZES");
@@ -76,8 +70,7 @@ std::vector<T> Utils::elementWiseDifference(std::vector<T>& vector1, std::vector
 	return ret;
 }
 
-template<typename T>
-std::vector<T> Utils::elementWiseDivision(std::vector<T>& vector1, std::vector<T>& vector2)
+template<typename T>  std::vector<T> Utils::elementWiseDivision(std::vector<T>& vector1, std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
 		throw std::exception("VECTORS OF DIFFERENT SIZES");
@@ -88,17 +81,15 @@ std::vector<T> Utils::elementWiseDivision(std::vector<T>& vector1, std::vector<T
 	return ret;
 }
 
-template<typename T>
-std::vector<T> Utils::elementWiseSum(std::vector<T>& vector, T element)
+template<typename T>  std::vector<T> Utils::elementWiseSum(std::vector<T>& vector, T element)
 {
 	std::vector<T> ret;
-	for (int i = 0; i < vector1.size(); i++)
-		ret.push_back(vector1.at(i) + element);
+	for (int i = 0; i < vector.size(); i++)
+		ret.push_back(vector.at(i) + element);
 	return ret;
 }
 
-template<typename T>
-std::vector<int> Utils::greater(std::vector<T>& vector, T threshold)
+template<typename T>  std::vector<int> Utils::greater(std::vector<T>& vector, T threshold)
 {
 	std::vector<int> ret;
 	for (int i = 0; i < vector.size(); i++)
@@ -107,8 +98,7 @@ std::vector<int> Utils::greater(std::vector<T>& vector, T threshold)
 	return ret;
 }
 
-template<typename T>
-void Utils::deleteElementPositions(std::vector<T>& vector, std::vector<int>& positions)
+template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, std::vector<int>& positions)
 {
 	
 	//sort positions in descending order
@@ -118,6 +108,13 @@ void Utils::deleteElementPositions(std::vector<T>& vector, std::vector<int>& pos
 	if (vector.size() > positions.size())
 		throw std::exception("MORE POSITIONS THAN ELEMENTS");
 
-	for (int i = 0; i < positions.size())	
+	for (int i = 0; i < positions.size(); i++)	
 		vector.erase(vector.begin() + positions.at(i));	
 }
+
+//USAGES
+template std::vector<int> Utils::argSort(const std::vector<float>&);
+template std::vector<int> Utils::slice(std::vector<int>& vector,int,int);
+template std::vector<float> Utils::slice(std::vector<float>&, std::vector<int>&);
+template std::vector<cv::Rect2f> Utils::slice(std::vector<cv::Rect2f>&, std::vector<int>&);
+
