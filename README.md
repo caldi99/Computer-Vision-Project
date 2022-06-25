@@ -62,7 +62,7 @@ The last step is to convert the `model.h5` into .pb file in order to be able to 
 	- Execute `python_scripts/convert_model_to_opencv.py` and then inside `python_scripts/model/` there will be the file `model.pb` that can be later used to do inference
 
 - if you want to do it with google colab then:
-	- Optional : By using this link : (TODO LINK GOOGLE COLABORATORY) open the notebook that must be executed (if not already opened)
+	- Optional : By using this link : [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1a7S4M3odeVacq8i811q8c8Aacna47eTq?usp=sharing) open the notebook that must be executed (if not already opened)
 	- Optional : upload the `model.h5` file in the root of the google colab enviroment (notice that this must be done if the training process was done locally)
 	- Upload in the root of the of the google colab enviroment :
 		- `python_scripts/convert_model_to_opencv.py` (file)
