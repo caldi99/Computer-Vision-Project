@@ -42,7 +42,10 @@ void Detector::readGroundTruth(cv::String pathGroundTruths)
 		cv::String line;
 		while (std::getline(file,line))
 		{
-			std::vector<cv::String> split = Utils::split(line, ' ');
+			std::vector<cv::String> split = Utils::split(line, '\t');
+			if (split.size() == 1) //then separator is " "
+				split = Utils::split(line, ' ');
+
 			groundTruthBoundingBoxes.push_back(cv::Rect(std::stoi(split.at(0)),
 														std::stoi(split.at(1)),
 														std::stoi(split.at(2)),
