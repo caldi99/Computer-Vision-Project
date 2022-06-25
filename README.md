@@ -8,14 +8,14 @@ In order to achieve this, the main idea was to use for the :
 - segmentation : TODO
 
 Overview :
-* [C++ Code Compilation](#compilation)
-* [Hand detection](#hand-detection)
-    * [Dataset Creation](#dataset-creation)
+* [C++ Code Compilation](#-compilation)
+* [Hand detection](#-hand-detection)
+    * [Dataset Creation](#-dataset-creation)
     * [Training](#training)
-    * [Model Conversion](#model-conversion)
-    * [Inference](#inference)
-* [Hand Segmentation](#hand-segmentation)
-* [Examples](#examples)
+    * [Model Conversion](#-model-conversion)
+    * [Inference](#-inference)
+* [Hand Segmentation](#-hand-segmentation)
+* [Examples](#-examples)
 
 ## <a href = "#compilation"></a> Compiling the C++ Code
 
