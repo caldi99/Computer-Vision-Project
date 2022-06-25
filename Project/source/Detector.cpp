@@ -140,7 +140,7 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	return pyramid;
 }
 
-std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<int, int> orginalDimensions,int positionPyramid,std::vector<float>& probabilities)
+std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::tuple<int, int>& orginalDimensions,int positionPyramid,std::vector<float>& probabilities)
 {
 	std::vector<cv::Rect> boundingBoxesHands;
 
@@ -201,7 +201,7 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<
 	return boundingBoxesHands;
 }
 
-cv::Mat Detector::prepareImageForCNN(cv::Mat image)
+cv::Mat Detector::prepareImageForCNN(const cv::Mat& image)
 {
 	cv::Mat resized,outputImage;
 
@@ -214,7 +214,7 @@ cv::Mat Detector::prepareImageForCNN(cv::Mat image)
 	return outputImage;
 }
 
-std::tuple<bool,float> Detector::isHand(cv::Mat image)
+std::tuple<bool,float> Detector::isHand(const cv::Mat& image)
 {
 	//Read Model
 	cv::dnn::Net network = cv::dnn::readNetFromTensorflow(pathModel);
@@ -232,7 +232,7 @@ std::tuple<bool,float> Detector::isHand(cv::Mat image)
 		return std::tuple<bool, float>(true, output.at<float>(0, 0));
 }
 
-std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions)
+std::tuple<int, int> Detector::convertCoordinates(const std::tuple<int, int>& coordinatesToConvert, const std::tuple<int, int>& orginalDimensions, const std::tuple<int, int>& currentDimensions)
 {
 	//Convert x coordinate
 	int newX = (std::get<0>(coordinatesToConvert) * std::get<1>(orginalDimensions)) / (std::get<1>(currentDimensions));
@@ -247,7 +247,7 @@ std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinat
 	return std::tuple<int, int>(newX, newY);
 }
 
-std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes, std::vector<float> probabilities)
+std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>& boxes, std::vector<float> probabilities)
 {
 	std::vector<cv::Rect> nms;
 	//If empty return empty nms
@@ -332,7 +332,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 	return convertBoxesToIntCoordinates(slicedBoxesFloat);	
 }
 
-std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes)
+std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(const std::vector<cv::Rect>& boxes)
 {
 	std::vector<cv::Rect2f> boxesFloat;
 
@@ -342,7 +342,7 @@ std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv:
 	return boxesFloat;
 }
 
-std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat)
+std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(const std::vector<cv::Rect2f>& boxesFloat)
 {
 	std::vector<cv::Rect> boxes;
 
@@ -352,7 +352,7 @@ std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(std::vector<cv::Rec
 	return boxes;
 }
 
-float Detector::intersectionOverUnion(cv::Rect box1, cv::Rect box2)
+float Detector::intersectionOverUnion(const cv::Rect& box1,const cv::Rect& box2)
 {
 	int xA = std::max(box1.x, box2.x);
 	int yA = std::max(box1.y, box2.y);
@@ -369,7 +369,7 @@ float Detector::intersectionOverUnion(cv::Rect box1, cv::Rect box2)
 	return intersectionArea / (boxAreaA + boxAreaB - intersectionArea);
 }
 
-std::vector<float> Detector::intersectionOverUnionElementWise(std::vector<cv::Rect>& boxes, cv::Rect& box)
+std::vector<float> Detector::intersectionOverUnionElementWise(const std::vector<cv::Rect>& boxes, const cv::Rect& box)
 {
 	std::vector<float> ious;
 	
@@ -379,7 +379,7 @@ std::vector<float> Detector::intersectionOverUnionElementWise(std::vector<cv::Re
 	return ious;
 }
 
-std::vector<cv::Rect> Detector::createListBoxes(std::vector<float>& x1s, std::vector<float>& y1s, std::vector<float>& ws, std::vector<float>& hs)
+std::vector<cv::Rect> Detector::createListBoxes(const std::vector<float>& x1s, const std::vector<float>& y1s, const std::vector<float>& ws, const std::vector<float>& hs)
 {
 	std::vector<cv::Rect> rectangles;		
 
