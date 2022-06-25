@@ -53,8 +53,8 @@ In order to train the CNN you need to follow the following steps :
 	  - numpy
 	  - matplotlib
 	  - imutils
-	- If all the packages are present, then, create the directory python_scripts/dataset/ and extract inside of it the "dataset.zip" file
-	- Next, execute `python_scripts/fine_tune_cnn.py`, a file `model.h5` will appear inside python_scripts/
+	- If all the packages are present, then, create the directory `python_scripts/dataset/` and extract inside of it the `dataset.zip` file
+	- Next, execute `python_scripts/fine_tune_cnn.py`, a file `model.h5` will appear inside `python_scripts/`
 
 - If we want to use google colab for the training process we need to follow the steps lists below : 
 	- Upload the file `dataset.zip` previusly created (or downloaded) in your private google drive and place it in a directory called `CV`
