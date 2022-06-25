@@ -26,6 +26,6 @@ public:
 	* This function will read the images inside pathImages
 	* @param pathImages : The path were the images are
 	*/
-	void segment_1(cv::String pathImages);
+	void segment_1(cv::String pathImage);
 };
 #endif // !SEGMENTATOR_H

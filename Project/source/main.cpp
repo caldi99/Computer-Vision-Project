@@ -1,6 +1,8 @@
 //MYLIB
 
 #include "../include/Detector.h"
+#include "../include/Segmentator.h"
+
 
 //NAMESPACES
 using namespace cv;
@@ -10,13 +12,15 @@ int mainFrancesco();
 int main()
 {
 	mainDaniela();
-	mainFrancesco();
+	//mainFrancesco();
 	
 }
 
 int mainDaniela()
 {
-	//Here my code
+	Segmentator segmentator;
+	segmentator.segment_1("01.jpg");
+	cv::waitKey(0);
 	return 0;
 }
 int mainFrancesco()
