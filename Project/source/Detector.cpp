@@ -1,6 +1,6 @@
 #include "../include/Detector.h"
 #include "../include/Utils.h"
-#include <iostream>
+
 
 /**
 * This file represent the Detector module "implementation"
@@ -15,17 +15,51 @@ void Detector::readImages(cv::String pathImages)
 	//Store the images inside the images vector
 	for (int i = 0; i < pathSingleImages.size(); i++)
 	{
-		//Split the string
+		//Split the string in order to obtain the name of the file
 		std::vector<cv::String> splits = Utils::split(pathSingleImages.at(i), '\\');
-		images.insert(std::pair<cv::String, cv::Mat>(splits.at(splits.size()-1), cv::imread(pathSingleImages.at(i))));
-	}
-		
+		cv::String fileExtension = splits.at(splits.size() - 1);
+		splits = Utils::split(fileExtension, '.');
+		images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), cv::imread(pathSingleImages.at(i))));
+	}		
 }
 
-std::vector<cv::Mat> Detector::detectHands(cv::String nameImage)
+void Detector::readGroundTruth(cv::String pathGroundTruths)
+{
+	//Read all the paths of the ground truth
+	std::vector<cv::String> pathSingleGroundTruths;
+	cv::glob(pathGroundTruths, pathSingleGroundTruths);
+	//Store the ground truth inside the groundTruth vecto
+	for (int i = 0; i < pathSingleGroundTruths.size(); i++)
+	{
+		//Split the string in order to obtain the name of the file
+		std::vector<cv::String> splits = Utils::split(pathSingleGroundTruths.at(i), '\\');
+		cv::String fileExtension = splits.at(splits.size() - 1);
+		splits = Utils::split(fileExtension, '.');
+		
+		//Read content of the file
+		std::vector<cv::Rect> groundTruthBoundingBoxes;
+		std::ifstream file(pathSingleGroundTruths.at(i));
+		cv::String line;
+		while (std::getline(file,line))
+		{
+			std::vector<cv::String> split = Utils::split(line, ' ');
+			groundTruthBoundingBoxes.push_back(cv::Rect(std::stoi(split.at(0)),
+														std::stoi(split.at(1)),
+														std::stoi(split.at(2)),
+														std::stoi(split.at(3))));
+		}
+		//Close The file
+		file.close();
+
+		//Save informations
+		groundTruths.insert(std::pair<cv::String,std::vector<cv::Rect>>(splits.at(0), groundTruthBoundingBoxes));
+	}
+}
+
+std::vector<cv::Rect> Detector::detectHands(cv::String nameImage)
 {
 	cv::Mat image = images.at(nameImage);
-	getBoudingBoxesDetections(image);
+	return getBoudingBoxesDetections(image);
 }
 
 void Detector::setModel(cv::String pathModel)
@@ -33,7 +67,7 @@ void Detector::setModel(cv::String pathModel)
 	this->pathModel = pathModel;
 }
 
-std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
+std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 {
 	//TODO : WINDOW SIZE DYNAMIC
 
@@ -60,16 +94,16 @@ std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
 	
 		
 	//TODO: REMOVE
-	for (int i = 0; i < allBoundingBoxesHands.size(); i++)
+	for (int i = 0; i < finalBoxes.size(); i++)
 	{
-		cv::rectangle(image, allBoundingBoxesHands.at(i), cv::Scalar(255, 0, 0));
+		cv::rectangle(image, finalBoxes.at(i), cv::Scalar(255, 0, 0));
 	}
 
 	cv::imshow("RECTANGLES", image);
 	cv::waitKey();
 
 
-	return std::vector<cv::Range>();
+	return std::vector<cv::Rect>();
 }
 
 std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
@@ -349,11 +383,11 @@ std::vector<cv::Rect> Detector::createListBoxes(std::vector<float>& x1s, std::ve
 {
 	std::vector<cv::Rect> rectangles;		
 
-	//TODO : ADD CONTROLS SIZE
+	if (x1s.size() != y1s.size() || x1s.size() != ws.size() || x1s.size() != hs.size() || y1s.size() != ws.size() || y1s.size() != hs.size() || ws.size() != hs.size())
+		throw std::exception("SIZES DIFFERENT!!");
 
 	for (int i = 0; i < x1s.size(); i++)
 		rectangles.push_back(cv::Rect(x1s.at(i), y1s.at(i), ws.at(i), hs.at(i)));
 
 	return rectangles;
 }
-

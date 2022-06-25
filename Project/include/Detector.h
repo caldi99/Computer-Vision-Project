@@ -10,7 +10,8 @@
 #include <vector>
 #include <tuple>
 #include <map>
-
+#include <iostream>
+#include <fstream>
 
 //MYLIB
 #include "Utils.h"
@@ -25,18 +26,27 @@ class Detector
 {
 public:
 	
+	
+
 	/**
 	* This function will read the images inside pathImages 
 	* @param pathImages : The path were the images are
 	*/
 	void readImages(cv::String pathImages);
 
-	//TODO : complete javadoc
-
 	/**
-	* This function will return a vector of images where each image has inside of it the bounding boxes drawn
+	* This function will read the ground truth inside pathGroundTruths
+	* @param pathGroundTruth : The path were the groundTruths are
 	*/
-	std::vector<cv::Mat> detectHands(cv::String nameImage);
+	void readGroundTruth(cv::String pathGroundTruths);
+
+	//TODO SPLIT FOR PATH.JPG
+	/**
+	* This function will return the bounding boxes for a given image
+	* @param nameImage : The filename of the image for which we need to detect things
+	* @return : Bounding Boxes of the hands detected
+	*/
+	std::vector<cv::Rect> detectHands(cv::String nameImage);
 	
 	//Better if in the constructor??
 	/**
@@ -44,6 +54,9 @@ public:
 	* @param : Path where the model is 
 	*/
 	void setModel(cv::String pathModel);
+
+	//TODO FINISH HERE, COMPUTATION FOR ALL IMAGES OF THE IOU in a file
+	float getIntersectionOverUnion(cv::String nameImage, std::vector<cv::Rect> detections);
 
 private:
 
@@ -54,7 +67,7 @@ private:
 	* @param image : Image for which detecting the hands
 	* @return : The list of bounding boxes where hands are supposed to be present
 	*/
-	std::vector<cv::Range> getBoudingBoxesDetections(cv::Mat image);
+	std::vector<cv::Rect> getBoudingBoxesDetections(cv::Mat image);
 
 	/**
 	* This function return the images of the gaussian pyramid for a given image
@@ -147,6 +160,9 @@ private:
 	 
 	//Images to process
 	std::map<cv::String,cv::Mat> images;
+
+	//Ground truth images
+	std::map<cv::String, std::vector<cv::Rect>> groundTruths;
 
 	cv::String pathModel;
 
