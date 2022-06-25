@@ -46,7 +46,6 @@ public:
 	*/
 	std::vector<cv::Rect> detectHands(cv::String nameImage);
 	
-	//Better if in the constructor??
 	/**
 	* This function will set the path of the model
 	* @param : Path where the model is 
@@ -54,12 +53,10 @@ public:
 	void setModel(cv::String pathModel);
 	
 	/**
-	* This function compute the IOUs, given the detections for a specific image	
-	* @param nameImage : The name of the image for which computing the detections
-	* @param detections : The detections for the given image
-	* @return : The IOUs for the given image
+	* This function get an image by its name
+	* @param imageName : The name of the image
 	*/
-	std::vector<float> getIntersectionsOverUnions(cv::String nameImage, std::vector<cv::Rect> detections);
+	cv::Mat getImgeByName(cv::String imageName);
 
 	/**
 	* This function compute the IOUs, given the detections for a specific image and save the result inside outputFile
@@ -69,6 +66,14 @@ public:
 	*/
 	void saveIntersectionsOverUnions(cv::String outputFile,cv::String nameImage, std::vector<cv::Rect> detections);
 	
+	/**
+	* This function compute the IOUs, given the detections for a specific image and save the result inside outputFile
+	* @param outputFile : The path of the file where to save th IOUs
+	* @param nameImage : The name of the image for which computing the detections
+	* @param detections : The detections for the given image
+	*/
+	void saveDetections(cv::String output, cv::String nameImage, std::vector<cv::Rect> detections);
+
 private:
 	//FUNCTIONS
 
@@ -177,6 +182,15 @@ private:
 										  const std::vector<float>& ws, 
 										  const std::vector<float>& hs);
 
+	/**
+	* This function compute the IOUs, given the detections for a specific image
+	* @param nameImage : The name of the image for which computing the detections
+	* @param detections : The detections for the given image
+	* @return : The IOUs for the given image
+	*/
+	std::vector<float> getIntersectionsOverUnions(const cv::String nameImage, 
+												  const std::vector<cv::Rect>& detections);
+
 	//FIELD MEMBER
 	 
 	//Images to process
@@ -213,10 +227,15 @@ private:
 	const int HEIGHT_INPUT_CNN = 224;
 
 	//Threshold used to understand if a blob is an image or not
-	const float THRESHOLD_DETECTION = 0.5;
+	const float THRESHOLD_DETECTION = 0.35;
 
 	//Threshold used to understand how much two overlapping regions overlap each other
 	const float THRESHOLD_OVERLAPPING = 0.85;
+
+	//Image width and heigth
+	const int IMAGE_WIDTH = 1024;
+	const int IMAGE_HEIGTH = 720;
+
 };
 
 #endif // !DETECTOR_H

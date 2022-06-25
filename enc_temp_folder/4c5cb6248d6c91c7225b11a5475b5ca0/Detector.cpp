@@ -93,6 +93,8 @@ cv::Mat Detector::getImgeByName(cv::String imageName)
 
 std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 {
+	//TODO : WINDOW SIZE DYNAMIC
+
 	//Create pyramid
 	std::vector<cv::Mat> pyramid = getGaussianPyramid(image);
 
