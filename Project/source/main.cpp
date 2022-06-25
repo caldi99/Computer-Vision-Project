@@ -40,8 +40,10 @@ int mainFinale(int argc, char* argv[])
 		"{m model|../model/model.pb| path to the model}"
 		"{a annotations|../testset/det/| path to the test set annotations}"
 		"{i images|../testset/rgb/| path to the test set images}"
-		"{d detect || run detection mode}"	
-		"{n name |28| name of the image for which applying detection}" //if only this, show the image with detection only 
+		"{n name |28| name of the image for which applying detection / segmentation}" 
+
+		//Detection Parameters
+		"{d detect || run detection mode}"			
 		"{opd || path where the image with inside the detections will be stored }" //output path detections ../detections/
 		"{opious || path where the ious results for the image will be stored }"		//output path ious ../ious/
 		
