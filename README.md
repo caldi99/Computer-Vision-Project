@@ -99,8 +99,14 @@ TODO COMPLETE
 - Orginal Image :
 
 ![image](examples/28.jpg)
-
+<p align="center">
+  <img src="examples/28.jpg" />
+</p>
 
 - Image with Detections : 
+
+<p align="center">
+  <img src="examples/28_detections.jpg" />
+</p>
 
 ![image](examples/28_detections.jpg)
