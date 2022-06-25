@@ -1,20 +1,17 @@
 //MYLIB
 
-#include "../include/Utils.h"
+#include "../include/Detector.h"
 
 //NAMESPACES
-//using namespace cv;
+using namespace cv;
 
 int mainDaniela();
-int mainFrancesco(int argc, char* argv[]);
+int mainFrancesco();
 int main()
 {
 	mainDaniela();
-
-	/*Detector detector;
-	detector.readImages("../testset/rgb/");
-	detector.setModel("../model/model.pb");
-	detector.detectHands();*/
+	mainFrancesco();
+	
 }
 
 int mainDaniela()
@@ -22,7 +19,14 @@ int mainDaniela()
 	//Here my code
 	return 0;
 }
+int mainFrancesco()
+{
 
+	Detector detector;
+	detector.readImages("../testset/rgb/");
+	detector.setModel("../model/model.pb");
+	detector.detectHands("01.jpg");
+}
 /*
 int mainFrancesco(int argc, char* argv[]) 
 {

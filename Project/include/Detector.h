@@ -9,7 +9,7 @@
 //STL
 #include <vector>
 #include <tuple>
-#include <unordered_map>
+#include <map>
 
 
 //MYLIB
@@ -35,7 +35,7 @@ public:
 	* //TODO : MODIFY THE RETURN TYPE
 	* This function will return a vector of images where each image has inside of it the bounding boxes drawn
 	*/
-	std::vector<cv::Mat> detectHands();
+	std::vector<cv::Mat> detectHands(cv::String nameImage);
 	
 	//Better if in the constructor??
 	/**
@@ -67,9 +67,10 @@ private:
 	* @param image : The image for which we need to search the hands
 	* @param originalDimensions : The original dimensions of the image (rows,cols)
 	* @param positionPyramid : The position of the image in the pyramid
+	* @param probabilities : The probabilities returned by the Network
 	* @return : The Bounding Boxes of the image specified in the orginal dimension coordinates 
 	*/
-	std::vector<cv::Rect> getHandsBoundingBoxes(cv::Mat image,std::tuple<int,int> orginalDimensions,int positionPyramid);
+	std::vector<cv::Rect> getHandsBoundingBoxes(cv::Mat image,std::tuple<int,int> orginalDimensions,int positionPyramid, std::vector<float>& probabilities);
 
 	/**
 	* This function given and input an image, it transform an image of size (224,224) and normalize it
@@ -80,9 +81,9 @@ private:
 
 	/**
 	* This function given as input an image in the correct format, it will return if it is an hand or not
-	* @return : True if it is an hand, false otherwise
+	* @return : True if it is an hand, false otherwise and the output of the network
 	*/
-	bool isHand(cv::Mat image);
+	std::tuple<bool,float> isHand(cv::Mat image);
 
 	/**
 	* This function convert (x,y) coordinates into a subsampled image into coordinates of original image
@@ -114,13 +115,11 @@ private:
 	* @return : The corresponding Bounding Boxes with int coordinates
 	*/
 	std::vector<cv::Rect> convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat);
-
 	
-
 	//FIELD MEMBER
 	 
 	//Images to process
-	std::vector<cv::Mat> images;
+	std::map<cv::String,cv::Mat> images;
 
 	cv::String pathModel;
 

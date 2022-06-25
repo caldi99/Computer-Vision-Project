@@ -22,14 +22,14 @@ template<typename T> std::vector<T> Utils::slice(std::vector<T>& vector, int sta
 {
 	// Starting and Ending iterators
 	auto s = vector.begin() + start;
-	auto e = vector.begin() + end + 1;
+	auto e = vector.begin() + end;
 
 	// To store the sliced vector
-	std::vector<T> result(e - s + 1);
+	std::vector<T> result;
 
-	// Copy vector using copy function()
-	std::copy(s, e, result.begin());
-
+	//Slice the vector
+	result.insert(result.end(), s, e);
+	
 	// Return the final sliced vector
 	return result;	
 }
@@ -117,6 +117,19 @@ template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, 
 		vector.erase(vector.begin() + positions.at(i));	
 }
 
+template<typename T>
+std::vector<T> Utils::split(T string, char charachter)
+{
+	std::stringstream stream(string);
+	T part;
+	
+	std::vector<T> parts;
+	while (std::getline(stream, part, charachter))
+		parts.push_back(part);
+
+	return parts;
+}
+
 //USAGES : For each specific usage instace add a line of that instance here
 template std::vector<int> Utils::argSort(const std::vector<float>&);
 template std::vector<int> Utils::slice(std::vector<int>& vector,int,int);
@@ -129,3 +142,4 @@ template std::vector<float> Utils::elementWiseDivision(std::vector<float>& vecto
 template std::vector<float> Utils::elementWiseSum(std::vector<float>& vector, float element);
 template std::vector<int> Utils::greater(std::vector<float>& vector, float threshold);
 template void Utils::deleteElementPositions(std::vector<int>& vector, std::vector<int>& positions);
+template std::vector<cv::String> Utils::split(cv::String string, char charachter);
