@@ -15,7 +15,7 @@
 //MYLIB
 #include "Utils.h"
 
-//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
+//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE, AND WHAT AS CONST
 
 /**
 * This class represent the Detector Module "definitions"
@@ -31,8 +31,9 @@ public:
 	*/
 	void readImages(cv::String pathImages);
 
+	//TODO : complete javadoc
+
 	/**
-	* //TODO : MODIFY THE RETURN TYPE
 	* This function will return a vector of images where each image has inside of it the bounding boxes drawn
 	*/
 	std::vector<cv::Mat> detectHands(cv::String nameImage);
@@ -116,6 +117,32 @@ private:
 	*/
 	std::vector<cv::Rect> convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat);
 	
+	/**
+	* This function computes the intersecion over union
+	* @param box1 : The first box
+	* @param box2 : The second box
+	* @return : The Intersection over union
+	*/
+	float intersectionOverUnion(cv::Rect box1, cv::Rect box2);
+
+	/**
+	* This function computes the intersecion over union element wise between boxes and box
+	* @param boxes : The list of boxes box
+	* @param box : A box
+	* @return : The Element Wise Intersection over union
+	*/
+	std::vector<float> intersectionOverUnionElementWise(std::vector<cv::Rect>& boxes, cv::Rect& box);
+
+	/**
+	* This function creates a list of Boxes given lists of x1s, y1s, ws, hs
+	* @param x1s : The list of x1s
+	* @param y1s : The list of y1s
+	* @param ws : The list of ws
+	* @param hs : The list of hs
+	* @return : The corresponding rectangles
+	*/
+	std::vector<cv::Rect> createListBoxes(std::vector<float>& x1s, std::vector<float>& y1s, std::vector<float>& ws, std::vector<float>& hs);
+
 	//FIELD MEMBER
 	 
 	//Images to process

@@ -110,7 +110,7 @@ template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, 
 	std::sort(positions.begin(), positions.end(), std::greater<int>());
 	positions.erase(std::unique(positions.begin(), positions.end()), positions.end());
 
-	if (vector.size() > positions.size())
+	if (positions.size() > vector.size())
 		throw std::exception("MORE POSITIONS THAN ELEMENTS");
 
 	for (int i = 0; i < positions.size(); i++)	
