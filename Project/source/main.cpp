@@ -5,18 +5,26 @@
 //NAMESPACES
 //using namespace cv;
 
-
+int mainDaniela();
+int mainFrancesco(int argc, char* argv[]);
 int main()
 {
-	
+	mainDaniela();
+
 	/*Detector detector;
 	detector.readImages("../testset/rgb/");
 	detector.setModel("../model/model.pb");
 	detector.detectHands();*/
 }
 
+int mainDaniela()
+{
+	//Here my code
+	return 0;
+}
+
 /*
-int main(int argc, char* argv[]) 
+int mainFrancesco(int argc, char* argv[]) 
 {
 	const String keys =
 		"{help h usage ? |				    | print this message}"
