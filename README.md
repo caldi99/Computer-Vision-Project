@@ -8,14 +8,14 @@ In order to achieve this, the main idea was to use for the :
 - segmentation : TODO
 
 Overview :
-* [C++ Code Compilation](#-compiling-the-c-code)
-* [Hand detection](#-hand-detection)
-    * [Dataset Creation](#-creation-of-the-dataset)
+* [C++ Code Compilation](#compiling-the-c-code)
+* [Hand detection](#hand-detection)
+    * [Dataset Creation](#creation-of-the-dataset)
     * [Training](#training-the-resnet50v2-to-recognize-hands)
-    * [Model Conversion](#-converting-the-h5-into-the-model-supported-by-opencv-library)
-    * [Inference](#-detect-hands-on-images)
-* [Hand Segmentation](#-hand-segmentation)
-* [Examples Hand Detection](#-examples-of-hand-detections)
+    * [Model Conversion](#converting-the-h5-into-the-model-supported-by-opencv-library)
+    * [Inference](#detect-hands-on-images)
+* [Hand Segmentation](#hand-segmentation)
+* [Examples Hand Detection](#examples-of-hand-detections)
 
 ## Compiling the C++ Code
 
