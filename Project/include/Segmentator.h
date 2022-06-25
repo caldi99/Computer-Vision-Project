@@ -12,9 +12,6 @@
 #include <unordered_map>
 
 
-//MYLIB
-#include "Utils.h"
-
 //TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
 
 /**
@@ -29,4 +26,6 @@ public:
 	* This function will read the images inside pathImages
 	* @param pathImages : The path were the images are
 	*/
-	void readImages(cv::String pathImages);
+	void segment_1(cv::String pathImages);
+};
+#endif // !SEGMENTATOR_H
