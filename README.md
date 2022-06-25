@@ -8,22 +8,22 @@ In order to achieve this, the main idea was to use for the :
 - segmentation : TODO
 
 Overview :
-* [C++ Code Compilation](#-compilation)
+* [C++ Code Compilation](#-compiling-the-c-code)
 * [Hand detection](#-hand-detection)
-    * [Dataset Creation](#-dataset-creation)
-    * [Training](#training)
-    * [Model Conversion](#-model-conversion)
-    * [Inference](#-inference)
+    * [Dataset Creation](#-creation-of-the-dataset)
+    * [Training](#training-the-resnet50v2-to-recognize-hands)
+    * [Model Conversion](#-converting-the-h5-into-the-model-supported-by-opencv-library)
+    * [Inference](#-detect-hands-on-images)
 * [Hand Segmentation](#-hand-segmentation)
-* [Examples](#-examples)
+* [Examples Hand Detection](#-examples-of-hand-detections)
 
-## <a href = "#compilation"></a> Compiling the C++ Code
+## Compiling the C++ Code
 
 TODO : ADD INSTRUCTIONS ON HOW TO COMPILE
 
-## <a href = "#hand-detection"></a> Hand Detection
+## Hand Detection
 
-### <a href = "#dataset-creation"></a> Creation of the dataset
+### Creation of the dataset
 
 To create the dataset in order to train our model we need to follow the steps listed below:
 - Dowload the EgoHands Dataset from : http://vision.soic.indiana.edu/egohands_files/egohands_data.zip
@@ -41,7 +41,7 @@ To create the dataset, it was done the following split :
 	- 75 % Training Set
 	- 25 % Validation Set
 
-### <a href = "#training"></a> Training the Resnet50V2 to recognize hands
+### Training the Resnet50V2 to recognize hands
 
 In order to train the CNN you need to follow the following steps : 
 
@@ -67,7 +67,7 @@ In order to train the CNN you need to follow the following steps :
 
 Notice that, you can skip the training process and download immediatly the `model.h5` file, from : https://drive.google.com/file/d/1vm2T1bqheUVgpB0QdJYq9mGdIplQ6f4H/view?usp=sharing
 
-### <a href = "#model-conversion"></a> Converting the .h5 into the model supported by OpenCV library
+### Converting the .h5 into the model supported by OpenCV library
 
 The last step is to convert the `model.h5` into .pb file in order to be able to use it in OpenCV. To do so, you need to follow the below steps :
 
@@ -86,7 +86,7 @@ The last step is to convert the `model.h5` into .pb file in order to be able to 
 Notice that, you can skip this process and download immediatly the `model.pb` file from : https://drive.google.com/file/d/12nhBovdFL4O7X1d0FZbZOiSmgfYZnWmj/view?usp=sharing
 
 
-### <a href = "#inference"></a> Detect Hands on images
+### Detect Hands on images
 
 In order to detect hands on an image, you need to execute the `C++` code i.e. (TODO ADD COMMAND) with the following, possibiles parameters :
 
@@ -100,11 +100,11 @@ Example of a command :
 
 
 
-## <a href = "#hand-segmentation"></a> Hand Segmentation
+## Hand Segmentation
 
 TODO COMPLETE
 
-## <a href = "#examples"></a> Examples of Hand Detections
+## Examples of Hand Detections
 
 - Orginal Image :
 
