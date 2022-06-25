@@ -1,6 +1,6 @@
 #include "../include/Detector.h"
 #include "../include/Utils.h"
-#include <iostream>
+
 
 /**
 * This file represent the Detector module "implementation"
@@ -15,17 +15,51 @@ void Detector::readImages(cv::String pathImages)
 	//Store the images inside the images vector
 	for (int i = 0; i < pathSingleImages.size(); i++)
 	{
-		//Split the string
+		//Split the string in order to obtain the name of the file
 		std::vector<cv::String> splits = Utils::split(pathSingleImages.at(i), '\\');
-		images.insert(std::pair<cv::String, cv::Mat>(splits.at(splits.size()-1), cv::imread(pathSingleImages.at(i))));
-	}
-		
+		cv::String fileExtension = splits.at(splits.size() - 1);
+		splits = Utils::split(fileExtension, '.');
+		images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), cv::imread(pathSingleImages.at(i))));
+	}		
 }
 
-std::vector<cv::Mat> Detector::detectHands(cv::String nameImage)
+void Detector::readGroundTruth(cv::String pathGroundTruths)
+{
+	//Read all the paths of the ground truth
+	std::vector<cv::String> pathSingleGroundTruths;
+	cv::glob(pathGroundTruths, pathSingleGroundTruths);
+	//Store the ground truth inside the groundTruth vecto
+	for (int i = 0; i < pathSingleGroundTruths.size(); i++)
+	{
+		//Split the string in order to obtain the name of the file
+		std::vector<cv::String> splits = Utils::split(pathSingleGroundTruths.at(i), '\\');
+		cv::String fileExtension = splits.at(splits.size() - 1);
+		splits = Utils::split(fileExtension, '.');
+		
+		//Read content of the file
+		std::vector<cv::Rect> groundTruthBoundingBoxes;
+		std::ifstream file(pathSingleGroundTruths.at(i));
+		cv::String line;
+		while (std::getline(file,line))
+		{
+			std::vector<cv::String> split = Utils::split(line, ' ');
+			groundTruthBoundingBoxes.push_back(cv::Rect(std::stoi(split.at(0)),
+														std::stoi(split.at(1)),
+														std::stoi(split.at(2)),
+														std::stoi(split.at(3))));
+		}
+		//Close The file
+		file.close();
+
+		//Save informations
+		groundTruths.insert(std::pair<cv::String,std::vector<cv::Rect>>(splits.at(0), groundTruthBoundingBoxes));
+	}
+}
+
+std::vector<cv::Rect> Detector::detectHands(cv::String nameImage)
 {
 	cv::Mat image = images.at(nameImage);
-	getBoudingBoxesDetections(image);
+	return getBoudingBoxesDetections(image);
 }
 
 void Detector::setModel(cv::String pathModel)
@@ -33,7 +67,7 @@ void Detector::setModel(cv::String pathModel)
 	this->pathModel = pathModel;
 }
 
-std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
+std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 {
 	//TODO : WINDOW SIZE DYNAMIC
 
@@ -54,21 +88,22 @@ std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
 		allProbabilities.insert(allProbabilities.end(), probabilities.begin(), probabilities.end());
 	}
 	
+	//Non maxima Suppression
 	std::vector<cv::Rect> finalBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
 
-	//NON MAXIMA SUPPRESSION
+	
 		
 	//TODO: REMOVE
-	for (int i = 0; i < allBoundingBoxesHands.size(); i++)
+	for (int i = 0; i < finalBoxes.size(); i++)
 	{
-		cv::rectangle(image, allBoundingBoxesHands.at(i), cv::Scalar(255, 0, 0));
+		cv::rectangle(image, finalBoxes.at(i), cv::Scalar(255, 0, 0));
 	}
 
 	cv::imshow("RECTANGLES", image);
 	cv::waitKey();
 
 
-	return std::vector<cv::Range>();
+	return std::vector<cv::Rect>();
 }
 
 std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
@@ -105,7 +140,7 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	return pyramid;
 }
 
-std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<int, int> orginalDimensions,int positionPyramid,std::vector<float>& probabilities)
+std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::tuple<int, int>& orginalDimensions,int positionPyramid,std::vector<float>& probabilities)
 {
 	std::vector<cv::Rect> boundingBoxesHands;
 
@@ -166,7 +201,7 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<
 	return boundingBoxesHands;
 }
 
-cv::Mat Detector::prepareImageForCNN(cv::Mat image)
+cv::Mat Detector::prepareImageForCNN(const cv::Mat& image)
 {
 	cv::Mat resized,outputImage;
 
@@ -179,7 +214,7 @@ cv::Mat Detector::prepareImageForCNN(cv::Mat image)
 	return outputImage;
 }
 
-std::tuple<bool,float> Detector::isHand(cv::Mat image)
+std::tuple<bool,float> Detector::isHand(const cv::Mat& image)
 {
 	//Read Model
 	cv::dnn::Net network = cv::dnn::readNetFromTensorflow(pathModel);
@@ -197,7 +232,7 @@ std::tuple<bool,float> Detector::isHand(cv::Mat image)
 		return std::tuple<bool, float>(true, output.at<float>(0, 0));
 }
 
-std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions)
+std::tuple<int, int> Detector::convertCoordinates(const std::tuple<int, int>& coordinatesToConvert, const std::tuple<int, int>& orginalDimensions, const std::tuple<int, int>& currentDimensions)
 {
 	//Convert x coordinate
 	int newX = (std::get<0>(coordinatesToConvert) * std::get<1>(orginalDimensions)) / (std::get<1>(currentDimensions));
@@ -212,7 +247,7 @@ std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinat
 	return std::tuple<int, int>(newX, newY);
 }
 
-std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes, std::vector<float> probabilities)
+std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>& boxes, std::vector<float> probabilities)
 {
 	std::vector<cv::Rect> nms;
 	//If empty return empty nms
@@ -264,27 +299,30 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 		std::vector<float> y2Sliced = Utils::slice(y2, idxsSliced);
 
 		//Find the largest coordinates for the start of the bounding box and the smallest (x,y) coordinates for the end of the bounding box
-		std::vector<float> xx1 = Utils::elementWiseMaximum(x1Sliced,x1[i]);
-		std::vector<float> xx2 = Utils::elementWiseMaximum(x2Sliced, x2[i]);
-		std::vector<float> yy1 = Utils::elementWiseMaximum(y1Sliced, y1[i]);
-		std::vector<float> yy2 = Utils::elementWiseMaximum(y2Sliced, y2[i]);
+		std::vector<float> xx1 = Utils::elementWiseMaximum(x1Sliced,x1.at(i));
+		std::vector<float> xx2 = Utils::elementWiseMaximum(x2Sliced, x2.at(i));
+		std::vector<float> yy1 = Utils::elementWiseMaximum(y1Sliced, y1.at(i));
+		std::vector<float> yy2 = Utils::elementWiseMaximum(y2Sliced, y2.at(i));
 
 		//Compute width and heigth of the bounding boxes
 		std::vector<float> differenceXX2XX1 = Utils::elementWiseDifference(xx2, xx1);
 		std::vector<float> differenceYY2YY1 = Utils::elementWiseDifference(yy2, yy1);
-		std::vector<float> sum1 = Utils::elementWiseSum(differenceXX2XX1, 0.0f);
-		std::vector<float> sum2 = Utils::elementWiseSum(differenceYY2YY1, 0.0f);
-		std::vector<float> w = Utils::elementWiseMaximum(sum1, 0.0f);
-		std::vector<float> h = Utils::elementWiseMaximum(sum2, 0.0f);
+		std::vector<float> w = Utils::elementWiseMaximum(differenceXX2XX1, 0.0f);
+		std::vector<float> h = Utils::elementWiseMaximum(differenceYY2YY1, 0.0f);
+		
+		//Remaining Boxes
+		std::vector<cv::Rect> listRemainingBoxes = createListBoxes(xx1, yy1, w, h);
+		
+		//Selected Rect
+		cv::Rect selectedBox(x1.at(i), y1.at(i), x2.at(i) - x1.at(i), y2.at(i) - y1.at(i));
 
+		std::cout << "SELECTED BOX " << selectedBox;
 
-		//Compute overlapping ratio
-		std::vector<float> product = Utils::elementWiseProduct(w, h);
-		std::vector<float> areaSliced = Utils::slice(area, idxsSliced);
-		std::vector<float> overlap = Utils::elementWiseDivision(product, areaSliced);
-
+		//Intersection over union
+		std::vector<float> ious = intersectionOverUnionElementWise(listRemainingBoxes, selectedBox);
+		
 		//Update Idx
-		std::vector<int> thresholded = Utils::greater(overlap, THRESHOLD_OVERLAPPING);
+		std::vector<int> thresholded = Utils::greater(ious, THRESHOLD_OVERLAPPING);
 		thresholded.insert(thresholded.begin(), last);
 		Utils::deleteElementPositions(idxs, thresholded);
 	}
@@ -294,7 +332,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 	return convertBoxesToIntCoordinates(slicedBoxesFloat);	
 }
 
-std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes)
+std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(const std::vector<cv::Rect>& boxes)
 {
 	std::vector<cv::Rect2f> boxesFloat;
 
@@ -304,7 +342,7 @@ std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(std::vector<cv:
 	return boxesFloat;
 }
 
-std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat)
+std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(const std::vector<cv::Rect2f>& boxesFloat)
 {
 	std::vector<cv::Rect> boxes;
 
@@ -314,3 +352,42 @@ std::vector<cv::Rect> Detector::convertBoxesToIntCoordinates(std::vector<cv::Rec
 	return boxes;
 }
 
+float Detector::intersectionOverUnion(const cv::Rect& box1,const cv::Rect& box2)
+{
+	int xA = std::max(box1.x, box2.x);
+	int yA = std::max(box1.y, box2.y);
+	int xB = std::min(box1.x + box1.width, box2.x + box2.width);
+	int yB = std::min(box1.y + box1.height, box2.y+ box2.height);
+
+	//Area of intersection rectangle
+	float intersectionArea = std::max(0, xB - xA) * std::max(0, yB - yA);
+
+	//Area of both boxes
+	float boxAreaA = box1.area();
+	float boxAreaB = box2.area();
+
+	return intersectionArea / (boxAreaA + boxAreaB - intersectionArea);
+}
+
+std::vector<float> Detector::intersectionOverUnionElementWise(const std::vector<cv::Rect>& boxes, const cv::Rect& box)
+{
+	std::vector<float> ious;
+	
+	for (int i = 0; i < boxes.size(); i++)
+		ious.push_back(intersectionOverUnion(box, boxes.at(i)));
+
+	return ious;
+}
+
+std::vector<cv::Rect> Detector::createListBoxes(const std::vector<float>& x1s, const std::vector<float>& y1s, const std::vector<float>& ws, const std::vector<float>& hs)
+{
+	std::vector<cv::Rect> rectangles;		
+
+	if (x1s.size() != y1s.size() || x1s.size() != ws.size() || x1s.size() != hs.size() || y1s.size() != ws.size() || y1s.size() != hs.size() || ws.size() != hs.size())
+		throw std::exception("SIZES DIFFERENT!!");
+
+	for (int i = 0; i < x1s.size(); i++)
+		rectangles.push_back(cv::Rect(x1s.at(i), y1s.at(i), ws.at(i), hs.at(i)));
+
+	return rectangles;
+}

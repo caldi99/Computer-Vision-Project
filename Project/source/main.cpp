@@ -29,7 +29,7 @@ int mainFrancesco()
 	Detector detector;
 	detector.readImages("../testset/rgb/");
 	detector.setModel("../model/model.pb");
-	detector.detectHands("01.jpg");
+	detector.detectHands("01");
 }
 /*
 int mainFrancesco(int argc, char* argv[]) 

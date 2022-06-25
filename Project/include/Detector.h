@@ -10,12 +10,13 @@
 #include <vector>
 #include <tuple>
 #include <map>
-
+#include <iostream>
+#include <fstream>
 
 //MYLIB
 #include "Utils.h"
 
-//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
+//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE, AND WHAT AS CONST
 
 /**
 * This class represent the Detector Module "definitions"
@@ -24,7 +25,7 @@
 class Detector 
 {
 public:
-	
+
 	/**
 	* This function will read the images inside pathImages 
 	* @param pathImages : The path were the images are
@@ -32,10 +33,18 @@ public:
 	void readImages(cv::String pathImages);
 
 	/**
-	* //TODO : MODIFY THE RETURN TYPE
-	* This function will return a vector of images where each image has inside of it the bounding boxes drawn
+	* This function will read the ground truth inside pathGroundTruths
+	* @param pathGroundTruth : The path were the groundTruths are
 	*/
-	std::vector<cv::Mat> detectHands(cv::String nameImage);
+	void readGroundTruth(cv::String pathGroundTruths);
+
+	//TODO SPLIT FOR PATH.JPG
+	/**
+	* This function will return the bounding boxes for a given image
+	* @param nameImage : The filename of the image for which we need to detect things
+	* @return : Bounding Boxes of the hands detected
+	*/
+	std::vector<cv::Rect> detectHands(cv::String nameImage);
 	
 	//Better if in the constructor??
 	/**
@@ -43,9 +52,24 @@ public:
 	* @param : Path where the model is 
 	*/
 	void setModel(cv::String pathModel);
+	
+	/**
+	* This function compute the IOUs, given the detections for a specific image	
+	* @param nameImage : The name of the image for which computing the detections
+	* @param detections : The detections for the given image
+	* @return : The IOUs for the given image
+	*/
+	std::vector<float> getIntersectionsOverUnions(cv::String nameImage, std::vector<cv::Rect> detections);
 
+	/**
+	* This function compute the IOUs, given the detections for a specific image and save the result inside outputFile
+	* @param outputFile : The path of the file where to save th IOUs
+	* @param nameImage : The name of the image for which computing the detections
+	* @param detections : The detections for the given image	
+	*/
+	void saveIntersectionsOverUnions(cv::String outputFile,cv::String nameImage, std::vector<cv::Rect> detections);
+	
 private:
-
 	//FUNCTIONS
 
 	/**
@@ -53,7 +77,7 @@ private:
 	* @param image : Image for which detecting the hands
 	* @return : The list of bounding boxes where hands are supposed to be present
 	*/
-	std::vector<cv::Range> getBoudingBoxesDetections(cv::Mat image);
+	std::vector<cv::Rect> getBoudingBoxesDetections(cv::Mat image);
 
 	/**
 	* This function return the images of the gaussian pyramid for a given image
@@ -70,20 +94,23 @@ private:
 	* @param probabilities : The probabilities returned by the Network
 	* @return : The Bounding Boxes of the image specified in the orginal dimension coordinates 
 	*/
-	std::vector<cv::Rect> getHandsBoundingBoxes(cv::Mat image,std::tuple<int,int> orginalDimensions,int positionPyramid, std::vector<float>& probabilities);
+	std::vector<cv::Rect> getHandsBoundingBoxes(cv::Mat image,
+												const std::tuple<int,int>& orginalDimensions,
+												int positionPyramid, 
+												std::vector<float>& probabilities);
 
 	/**
 	* This function given and input an image, it transform an image of size (224,224) and normalize it
 	* @param image : The image to be "tranformed"
 	* @return : The tranformed image
 	*/
-	cv::Mat prepareImageForCNN(cv::Mat image);
+	cv::Mat prepareImageForCNN(const cv::Mat& image);
 
 	/**
 	* This function given as input an image in the correct format, it will return if it is an hand or not
 	* @return : True if it is an hand, false otherwise and the output of the network
 	*/
-	std::tuple<bool,float> isHand(cv::Mat image);
+	std::tuple<bool,float> isHand(const cv::Mat& image);
 
 	/**
 	* This function convert (x,y) coordinates into a subsampled image into coordinates of original image
@@ -92,7 +119,9 @@ private:
 	* @param currentDimensions : Dimensions of the subsampled image provided as (rangey,rangex) = (heigth,width) = (rows,cols)
 	* @return : Coordinates converted 
 	*/
-	std::tuple<int, int> convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions);
+	std::tuple<int, int> convertCoordinates(const std::tuple<int, int>& coordinatesToConvert, 
+											const std::tuple<int, int>& orginalDimensions, 
+											const std::tuple<int, int>& currentDimensions);
 
 	/**
 	* This function given the detections as input, return the non maxima suppression of them
@@ -100,27 +129,63 @@ private:
 	* @param probabilities : List of probabilities if provided
 	* @return : The result of Non Maxima Suppression
 	*/
-	std::vector<cv::Rect> nonMaximaSuppression(std::vector<cv::Rect> boxes, std::vector<float> probabilities = std::vector<float>());
+	std::vector<cv::Rect> nonMaximaSuppression(const std::vector<cv::Rect>& boxes, 
+													 std::vector<float> probabilities = std::vector<float>());
 
 	/**
 	* This function convert a vector of rectangles specified with integer values into a rectangle that uses float values
 	* @param boxes : The Bounding Boxes specified in integer coordinates
 	* @return : The corresponding Bounding Boxes with float coordinates
 	*/
-	std::vector<cv::Rect2f> convertBoxesToFloatCoordinates(std::vector<cv::Rect> boxes);
+	std::vector<cv::Rect2f> convertBoxesToFloatCoordinates(const std::vector<cv::Rect>& boxes);
 	
 	/**
 	* This function convert a vector of rectangles specified with float values into a rectangle that uses int values
 	* @param boxesFloat : The Bounding Boxes specified in float coordinates
 	* @return : The corresponding Bounding Boxes with int coordinates
 	*/
-	std::vector<cv::Rect> convertBoxesToIntCoordinates(std::vector<cv::Rect2f> boxesFloat);
+	std::vector<cv::Rect> convertBoxesToIntCoordinates(const std::vector<cv::Rect2f>& boxesFloat);
 	
+	/**
+	* This function computes the intersecion over union
+	* @param box1 : The first box
+	* @param box2 : The second box
+	* @return : The Intersection over union
+	*/
+	float intersectionOverUnion(const cv::Rect& box1, 
+								const cv::Rect& box2);
+
+	/**
+	* This function computes the intersecion over union element wise between boxes and box
+	* @param boxes : The list of boxes box
+	* @param box : A box
+	* @return : The Element Wise Intersection over union
+	*/
+	std::vector<float> intersectionOverUnionElementWise(const std::vector<cv::Rect>& boxes, 
+													    const cv::Rect& box);
+
+	/**
+	* This function creates a list of Boxes given lists of x1s, y1s, ws, hs
+	* @param x1s : The list of x1s
+	* @param y1s : The list of y1s
+	* @param ws : The list of ws
+	* @param hs : The list of hs
+	* @return : The corresponding rectangles
+	*/
+	std::vector<cv::Rect> createListBoxes(const std::vector<float>& x1s, 
+										  const std::vector<float>& y1s, 
+										  const std::vector<float>& ws, 
+										  const std::vector<float>& hs);
+
 	//FIELD MEMBER
 	 
 	//Images to process
 	std::map<cv::String,cv::Mat> images;
 
+	//Ground truth images
+	std::map<cv::String, std::vector<cv::Rect>> groundTruths;
+
+	//Path to the CNN model
 	cv::String pathModel;
 
 
@@ -154,7 +219,4 @@ private:
 	const float THRESHOLD_OVERLAPPING = 0.85;
 };
 
-
 #endif // !DETECTOR_H
-
-
