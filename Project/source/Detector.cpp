@@ -25,17 +25,6 @@ void Detector::readImages(cv::String pathImages)
 		//Read image
 		cv::Mat image = cv::imread(pathSingleImages.at(i));
 		images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), image));
-
-		/*cv::Mat resized;
-
-		//Resize image
-		if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
-		{
-			cv::resize(image, resized, cv::Size(IMAGE_WIDTH, IMAGE_HEIGTH), cv::INTER_CUBIC);
-			images.insert(std::pair<cv::String, cv::Mat>(splits.at(0),resized));
-		}
-		else
-			images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), image));*/
 	}		
 }
 
@@ -91,6 +80,64 @@ cv::Mat Detector::getImgeByName(cv::String imageName)
 	return images.at(imageName);
 }
 
+void Detector::saveIntersectionsOverUnions(cv::String outputFile, cv::String nameImage, std::vector<cv::Rect> detections)
+{
+	//TODO : FINISH
+	//Get ground truths of the image
+	std::vector<cv::Rect> groundTruthBoundingBoxes = groundTruths.at(nameImage);
+
+	//Sort groundTruthBoundingBoxes and detections by x1,y1
+	/*std::sort(groundTruthBoundingBoxes.begin(),
+		groundTruthBoundingBoxes.end(),
+		[](cv::Rect rect1, cv::Rect rect2)
+		{
+			if (rect1.x <= rect2.x)			
+				if (rect1.y <= rect2.y)
+					return true;
+			
+			return false;
+		});
+
+	std::sort(detections.begin(),
+		detections.end(),
+		[](cv::Rect rect1, cv::Rect rect2)
+		{
+			if (rect1.x <= rect2.x)
+				if (rect1.y <= rect2.y)
+					return true;
+
+			return false;
+		});*/
+
+	std::ofstream file(Utils::split(nameImage, '.').at(0) + ".txt");
+	for (int i = 0; i < groundTruthBoundingBoxes.size(); i++)
+	{
+
+		std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruthBoundingBoxes.at(i));
+
+		//Write in the file depending what prof/colleges says
+
+	}
+
+	file.close();
+}
+
+void Detector::saveDetections(cv::String output, cv::String nameImage, std::vector<cv::Rect> detections)
+{
+	//Construct name of the image that we are going to save
+	cv::String nameFileExtension = Utils::split(nameImage, '.').at(0) + "_detections.jpg";
+	
+	//Get Image
+	cv::Mat image = images.at(nameImage);
+
+	//Draw rectangles
+	for (int i = 0; i < detections.size(); i++)
+		cv::rectangle(image, detections.at(i), cv::Scalar(0, 255, 0));
+	
+	//Save Image
+	cv::imwrite(output + nameFileExtension, image);
+}
+
 std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 {
 	//Create pyramid
@@ -103,7 +150,7 @@ std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 	std::vector<float> allProbabilities;
 	for (int i = 0; i < pyramid.size(); i++)
 	{
-		std::cout << "COMPUTING BOUNDING BOXES PYRAMID " << i << " OF " << pyramid.size() << std::endl;
+		//std::cout << "COMPUTING BOUNDING BOXES PYRAMID " << i << " OF " << pyramid.size() << std::endl;
 		std::vector<float> probabilities;
 		std::vector<cv::Rect> boundingBoxes = getHandsBoundingBoxes(pyramid.at(i), dimensions, i,probabilities);
 		allBoundingBoxesHands.insert(allBoundingBoxesHands.end(), boundingBoxes.begin(), boundingBoxes.end());
@@ -226,8 +273,8 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::
 				//Add Probability
 				probabilities.push_back(std::get<1>(outputCNN));
 
-				std::cout << "X1 " << std::get<0>(x1y1) << " Y1 " << std::get<1>(x1y1)
-					<< " X2 " << std::get<0>(x2y2) << " Y2 " << std::get<1>(x2y2) << std::endl;
+				//std::cout << "X1 " << std::get<0>(x1y1) << " Y1 " << std::get<1>(x1y1)
+				//	<< " X2 " << std::get<0>(x2y2) << " Y2 " << std::get<1>(x2y2) << std::endl;
 			}
 		}
 	}
@@ -258,7 +305,7 @@ std::tuple<bool,float> Detector::isHand(const cv::Mat& image)
 	//Forward
 	cv::Mat output = network.forward();	
 
-	std::cout << output << std::endl;
+	//std::cout << output << std::endl;
 
 	//Check if it is an hand
 	if (output.at<float>(0, 0) > THRESHOLD_DETECTION)

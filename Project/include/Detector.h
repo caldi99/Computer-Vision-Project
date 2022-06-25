@@ -227,7 +227,7 @@ private:
 	const int HEIGHT_INPUT_CNN = 224;
 
 	//Threshold used to understand if a blob is an image or not
-	const float THRESHOLD_DETECTION = 0.35;
+	const float THRESHOLD_DETECTION = 0.25;
 
 	//Threshold used to understand how much two overlapping regions overlap each other
 	const float THRESHOLD_OVERLAPPING = 0.85;

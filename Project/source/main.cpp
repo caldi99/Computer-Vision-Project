@@ -73,15 +73,20 @@ int mainFinale(int argc, char* argv[])
 	//Declare variables
 	Detector detector;
 
-
 	switch (mode)
 	{
 		case MODE::SEGMENT:
-				//TODO : CODE TO ADD
-			break;
-		case MODE::DETECT:
 		{
-			//TODO: INTERSECTION OVER UNION OF TWO SETS (NEED TO ORDER THEM BASED ON (X1,Y1)
+			cout << "YOU SELECTED SEGMENTATION MODE " << endl;
+
+			//TODO : CODE TO ADD
+			break;
+		}			
+		case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
+		{
+			//TODO: INTERSECTION OVER UNION OF TWO SETS (NEED TO ORDER THEM BASED ON (X1,Y1) ??
+			cout << "YOU SELECTED DETECTOR MODE " << endl;
+
 			detector.setModel(parser.get<String>("m"));
 			detector.readGroundTruth(parser.get<String>("a"));
 			detector.readImages(parser.get<String>("i"));
@@ -92,20 +97,33 @@ int mainFinale(int argc, char* argv[])
 			//Get Image By Name
 			Mat image = detector.getImgeByName(imageName);
 			
+			cout << "DETECTOR IS RUNNING " << endl;
+
 			//Detect Bounding Boxes Image
 			vector<Rect> boundingBoxes = detector.detectHands(imageName);
 
+			String outputPathIous, outputPathDetections;
+
 			if (parser.has("opd") && parser.has("opious")) //Both
 			{
-
+				outputPathDetections = parser.get<String>("opd");
+				outputPathIous = parser.get<String>("opious");
+				cout << "SAVING DETECTIONS IN " + outputPathDetections << endl;
+				cout << "SAVING IOUS IN " + outputPathIous << endl;
+				detector.saveDetections(outputPathDetections, imageName, boundingBoxes);
+				detector.saveIntersectionsOverUnions(outputPathIous, imageName, boundingBoxes);
 			}
 			else if (parser.has("opd")) //only
 			{
-
+				outputPathDetections = parser.get<String>("opd");
+				cout << "SAVING DETECTIONS IN " + outputPathDetections << endl;
+				detector.saveDetections(outputPathDetections, imageName, boundingBoxes);
 			}
 			else if (parser.has("opious"))
-			{
-
+			{				
+				outputPathIous = parser.get<String>("opious");
+				cout << "SAVING IOUS IN " + outputPathIous << endl;
+				detector.saveIntersectionsOverUnions(outputPathIous, imageName, boundingBoxes);
 			}
 
 			//In each situation show the image and its boxes 
@@ -123,5 +141,3 @@ int mainFinale(int argc, char* argv[])
 	}
 	return 0;
 }
-
-
