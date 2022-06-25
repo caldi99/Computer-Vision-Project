@@ -7,9 +7,23 @@ In order to achieve this, the main idea was to use for the :
 - detection : Sliding Window approach with a Resnet50V2 CNN pre trained able to distinguish between hands and not hands. Moreover, to avoid several overlappings a non maxima suppression is also implemented
 - segmentation : TODO
 
-## Hand Detection
+Overview :
+* [C++ Code Compilation](#compilation)
+* [Hand detection](#hand-detection)
+    * [Dataset Creation](#dataset-creation)
+    * [Training](#training)
+    * [Model Conversion](#model-conversion)
+    * [Inference](#inference)
+* [Hand Segmentation](#hand-segmentation)
+* [Examples](#examples)
 
-### Creation of the dataset
+## <a href = "#compilation"></a> Compiling the C++ Code
+
+TODO : ADD INSTRUCTIONS ON HOW TO COMPILE
+
+## <a href = "#hand-detection"></a> Hand Detection
+
+### <a href = "#dataset-creation"></a> Creation of the dataset
 
 To create the dataset in order to train our model we need to follow the steps listed below:
 - Dowload the EgoHands Dataset from : http://vision.soic.indiana.edu/egohands_files/egohands_data.zip
@@ -27,7 +41,7 @@ To create the dataset, it was done the following split :
 	- 75 % Training Set
 	- 25 % Validation Set
 
-## Training the Resnet50V2 to recognize hands
+### <a href = "#training"></a> Training the Resnet50V2 to recognize hands
 
 In order to train the CNN you need to follow the following steps : 
 
@@ -53,7 +67,7 @@ In order to train the CNN you need to follow the following steps :
 
 Notice that, you can skip the training process and download immediatly the `model.h5` file, from : https://drive.google.com/file/d/1vm2T1bqheUVgpB0QdJYq9mGdIplQ6f4H/view?usp=sharing
 
-## Converting the .h5 into the model supported by OpenCV library
+### <a href = "#model-conversion"></a> Converting the .h5 into the model supported by OpenCV library
 
 The last step is to convert the `model.h5` into .pb file in order to be able to use it in OpenCV. To do so, you need to follow the below steps :
 
@@ -71,12 +85,8 @@ The last step is to convert the `model.h5` into .pb file in order to be able to 
 
 Notice that, you can skip this process and download immediatly the `model.pb` file from : https://drive.google.com/file/d/12nhBovdFL4O7X1d0FZbZOiSmgfYZnWmj/view?usp=sharing
 
-## Compiling the C++ Code
 
-TODO : ADD INSTRUCTIONS ON HOW TO COMPILE
-
-
-## Detect Hands on images
+### <a href = "#inference"></a> Detect Hands on images
 
 In order to detect hands on an image, you need to execute the `C++` code i.e. (TODO ADD COMMAND) with the following, possibiles parameters :
 
@@ -90,11 +100,11 @@ Example of a command :
 
 
 
-## Segment Hands on images
+## <a href = "#hand-segmentation"></a> Hand Segmentation
 
 TODO COMPLETE
 
-### Examples of Hand Detections
+## <a href = "#examples"></a> Examples of Hand Detections
 
 - Orginal Image :
 
