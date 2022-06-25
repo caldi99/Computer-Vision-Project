@@ -1,18 +1,18 @@
 //MYLIB
 
-#include "../include/Utils.h"
+#include "../include/Detector.h"
 
 //NAMESPACES
-//using namespace cv;
+using namespace cv;
 
 
 int main()
 {
 	
-	/*Detector detector;
+	Detector detector;
 	detector.readImages("../testset/rgb/");
 	detector.setModel("../model/model.pb");
-	detector.detectHands();*/
+	detector.detectHands("01.jpg");
 }
 
 /*

@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <numeric>
 #include <exception>
+#include <sstream>
+#include <string>
 
 //OPENCV
 #include <opencv2/highgui.hpp>
@@ -117,6 +119,17 @@ public:
 	*/
 	template<typename T>
 	static void deleteElementPositions(std::vector<T>& vector, std::vector<int>& positions);
+
+	/**
+	* This function is used to split a string
+	* @param string : The string to split
+	* @param charachter : The splitting characther
+	* @typename T : Template function
+	* @return : The splitted parts
+	*/
+	template<typename T>
+	static std::vector<T> split(T string,char charachter);
+
 };
 
 #endif // !UTILS_H

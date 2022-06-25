@@ -12,23 +12,20 @@ void Detector::readImages(cv::String pathImages)
 	//Read all the paths of the images
 	std::vector<cv::String> pathSingleImages;
 	cv::glob(pathImages, pathSingleImages);
-
 	//Store the images inside the images vector
 	for (int i = 0; i < pathSingleImages.size(); i++)
-		images.push_back(cv::imread(pathSingleImages.at(i)));
+	{
+		//Split the string
+		std::vector<cv::String> splits = Utils::split(pathSingleImages.at(i), '\\');
+		images.insert(std::pair<cv::String, cv::Mat>(splits.at(splits.size()-1), cv::imread(pathSingleImages.at(i))));
+	}
+		
 }
 
-std::vector<cv::Mat> Detector::detectHands()
+std::vector<cv::Mat> Detector::detectHands(cv::String nameImage)
 {
-	for (int i = 0; i < images.size(); i++)
-	{
-		//TODO: remove
-		cv::imshow("IMAGE", images.at(i));
-		cv::waitKey();
-		getBoudingBoxesDetections(images.at(i));
-	}
-
-
+	cv::Mat image = images.at(nameImage);
+	getBoudingBoxesDetections(image);
 }
 
 void Detector::setModel(cv::String pathModel)
@@ -47,13 +44,18 @@ std::vector<cv::Range> Detector::getBoudingBoxesDetections(cv::Mat image)
 	std::tuple<int, int> dimensions = std::make_tuple(image.rows, image.cols);
 
 	std::vector<cv::Rect> allBoundingBoxesHands;
+	std::vector<float> allProbabilities;
 	for (int i = 0; i < pyramid.size(); i++)
 	{
 		std::cout << "COMPUTING BOUNDING BOXES PYRAMID " << i << " OF " << pyramid.size() << std::endl;
-		std::vector<cv::Rect> boundingBoxes = getHandsBoundingBoxes(pyramid.at(i), dimensions, i);
+		std::vector<float> probabilities;
+		std::vector<cv::Rect> boundingBoxes = getHandsBoundingBoxes(pyramid.at(i), dimensions, i,probabilities);
 		allBoundingBoxesHands.insert(allBoundingBoxesHands.end(), boundingBoxes.begin(), boundingBoxes.end());
+		allProbabilities.insert(allProbabilities.end(), probabilities.begin(), probabilities.end());
 	}
 	
+	std::vector<cv::Rect> finalBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
+
 	//NON MAXIMA SUPPRESSION
 		
 	//TODO: REMOVE
@@ -103,7 +105,7 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	return pyramid;
 }
 
-std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<int, int> orginalDimensions,int positionPyramid)
+std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<int, int> orginalDimensions,int positionPyramid,std::vector<float>& probabilities)
 {
 	std::vector<cv::Rect> boundingBoxesHands;
 
@@ -131,14 +133,12 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<
 			//Prepare for input to the CNN
 			cv::Mat inputCNN = prepareImageForCNN(roi);
 
+			//Get output CNN
+			std::tuple<bool, float> outputCNN = isHand(inputCNN);
+				
 			//Get if what it is
-			if (isHand(inputCNN))
-			{		
-
-				cv::imshow("ROI", roi);
-				cv::waitKey();
-				cv::destroyWindow("ROI");
-
+			if (std::get<0>(outputCNN))
+			{
 				//Need to convert bounding box coordinates to original image size
 				//(x1,y1) 
 				std::tuple<int, int> x1y1 = convertCoordinates(std::tuple<int, int>(col, row),
@@ -154,6 +154,9 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, std::tuple<
 				//Add Bounding Boxes
 				boundingBoxesHands.push_back(cv::Rect(cv::Point(std::get<0>(x1y1), std::get<1>(x1y1)), 
 													cv::Point(std::get<0>(x2y2), std::get<1>(x2y2))));
+
+				//Add Probability
+				probabilities.push_back(std::get<1>(outputCNN));
 
 				std::cout << "X1 " << std::get<0>(x1y1) << " Y1 " << std::get<1>(x1y1)
 					<< " X2 " << std::get<0>(x2y2) << " Y2 " << std::get<1>(x2y2) << std::endl;
@@ -176,7 +179,7 @@ cv::Mat Detector::prepareImageForCNN(cv::Mat image)
 	return outputImage;
 }
 
-bool Detector::isHand(cv::Mat image)
+std::tuple<bool,float> Detector::isHand(cv::Mat image)
 {
 	//Read Model
 	cv::dnn::Net network = cv::dnn::readNetFromTensorflow(pathModel);
@@ -189,9 +192,9 @@ bool Detector::isHand(cv::Mat image)
 
 	//Check if it is an hand
 	if (output.at<float>(0, 0) > THRESHOLD_DETECTION)
-		return false;
+		return std::tuple<bool,float>(false, output.at<float>(0, 0));
 	else
-		return true;
+		return std::tuple<bool, float>(true, output.at<float>(0, 0));
 }
 
 std::tuple<int, int> Detector::convertCoordinates(std::tuple<int, int> coordinatesToConvert, std::tuple<int, int> orginalDimensions, std::tuple<int, int> currentDimensions)
@@ -252,7 +255,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 		pickedIndices.push_back(i);
 
 		//Slice the idx vector
-		std::vector<int> idxsSliced = Utils::slice(idxs, 0, last);
+		std::vector<int> idxsSliced = Utils::slice(idxs, 0, last);		
 
 		//Slice the vectors
 		std::vector<float> x1Sliced = Utils::slice(x1, idxsSliced);
@@ -269,8 +272,8 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(std::vector<cv::Rect> boxes
 		//Compute width and heigth of the bounding boxes
 		std::vector<float> differenceXX2XX1 = Utils::elementWiseDifference(xx2, xx1);
 		std::vector<float> differenceYY2YY1 = Utils::elementWiseDifference(yy2, yy1);
-		std::vector<float> sum1 = Utils::elementWiseSum(differenceXX2XX1, 1.0f);
-		std::vector<float> sum2 = Utils::elementWiseSum(differenceYY2YY1, 1.0f);
+		std::vector<float> sum1 = Utils::elementWiseSum(differenceXX2XX1, 0.0f);
+		std::vector<float> sum2 = Utils::elementWiseSum(differenceYY2YY1, 0.0f);
 		std::vector<float> w = Utils::elementWiseMaximum(sum1, 0.0f);
 		std::vector<float> h = Utils::elementWiseMaximum(sum2, 0.0f);
 
