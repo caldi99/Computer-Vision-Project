@@ -1,3 +1,5 @@
+
+//MYIMPORT
 #include "../include/Detector.h"
 #include "../include/Utils.h"
 
@@ -19,7 +21,10 @@ void Detector::readImages(cv::String pathImages)
 		std::vector<cv::String> splits = Utils::split(pathSingleImages.at(i), '\\');
 		cv::String fileExtension = splits.at(splits.size() - 1);
 		splits = Utils::split(fileExtension, '.');
-		images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), cv::imread(pathSingleImages.at(i))));
+
+		//Read image
+		cv::Mat image = cv::imread(pathSingleImages.at(i));
+		images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), image));
 	}		
 }
 
@@ -42,7 +47,10 @@ void Detector::readGroundTruth(cv::String pathGroundTruths)
 		cv::String line;
 		while (std::getline(file,line))
 		{
-			std::vector<cv::String> split = Utils::split(line, ' ');
+			std::vector<cv::String> split = Utils::split(line, '\t');
+			if (split.size() == 1) //then separator is " "
+				split = Utils::split(line, ' ');
+
 			groundTruthBoundingBoxes.push_back(cv::Rect(std::stoi(split.at(0)),
 														std::stoi(split.at(1)),
 														std::stoi(split.at(2)),
@@ -67,10 +75,71 @@ void Detector::setModel(cv::String pathModel)
 	this->pathModel = pathModel;
 }
 
+cv::Mat Detector::getImgeByName(cv::String imageName)
+{
+	return images.at(imageName);
+}
+
+void Detector::saveIntersectionsOverUnions(cv::String outputFile, cv::String nameImage, std::vector<cv::Rect> detections)
+{
+	//TODO : FINISH
+	//Get ground truths of the image
+	std::vector<cv::Rect> groundTruthBoundingBoxes = groundTruths.at(nameImage);
+
+	//Sort groundTruthBoundingBoxes and detections by x1,y1
+	/*std::sort(groundTruthBoundingBoxes.begin(),
+		groundTruthBoundingBoxes.end(),
+		[](cv::Rect rect1, cv::Rect rect2)
+		{
+			if (rect1.x <= rect2.x)			
+				if (rect1.y <= rect2.y)
+					return true;
+			
+			return false;
+		});
+
+	std::sort(detections.begin(),
+		detections.end(),
+		[](cv::Rect rect1, cv::Rect rect2)
+		{
+			if (rect1.x <= rect2.x)
+				if (rect1.y <= rect2.y)
+					return true;
+
+			return false;
+		});*/
+
+	std::ofstream file(Utils::split(nameImage, '.').at(0) + ".txt");
+	for (int i = 0; i < groundTruthBoundingBoxes.size(); i++)
+	{
+
+		std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruthBoundingBoxes.at(i));
+
+		//Write in the file depending what prof/colleges says
+
+	}
+
+	file.close();
+}
+
+void Detector::saveDetections(cv::String output, cv::String nameImage, std::vector<cv::Rect> detections)
+{
+	//Construct name of the image that we are going to save
+	cv::String nameFileExtension = Utils::split(nameImage, '.').at(0) + "_detections.jpg";
+	
+	//Get Image
+	cv::Mat image = images.at(nameImage);
+
+	//Draw rectangles
+	for (int i = 0; i < detections.size(); i++)
+		cv::rectangle(image, detections.at(i), cv::Scalar(0, 255, 0));
+	
+	//Save Image
+	cv::imwrite(output + nameFileExtension, image);
+}
+
 std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 {
-	//TODO : WINDOW SIZE DYNAMIC
-
 	//Create pyramid
 	std::vector<cv::Mat> pyramid = getGaussianPyramid(image);
 
@@ -81,7 +150,7 @@ std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 	std::vector<float> allProbabilities;
 	for (int i = 0; i < pyramid.size(); i++)
 	{
-		std::cout << "COMPUTING BOUNDING BOXES PYRAMID " << i << " OF " << pyramid.size() << std::endl;
+		//std::cout << "COMPUTING BOUNDING BOXES PYRAMID " << i << " OF " << pyramid.size() << std::endl;
 		std::vector<float> probabilities;
 		std::vector<cv::Rect> boundingBoxes = getHandsBoundingBoxes(pyramid.at(i), dimensions, i,probabilities);
 		allBoundingBoxesHands.insert(allBoundingBoxesHands.end(), boundingBoxes.begin(), boundingBoxes.end());
@@ -91,25 +160,24 @@ std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 	//Non maxima Suppression
 	std::vector<cv::Rect> finalBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
 
-	
-		
-	//TODO: REMOVE
-	for (int i = 0; i < finalBoxes.size(); i++)
-	{
-		cv::rectangle(image, finalBoxes.at(i), cv::Scalar(255, 0, 0));
-	}
-
-	cv::imshow("RECTANGLES", image);
-	cv::waitKey();
-
-
-	return std::vector<cv::Rect>();
+	return finalBoxes;
 }
 
 std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 {
 	std::vector<cv::Mat> pyramid;
 	
+	//Scale initial window size
+	std::tuple<int, int> initialWindowSize;
+	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
+	{
+		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
+		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);		
+		initialWindowSize = std::make_tuple(colsWindow, rowsWindow);
+	}
+	else
+		initialWindowSize = INITIAL_WINDOW_SIZE;
+
 	//Add the image as it is
 	pyramid.push_back(image);
 
@@ -129,7 +197,7 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 		cv::filter2D(resized, blurred, resized.depth(), KERNEL_PYRAMID);
 
 		//Check if the size of the window used for sliding window approach is contained into the image produced
-		if (blurred.cols < std::get<0>(INITIAL_WINDOW_SIZE) || blurred.rows < std::get<1>(INITIAL_WINDOW_SIZE))
+		if (blurred.cols < std::get<0>(initialWindowSize) || blurred.rows < std::get<1>(initialWindowSize))
 			break;
 
 		//Add image to the pyramid of images
@@ -144,9 +212,21 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::
 {
 	std::vector<cv::Rect> boundingBoxesHands;
 
+	//Scale initial window size
+	std::tuple<int, int> initialWindowSize;
+	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
+	{
+		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
+		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);
+		initialWindowSize = std::make_tuple(colsWindow, rowsWindow);
+	}
+	else
+		initialWindowSize = INITIAL_WINDOW_SIZE;
+
+
 	//Compute windows sizes for the current image in the pyramid according to the scale
-	int windowSizeHeigth = std::get<0>(INITIAL_WINDOW_SIZE) / std::pow(SCALE_PYRAMID, positionPyramid);
-	int windowSizeWidth = std::get<1>(INITIAL_WINDOW_SIZE) / std::pow(SCALE_PYRAMID, positionPyramid);
+	int windowSizeHeigth = std::get<1>(initialWindowSize) / std::pow(SCALE_PYRAMID, positionPyramid);
+	int windowSizeWidth = std::get<0>(initialWindowSize) / std::pow(SCALE_PYRAMID, positionPyramid);
 
 	//Compute the Stride for the Rows and Cols
 	int strideRows = windowSizeHeigth * STRIDE_ROWS_FACTOR;
@@ -193,8 +273,8 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::
 				//Add Probability
 				probabilities.push_back(std::get<1>(outputCNN));
 
-				std::cout << "X1 " << std::get<0>(x1y1) << " Y1 " << std::get<1>(x1y1)
-					<< " X2 " << std::get<0>(x2y2) << " Y2 " << std::get<1>(x2y2) << std::endl;
+				//std::cout << "X1 " << std::get<0>(x1y1) << " Y1 " << std::get<1>(x1y1)
+				//	<< " X2 " << std::get<0>(x2y2) << " Y2 " << std::get<1>(x2y2) << std::endl;
 			}
 		}
 	}
@@ -224,6 +304,8 @@ std::tuple<bool,float> Detector::isHand(const cv::Mat& image)
 
 	//Forward
 	cv::Mat output = network.forward();	
+
+	//std::cout << output << std::endl;
 
 	//Check if it is an hand
 	if (output.at<float>(0, 0) > THRESHOLD_DETECTION)
@@ -315,8 +397,6 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		
 		//Selected Rect
 		cv::Rect selectedBox(x1.at(i), y1.at(i), x2.at(i) - x1.at(i), y2.at(i) - y1.at(i));
-
-		std::cout << "SELECTED BOX " << selectedBox;
 
 		//Intersection over union
 		std::vector<float> ious = intersectionOverUnionElementWise(listRemainingBoxes, selectedBox);

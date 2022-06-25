@@ -19,6 +19,7 @@
 class Utils
 {
 public:
+	//TODO TRY TO UNDERSTAND WHAT NEEDS TO BE PASSED AS REFERENCE AND CONST
 
 	/**
 	* This function returns the indexes of the corresponding sorted vector as positions of the orginal vector i.e. a = [2,4,3] b = [2,3,4] ret = [0,2,1]
@@ -129,7 +130,6 @@ public:
 	*/
 	template<typename T>
 	static std::vector<T> split(T string,char charachter);
-
 };
 
 #endif // !UTILS_H

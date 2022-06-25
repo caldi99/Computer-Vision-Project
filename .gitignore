@@ -59,3 +59,7 @@ __pycache__
 *.h5
 *.pb
 *.pbtx
+
+#Other stuff
+detections/
+ious/
