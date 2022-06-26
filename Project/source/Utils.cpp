@@ -53,6 +53,18 @@ template<typename T>  std::vector<T> Utils::elementWiseMaximum(const std::vector
 	return ret;
 }
 
+template<typename T>
+std::vector<T> Utils::elementWiseMinimum(const std::vector<T>& vector, T element)
+{
+	std::vector<T> ret;
+	for (int i = 0; i < vector.size(); i++)
+		if (vector.at(i) > element)
+			ret.push_back(element);
+		else
+			ret.push_back(vector.at(i));
+	return ret;
+}
+
 template<typename T>  std::vector<T> Utils::elementWiseProduct(const std::vector<T>& vector1, const std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())

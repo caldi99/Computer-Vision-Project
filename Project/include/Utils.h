@@ -59,6 +59,16 @@ public:
 	template <typename T>
 	static std::vector<T> elementWiseMaximum(const std::vector<T>& vector, T element);
 
+	/**
+	* This function compute the element wise minimum between a vector of elements and an element
+	* @param vector : The vector to compare
+	* @param element : The element to compare
+	* @typename T : Template function
+	* @return :	The maximum vector of minimum
+	*/
+	template <typename T>
+	static std::vector<T> elementWiseMinimum(const std::vector<T>& vector, T element);
+
 
 	/**
 	* This function compute the element wise product between two vectors

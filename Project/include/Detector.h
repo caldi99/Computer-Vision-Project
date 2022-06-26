@@ -206,7 +206,7 @@ private:
 															1.0 / 256.0, 4.0 / 256.0, 6.0 / 256.0, 4.0 / 256.0, 1.0 / 256.0);
 
 	//Window size
-	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(224, 224);
+	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(168, 168);
 
 	//Strides
 	const float STRIDE_ROWS_FACTOR = 0.5;
