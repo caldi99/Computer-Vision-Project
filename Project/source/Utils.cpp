@@ -148,6 +148,7 @@ template std::vector<int> Utils::slice(const std::vector<int>& vector,int,int);
 template std::vector<float> Utils::slice(const std::vector<float>&, const std::vector<int>&);
 template std::vector<cv::Rect2f> Utils::slice(const std::vector<cv::Rect2f>&, const std::vector<int>&);
 template std::vector<float> Utils::elementWiseMaximum(const std::vector<float>&, float);
+template std::vector<float> Utils::elementWiseMinimum(const std::vector<float>&, float);
 template std::vector<float> Utils::elementWiseProduct(const std::vector<float>& vector1, const std::vector<float>& vector2);
 template std::vector<float> Utils::elementWiseDifference(const std::vector<float>& vector1, const std::vector<float>& vector2);
 template std::vector<float> Utils::elementWiseDivision(const std::vector<float>& vector1, const std::vector<float>& vector2);

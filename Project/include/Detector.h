@@ -223,7 +223,7 @@ private:
 	const float THRESHOLD_OVERLAPPING = 0.85;
 
 	//Image width and heigth
-	const int IMAGE_WIDTH = 1024;
+	const int IMAGE_WIDTH = 1280;
 	const int IMAGE_HEIGTH = 720;
 
 };
