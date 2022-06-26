@@ -24,18 +24,17 @@ void Segmentator::segment_1(cv::String pathImage)
     Mat gray;
 
 	// step 1) apply bilateral filter
-	bilateralFilter(img,out, 5, 150, 150);
+	bilateralFilter(img,out_bf, 5, 150, 150);
     
-    /*
+
 	// step 2) apply threshold
     cvtColor(out_bf, out_bf, COLOR_BGR2YCrCb);
     inRange(out_bf, Scalar(0, 133, 77), Scalar(255, 173, 127), skin_region);
     out_bf.copyTo(out, skin_region); //apply mask
-    */
+
 	// step 3) find the contours 
     
     cvtColor(out, gray, COLOR_BGR2GRAY);
- 
 
     Canny(gray, gray, 130, 180, 3);
     /// Find contours   

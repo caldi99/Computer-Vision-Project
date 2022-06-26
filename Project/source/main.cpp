@@ -14,8 +14,8 @@ int mainFinale(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
 {
-	//mainDaniela();
-	mainFinale(argc, argv);
+	mainDaniela();
+	//mainFinale(argc, argv);
 	
 }
 
