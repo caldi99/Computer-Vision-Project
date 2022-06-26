@@ -80,49 +80,37 @@ cv::Mat Detector::getImgeByName(cv::String imageName)
 	return images.at(imageName);
 }
 
-void Detector::saveIntersectionsOverUnions(cv::String outputFile, cv::String nameImage, std::vector<cv::Rect> detections)
+void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nameImage,const std::vector<cv::Rect>& detections)
 {
-	//TODO : FINISH
 	//Get ground truths of the image
 	std::vector<cv::Rect> groundTruthBoundingBoxes = groundTruths.at(nameImage);
 
-	//Sort groundTruthBoundingBoxes and detections by x1,y1
-	/*std::sort(groundTruthBoundingBoxes.begin(),
-		groundTruthBoundingBoxes.end(),
-		[](cv::Rect rect1, cv::Rect rect2)
-		{
-			if (rect1.x <= rect2.x)			
-				if (rect1.y <= rect2.y)
-					return true;
-			
-			return false;
-		});
-
-	std::sort(detections.begin(),
-		detections.end(),
-		[](cv::Rect rect1, cv::Rect rect2)
-		{
-			if (rect1.x <= rect2.x)
-				if (rect1.y <= rect2.y)
-					return true;
-
-			return false;
-		});*/
-
-	std::ofstream file(Utils::split(nameImage, '.').at(0) + ".txt");
+	std::ofstream file(outputPath + Utils::split(nameImage, '.').at(0) + ".txt");
 	for (int i = 0; i < groundTruthBoundingBoxes.size(); i++)
 	{
-
+		//Compute Intersection over union between detections and ground truth
 		std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruthBoundingBoxes.at(i));
+		
+		//Take the best Intersection over union
+		float iou = *std::max_element(ious.begin(), ious.end());
+		int position = std::distance(ious.begin(), std::max_element(ious.begin(), ious.end()));
 
-		//Write in the file depending what prof/colleges says
-
+		//Print on a file
+		cv::String row = "Bounding Box Detected : [ X : " + std::to_string(detections.at(position).x) +
+			", Y : " + std::to_string(detections.at(position).y) +
+			", W : " + std::to_string(detections.at(position).width) +
+			", H : " + std::to_string(detections.at(position).width) + " ] " +
+			"Bounding Box Ground Truth : [ X : " + std::to_string(groundTruthBoundingBoxes.at(i).x) +
+			", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
+			", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
+			", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
+			"Intersection over union value : " + std::to_string(iou);
+		file << row << std::endl;
 	}
-
 	file.close();
 }
 
-void Detector::saveDetections(cv::String output, cv::String nameImage, std::vector<cv::Rect> detections)
+void Detector::saveDetections(cv::String output,cv::String nameImage,const std::vector<cv::Rect>& detections)
 {
 	//Construct name of the image that we are going to save
 	cv::String nameFileExtension = Utils::split(nameImage, '.').at(0) + "_detections.jpg";

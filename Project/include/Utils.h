@@ -18,9 +18,7 @@
 */
 class Utils
 {
-public:
-	//TODO TRY TO UNDERSTAND WHAT NEEDS TO BE PASSED AS REFERENCE AND CONST
-
+public:	
 	/**
 	* This function returns the indexes of the corresponding sorted vector as positions of the orginal vector i.e. a = [2,4,3] b = [2,3,4] ret = [0,2,1]
 	* @param vector : The vector to compute the sorted indices
@@ -39,7 +37,7 @@ public:
 	* @return : The sliced vector
 	*/
 	template <typename T>
-	static std::vector<T> slice(std::vector<T>& vector, int start, int end);
+	static std::vector<T> slice(const std::vector<T>& vector, int start, int end);
 
 	/**
 	* This function is used to implement the slicing in C++
@@ -49,7 +47,7 @@ public:
 	* @return : The sliced vector
 	*/
 	template <typename T>
-	static std::vector<T> slice(std::vector<T>& vector, std::vector<int>& indices);
+	static std::vector<T> slice(const std::vector<T>& vector, const std::vector<int>& indices);
 
 	/**
 	* This function compute the element wise maximum between a vector of elements and an element
@@ -59,7 +57,7 @@ public:
 	* @return :	The maximum vector of maximums
 	*/
 	template <typename T>
-	static std::vector<T> elementWiseMaximum(std::vector<T>& vector, T element);
+	static std::vector<T> elementWiseMaximum(const std::vector<T>& vector, T element);
 
 
 	/**
@@ -70,7 +68,7 @@ public:
 	* @return : Element wise product vector
 	*/
 	template <typename T>
-	static std::vector<T> elementWiseProduct(std::vector<T>& vector1, std::vector<T>& vector2);
+	static std::vector<T> elementWiseProduct(const std::vector<T>& vector1, const std::vector<T>& vector2);
 
 	/**
 	* This function compute the element wise difference between two vectors
@@ -80,7 +78,7 @@ public:
 	* @return : Element wise difference vector
 	*/
 	template <typename T>
-	static std::vector<T> elementWiseDifference(std::vector<T>& vector1, std::vector<T>& vector2);
+	static std::vector<T> elementWiseDifference(const std::vector<T>& vector1, const std::vector<T>& vector2);
 
 	/**
 	* This function compute the element wise divion between two vectors
@@ -90,7 +88,7 @@ public:
 	* @return : Element wise division vector
 	*/
 	template <typename T>
-	static std::vector<T> elementWiseDivision(std::vector<T>& vector1, std::vector<T>& vector2);
+	static std::vector<T> elementWiseDivision(const std::vector<T>& vector1, const std::vector<T>& vector2);
 
 	/**
 	* This function compute the element wise sum between one vector and one element
@@ -100,17 +98,17 @@ public:
 	* @return : Element wise sum vector
 	*/
 	template <typename T>
-	static std::vector<T> elementWiseSum(std::vector<T>& vector, T element);
+	static std::vector<T> elementWiseSum(const std::vector<T>& vector, T element);
 
 	/**
 	* This function return the vector of all the posistions of the elements greater than the threshold specified
-	* @param vector :
-	* @param threshold :
+	* @param vector : The vector to be thresholded
+	* @param threshold : The threshold
 	* @typename T : Template function
 	* @return : The positions of the elements of the vector greater than the threshold
 	*/
 	template<typename T>
-	static std::vector<int> greater(std::vector<T>& vector, T threshold);
+	static std::vector<int> greater(const std::vector<T>& vector, T threshold);
 
 	/**
 	* This function remove from the vector provided all the elements in the positions specified by positions

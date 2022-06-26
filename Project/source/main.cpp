@@ -40,7 +40,7 @@ int mainFinale(int argc, char* argv[])
 		"{m model|../model/model.pb| path to the model}"
 		"{a annotations|../testset/det/| path to the test set annotations}"
 		"{i images|../testset/rgb/| path to the test set images}"
-		"{n name |28| name of the image for which applying detection / segmentation}" 
+		"{n name |01| name of the image for which applying detection / segmentation}" 
 
 		//Detection Parameters
 		"{d detect || run detection mode}"			
@@ -86,7 +86,6 @@ int mainFinale(int argc, char* argv[])
 		}			
 		case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
 		{
-			//TODO: INTERSECTION OVER UNION OF TWO SETS (NEED TO ORDER THEM BASED ON (X1,Y1) ??
 			cout << "YOU SELECTED DETECTOR MODE " << endl;
 
 			detector.setModel(parser.get<String>("m"));

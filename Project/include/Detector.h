@@ -16,8 +16,6 @@
 //MYLIB
 #include "Utils.h"
 
-//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE, AND WHAT AS CONST
-
 /**
 * This class represent the Detector Module "definitions"
 * @author : Francesco Caldivezzi
@@ -38,7 +36,6 @@ public:
 	*/
 	void readGroundTruth(cv::String pathGroundTruths);
 
-	//TODO SPLIT FOR PATH.JPG
 	/**
 	* This function will return the bounding boxes for a given image
 	* @param nameImage : The filename of the image for which we need to detect things
@@ -64,7 +61,9 @@ public:
 	* @param nameImage : The name of the image for which computing the detections
 	* @param detections : The detections for the given image	
 	*/
-	void saveIntersectionsOverUnions(cv::String outputFile,cv::String nameImage, std::vector<cv::Rect> detections);
+	void saveIntersectionsOverUnions(cv::String outputFile,
+									 cv::String nameImage,
+									 const std::vector<cv::Rect>& detections);
 	
 	/**
 	* This function compute the IOUs, given the detections for a specific image and save the result inside outputFile
@@ -72,7 +71,7 @@ public:
 	* @param nameImage : The name of the image for which computing the detections
 	* @param detections : The detections for the given image
 	*/
-	void saveDetections(cv::String output, cv::String nameImage, std::vector<cv::Rect> detections);
+	void saveDetections(cv::String output,cv::String nameImage,const std::vector<cv::Rect>& detections);
 
 private:
 	//FUNCTIONS
@@ -181,15 +180,6 @@ private:
 										  const std::vector<float>& y1s, 
 										  const std::vector<float>& ws, 
 										  const std::vector<float>& hs);
-
-	/**
-	* This function compute the IOUs, given the detections for a specific image
-	* @param nameImage : The name of the image for which computing the detections
-	* @param detections : The detections for the given image
-	* @return : The IOUs for the given image
-	*/
-	std::vector<float> getIntersectionsOverUnions(const cv::String nameImage, 
-												  const std::vector<cv::Rect>& detections);
 
 	//FIELD MEMBER
 	 
