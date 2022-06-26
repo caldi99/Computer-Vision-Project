@@ -107,8 +107,7 @@ void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nam
 				", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
 				", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
 				", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
-				"Intersection over union value : " + std::to_string(iou);
-			
+				"Intersection over union value : " + std::to_string(iou);			
 		}
 		else
 		{
@@ -215,7 +214,7 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::
 
 	//Scale initial window size
 	std::tuple<int, int> initialWindowSize;
-	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
+	if (std::get<0>(orginalDimensions) != IMAGE_HEIGTH || std::get<1>(orginalDimensions) != IMAGE_WIDTH)
 	{
 		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
 		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);
@@ -352,7 +351,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 
 	//Compute area of the bounding boxes
 	for (int i = 0; i < boxesFloat.size(); i++)
-		area.push_back((x2.at(i) - x1.at(i) + 1) * (y2.at(i) - y1.at(i) + 1));
+		area.push_back((x2.at(i) - x1.at(i)) * (y2.at(i) - y1.at(i)));
 		
 	//If probabilities are present, then use them as idx
 	if (!probabilities.empty())	
@@ -380,6 +379,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		std::vector<float> x2Sliced = Utils::slice(x2, idxsSliced);
 		std::vector<float> y1Sliced = Utils::slice(y1, idxsSliced);
 		std::vector<float> y2Sliced = Utils::slice(y2, idxsSliced);
+		std::vector<float> areaSliced = Utils::slice(area, idxsSliced);
 
 		//Find the largest coordinates for the start of the bounding box and the smallest (x,y) coordinates for the end of the bounding box
 		std::vector<float> xx1 = Utils::elementWiseMaximum(x1Sliced,x1.at(i));
@@ -401,9 +401,13 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 
 		//Intersection over union
 		//std::vector<float> ious = intersectionOverUnionElementWise(listRemainingBoxes, selectedBox);
-		
+				
+		//Compute Overlapping
+		std::vector<float> wH = Utils::elementWiseProduct(w, h);
+		std::vector<float> overlap = Utils::elementWiseDivision(wH, areaSliced);
+
 		//Update Idx
-		std::vector<int> thresholded = Utils::greater(, THRESHOLD_OVERLAPPING);
+		std::vector<int> thresholded = Utils::greater(overlap, THRESHOLD_OVERLAPPING);
 		thresholded.insert(thresholded.begin(), last);
 		Utils::deleteElementPositions(idxs, thresholded);
 	}
