@@ -80,7 +80,7 @@ cv::Mat Detector::getImgeByName(cv::String imageName)
 	return images.at(imageName);
 }
 
-void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nameImage, std::vector<cv::Rect> detections)
+void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nameImage,const std::vector<cv::Rect>& detections)
 {
 	//Get ground truths of the image
 	std::vector<cv::Rect> groundTruthBoundingBoxes = groundTruths.at(nameImage);
@@ -110,7 +110,7 @@ void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nam
 	file.close();
 }
 
-void Detector::saveDetections(cv::String output, cv::String nameImage, std::vector<cv::Rect> detections)
+void Detector::saveDetections(cv::String output,cv::String nameImage,const std::vector<cv::Rect>& detections)
 {
 	//Construct name of the image that we are going to save
 	cv::String nameFileExtension = Utils::split(nameImage, '.').at(0) + "_detections.jpg";

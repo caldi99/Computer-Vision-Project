@@ -86,7 +86,6 @@ int mainFinale(int argc, char* argv[])
 		}			
 		case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
 		{
-			//TODO: INTERSECTION OVER UNION OF TWO SETS (NEED TO ORDER THEM BASED ON (X1,Y1) ??
 			cout << "YOU SELECTED DETECTOR MODE " << endl;
 
 			detector.setModel(parser.get<String>("m"));
