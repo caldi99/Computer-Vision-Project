@@ -171,8 +171,8 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	std::tuple<int, int> initialWindowSize;
 	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH) //TODO FOR IMAGES 21-30 BETTER TO USE 168 *0.6
 	{
-		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
-		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);		
+		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * 0.6);
+		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * 0.6);		
 		initialWindowSize = std::make_tuple(colsWindow, rowsWindow);
 	}
 	else
@@ -216,8 +216,8 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::
 	std::tuple<int, int> initialWindowSize;
 	if (std::get<0>(orginalDimensions) != IMAGE_HEIGTH || std::get<1>(orginalDimensions) != IMAGE_WIDTH)
 	{
-		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
-		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);
+		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * 0.6);
+		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * 0.6);
 		initialWindowSize = std::make_tuple(colsWindow, rowsWindow);
 	}
 	else
