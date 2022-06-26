@@ -103,7 +103,7 @@ template<typename T>  std::vector<int> Utils::greater(const std::vector<T>& vect
 	return ret;
 }
 
-template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, const std::vector<int>& positions)
+template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, std::vector<int>& positions)
 {
 	
 	//sort positions in descending order
@@ -141,5 +141,5 @@ template std::vector<float> Utils::elementWiseDifference(const std::vector<float
 template std::vector<float> Utils::elementWiseDivision(const std::vector<float>& vector1, const std::vector<float>& vector2);
 template std::vector<float> Utils::elementWiseSum(const std::vector<float>& vector, float element);
 template std::vector<int> Utils::greater(const std::vector<float>& vector, float threshold);
-template void Utils::deleteElementPositions(std::vector<int>& vector, const std::vector<int>& positions);
+template void Utils::deleteElementPositions(std::vector<int>& vector, std::vector<int>& positions);
 template std::vector<cv::String> Utils::split(cv::String string, char charachter);

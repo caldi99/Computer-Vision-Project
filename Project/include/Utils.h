@@ -117,7 +117,7 @@ public:
 	* @typename T : Template function
 	*/
 	template<typename T>
-	static void deleteElementPositions(std::vector<T>& vector, const std::vector<int>& positions);
+	static void deleteElementPositions(std::vector<T>& vector, std::vector<int>& positions);
 
 	/**
 	* This function is used to split a string
