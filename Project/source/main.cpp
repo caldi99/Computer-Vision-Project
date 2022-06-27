@@ -1,6 +1,7 @@
 //MYLIB
 #include "../include/Detector.h"
 #include "../include/Segmentator.h"
+#include "../include/PreProcSegmentator.h"
 
 //STL
 #include <iostream>
@@ -23,6 +24,15 @@ int mainDaniela()
 {
 	Segmentator segmentator;
 	segmentator.segment_1("01.jpg");
+	/*
+	Mat src = imread("01.jpg", IMREAD_COLOR);
+	Mat bin;
+	Mat lap;
+	PreProcSegmentator p;
+	p.getPreFiltered(src, bin, lap);
+	imshow("b", bin);
+	imshow("l", lap);
+	*/
 	cv::waitKey(0);
 	return 0;
 }

@@ -3,6 +3,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include <cmath>
 
 using namespace cv;
 using namespace std;
@@ -14,46 +15,79 @@ using namespace std;
 
 void Segmentator::segment_1(cv::String pathImage)
 {
-	// read the image
+	// **********  read the image ************** //
 	Mat img = imread(pathImage, IMREAD_COLOR);
 
-    //definition of variables
+
+    
+    // ************** definition of variables ************** //
 	Mat out_bf;
     Mat skin_region;
-    Mat out;
-    Mat gray;
+    Mat src;
 
-	// step 1) apply bilateral filter
+
+
+	// ********** step 1) apply bilateral filter ************** //
 	bilateralFilter(img,out_bf, 5, 150, 150);
     
 
-	// step 2) apply threshold
-    cvtColor(out_bf, out_bf, COLOR_BGR2YCrCb);
-    inRange(out_bf, Scalar(0, 133, 77), Scalar(255, 173, 127), skin_region);
-    out_bf.copyTo(out, skin_region); //apply mask
 
-	// step 3) find the contours 
     
-    cvtColor(out, gray, COLOR_BGR2GRAY);
+	// ********** step 2) apply threshold *************
 
-    Canny(gray, gray, 130, 180, 3);
-    /// Find contours   
-    vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
-    RNG rng(12345);
-    findContours(gray, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
-    /// Draw contours
-    Mat drawing = Mat::zeros(gray.size(), CV_8UC3);
-    for (int i = 0; i < contours.size(); i++)
-    {
-        Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-        drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+    for (int i = 0; i < out_bf.rows; i++) {
+        for (int j = 0; j < out_bf.cols; j++) {
+
+            int R = out_bf.at<cv::Vec3b>(i, j)[0];
+            int G = out_bf.at<cv::Vec3b>(i, j)[1];
+            int B = out_bf.at<cv::Vec3b>(i, j)[2];
+
+            int max_value = max(R,G,B);
+            int min_value = min(R, G, B);
+
+            /*
+            // search max value among R, G, B
+            if (R >= G && R >= B) {
+                max_value = R;
+            }
+            else if (G >= R && G >= B) {
+                max_value = G;
+            }
+            else {
+                max_value = B;
+            }
+
+            // search min value among R, G, B
+            if (R <= G && R <= B) {
+                min_value = R;
+            }
+            else if (G <= R && G <= B) {
+                min_value = G;
+            }
+            else {
+                min_value = B;
+            }
+            */
+            if (( R > 95 && G > 40 && B > 20 && (max_value - min_value) > 15 && abs(R-G) > 15 && R> G && R>B) || (R > 220 && G> 210 && B> 170 && abs(R-G)<=15 && R>B && G>B)) {
+                src.at<cv::Vec3b>(i, j)[0] = R;
+                src.at<cv::Vec3b>(i, j)[1] = G;
+                src.at<cv::Vec3b>(i, j)[2] = B;
+            }
+            else {
+                src.at<cv::Vec3b>(i, j)[0] = 0;
+                src.at<cv::Vec3b>(i, j)[1] = 0;
+                src.at<cv::Vec3b>(i, j)[2] = 0;
+            }
+        }
     }
+    /*
+    cvtColor(out_bf, out_bf, COLOR_BGR2YCrCb); // covert from BGR to YCrCb
+    inRange(out_bf, Scalar(0, 133, 77), Scalar(255, 173, 127), skin_region); //compute mask
+    out_bf.copyTo(src, skin_region); //apply mask
+    cvtColor(src, src, COLOR_YCrCb2BGR); // covert from YCrCb TO BGR
+    */
+    imshow("Image after bilateral filter and threshold", src);
 
     
     
-	//show the result
-	imshow("Input", img);
-    imshow("Result window", drawing);
-
 }
