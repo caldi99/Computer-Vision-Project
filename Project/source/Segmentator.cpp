@@ -3,7 +3,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
-#include <cmath>
+
 
 using namespace cv;
 using namespace std;
@@ -26,11 +26,8 @@ void Segmentator::segment_1(cv::String pathImage)
     Mat src;
 
 
-
 	// ********** step 1) apply bilateral filter ************** //
 	bilateralFilter(img,out_bf, 5, 150, 150);
-    
-
 
     
 	// ********** step 2) apply threshold *************
@@ -41,11 +38,9 @@ void Segmentator::segment_1(cv::String pathImage)
             int R = out_bf.at<cv::Vec3b>(i, j)[0];
             int G = out_bf.at<cv::Vec3b>(i, j)[1];
             int B = out_bf.at<cv::Vec3b>(i, j)[2];
+            int max_value;
+            int min_value;
 
-            int max_value = max(R,G,B);
-            int min_value = min(R, G, B);
-
-            /*
             // search max value among R, G, B
             if (R >= G && R >= B) {
                 max_value = R;
@@ -67,25 +62,29 @@ void Segmentator::segment_1(cv::String pathImage)
             else {
                 min_value = B;
             }
-            */
-            if (( R > 95 && G > 40 && B > 20 && (max_value - min_value) > 15 && abs(R-G) > 15 && R> G && R>B) || (R > 220 && G> 210 && B> 170 && abs(R-G)<=15 && R>B && G>B)) {
-                src.at<cv::Vec3b>(i, j)[0] = R;
-                src.at<cv::Vec3b>(i, j)[1] = G;
-                src.at<cv::Vec3b>(i, j)[2] = B;
+
+            if ((B > 95 && G > 40 && R > 20 && (max_value - min_value > 15) && abs(B - G) > 15 && B > G && B > R) || (B > 220 && G > 210 && R > 170 && abs(B - G) <= 15 && B > R && G > R)) {
+                
+                out_bf.at<cv::Vec3b>(i, j)[0] = R;
+                out_bf.at<cv::Vec3b>(i, j)[1] = G;
+                out_bf.at<cv::Vec3b>(i, j)[2] = B;
             }
             else {
-                src.at<cv::Vec3b>(i, j)[0] = 0;
-                src.at<cv::Vec3b>(i, j)[1] = 0;
-                src.at<cv::Vec3b>(i, j)[2] = 0;
+                out_bf.at<cv::Vec3b>(i, j)[0] = 0;
+                out_bf.at<cv::Vec3b>(i, j)[1] = 0;
+                out_bf.at<cv::Vec3b>(i, j)[2] = 0;
             }
         }
     }
-    /*
+    
+    
+            
     cvtColor(out_bf, out_bf, COLOR_BGR2YCrCb); // covert from BGR to YCrCb
     inRange(out_bf, Scalar(0, 133, 77), Scalar(255, 173, 127), skin_region); //compute mask
     out_bf.copyTo(src, skin_region); //apply mask
     cvtColor(src, src, COLOR_YCrCb2BGR); // covert from YCrCb TO BGR
-    */
+    
+    
     imshow("Image after bilateral filter and threshold", src);
 
     
