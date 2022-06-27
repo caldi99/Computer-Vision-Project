@@ -88,24 +88,36 @@ void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nam
 	std::ofstream file(outputPath + Utils::split(nameImage, '.').at(0) + ".txt");
 	for (int i = 0; i < groundTruthBoundingBoxes.size(); i++)
 	{
-		//Compute Intersection over union between detections and ground truth
-		std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruthBoundingBoxes.at(i));
-		
-		//Take the best Intersection over union
-		float iou = *std::max_element(ious.begin(), ious.end());
-		int position = std::distance(ious.begin(), std::max_element(ious.begin(), ious.end()));
+		cv::String row;
+		if (!detections.empty())
+		{
+			//Compute Intersection over union between detections and ground truth
+			std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruthBoundingBoxes.at(i));
 
-		//Print on a file
-		cv::String row = "Bounding Box Detected : [ X : " + std::to_string(detections.at(position).x) +
-			", Y : " + std::to_string(detections.at(position).y) +
-			", W : " + std::to_string(detections.at(position).width) +
-			", H : " + std::to_string(detections.at(position).width) + " ] " +
-			"Bounding Box Ground Truth : [ X : " + std::to_string(groundTruthBoundingBoxes.at(i).x) +
-			", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
-			", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
-			", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
-			"Intersection over union value : " + std::to_string(iou);
-		file << row << std::endl;
+			//Take the best Intersection over union
+			float iou = *std::max_element(ious.begin(), ious.end());
+			int position = std::distance(ious.begin(), std::max_element(ious.begin(), ious.end()));
+
+			//Print on a file
+			row = "Bounding Box Detected : [ X : " + std::to_string(detections.at(position).x) +
+				", Y : " + std::to_string(detections.at(position).y) +
+				", W : " + std::to_string(detections.at(position).width) +
+				", H : " + std::to_string(detections.at(position).width) + " ] " +
+				"Bounding Box Ground Truth : [ X : " + std::to_string(groundTruthBoundingBoxes.at(i).x) +
+				", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
+				", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
+				", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
+				"Intersection over union value : " + std::to_string(iou);			
+		}
+		else
+		{
+			row = "Bounding Box Ground Truth : [ X : " + std::to_string(groundTruthBoundingBoxes.at(i).x) +
+				", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
+				", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
+				", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
+				"Intersection over union value : " + std::to_string(0);
+		}
+		file << row << std::endl;		
 	}
 	file.close();
 }
@@ -157,10 +169,10 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	
 	//Scale initial window size
 	std::tuple<int, int> initialWindowSize;
-	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
+	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH) //TODO FOR IMAGES 21-30 BETTER TO USE 168 *0.6
 	{
-		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
-		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);		
+		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * FACTOR_RESIZER);
+		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * FACTOR_RESIZER);
 		initialWindowSize = std::make_tuple(colsWindow, rowsWindow);
 	}
 	else
@@ -202,10 +214,10 @@ std::vector<cv::Rect> Detector::getHandsBoundingBoxes(cv::Mat image, const std::
 
 	//Scale initial window size
 	std::tuple<int, int> initialWindowSize;
-	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
+	if (std::get<0>(orginalDimensions) != IMAGE_HEIGTH || std::get<1>(orginalDimensions) != IMAGE_WIDTH)
 	{
-		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * image.rows) / (IMAGE_HEIGTH);
-		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * image.cols) / (IMAGE_WIDTH);
+		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * FACTOR_RESIZER);
+		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * FACTOR_RESIZER);
 		initialWindowSize = std::make_tuple(colsWindow, rowsWindow);
 	}
 	else
@@ -339,7 +351,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 
 	//Compute area of the bounding boxes
 	for (int i = 0; i < boxesFloat.size(); i++)
-		area.push_back((x2.at(i) - x1.at(i) + 1) * (x2.at(i) - x1.at(i) + 1));
+		area.push_back((x2.at(i) - x1.at(i)) * (y2.at(i) - y1.at(i)));
 		
 	//If probabilities are present, then use them as idx
 	if (!probabilities.empty())	
@@ -367,12 +379,13 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		std::vector<float> x2Sliced = Utils::slice(x2, idxsSliced);
 		std::vector<float> y1Sliced = Utils::slice(y1, idxsSliced);
 		std::vector<float> y2Sliced = Utils::slice(y2, idxsSliced);
+		std::vector<float> areaSliced = Utils::slice(area, idxsSliced);
 
 		//Find the largest coordinates for the start of the bounding box and the smallest (x,y) coordinates for the end of the bounding box
 		std::vector<float> xx1 = Utils::elementWiseMaximum(x1Sliced,x1.at(i));
-		std::vector<float> xx2 = Utils::elementWiseMaximum(x2Sliced, x2.at(i));
 		std::vector<float> yy1 = Utils::elementWiseMaximum(y1Sliced, y1.at(i));
-		std::vector<float> yy2 = Utils::elementWiseMaximum(y2Sliced, y2.at(i));
+		std::vector<float> xx2 = Utils::elementWiseMinimum(x2Sliced, x2.at(i));
+		std::vector<float> yy2 = Utils::elementWiseMinimum(y2Sliced, y2.at(i));
 
 		//Compute width and heigth of the bounding boxes
 		std::vector<float> differenceXX2XX1 = Utils::elementWiseDifference(xx2, xx1);
@@ -381,16 +394,20 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		std::vector<float> h = Utils::elementWiseMaximum(differenceYY2YY1, 0.0f);
 		
 		//Remaining Boxes
-		std::vector<cv::Rect> listRemainingBoxes = createListBoxes(xx1, yy1, w, h);
+		//std::vector<cv::Rect> listRemainingBoxes = createListBoxes(xx1, yy1, w, h);
 		
 		//Selected Rect
-		cv::Rect selectedBox(x1.at(i), y1.at(i), x2.at(i) - x1.at(i), y2.at(i) - y1.at(i));
+		//cv::Rect selectedBox(x1.at(i), y1.at(i), x2.at(i) - x1.at(i), y2.at(i) - y1.at(i));
 
 		//Intersection over union
-		std::vector<float> ious = intersectionOverUnionElementWise(listRemainingBoxes, selectedBox);
-		
+		//std::vector<float> ious = intersectionOverUnionElementWise(listRemainingBoxes, selectedBox);
+				
+		//Compute Overlapping
+		std::vector<float> wH = Utils::elementWiseProduct(w, h);
+		std::vector<float> overlap = Utils::elementWiseDivision(wH, areaSliced);
+
 		//Update Idx
-		std::vector<int> thresholded = Utils::greater(ious, THRESHOLD_OVERLAPPING);
+		std::vector<int> thresholded = Utils::greater(overlap, THRESHOLD_OVERLAPPING);
 		thresholded.insert(thresholded.begin(), last);
 		Utils::deleteElementPositions(idxs, thresholded);
 	}

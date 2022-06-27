@@ -16,6 +16,10 @@
 //MYLIB
 #include "Utils.h"
 
+//TODO TO BETTER DETECT THE IMAGE :
+//ADD A POST DETECTION AFTER THE CNN FOR DEALING WITH OCCLUSIONS USING THRESHOLD OF PAPER
+//ADD A WAY TO UNDERSTAND IF THE CNN IS UNDECIDED (0.45 <= PROBABILITY <= 0.55) ON IF THE BLOB IS A HAND OR NOT
+//AFTER NMS, WITH THE USAGE OF THE PROBABILITIES, TAKE THE UNION OF THE BOXES IF THEY ARE CONNECTED AND WITH HIGH PROBABILITY => USE A LOWER STRIDE FOR HEIGTH
 /**
 * This class represent the Detector Module "definitions"
 * @author : Francesco Caldivezzi
@@ -206,7 +210,7 @@ private:
 															1.0 / 256.0, 4.0 / 256.0, 6.0 / 256.0, 4.0 / 256.0, 1.0 / 256.0);
 
 	//Window size
-	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(224, 224);
+	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(168, 168);
 
 	//Strides
 	const float STRIDE_ROWS_FACTOR = 0.5;
@@ -223,9 +227,11 @@ private:
 	const float THRESHOLD_OVERLAPPING = 0.85;
 
 	//Image width and heigth
-	const int IMAGE_WIDTH = 1024;
+	const int IMAGE_WIDTH = 1280;
 	const int IMAGE_HEIGTH = 720;
 
+	//Factor resizer for images from 21-30
+	const float FACTOR_RESIZER = 0.6;
 };
 
 #endif // !DETECTOR_H

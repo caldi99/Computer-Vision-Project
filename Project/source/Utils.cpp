@@ -53,6 +53,18 @@ template<typename T>  std::vector<T> Utils::elementWiseMaximum(const std::vector
 	return ret;
 }
 
+template<typename T>
+std::vector<T> Utils::elementWiseMinimum(const std::vector<T>& vector, T element)
+{
+	std::vector<T> ret;
+	for (int i = 0; i < vector.size(); i++)
+		if (vector.at(i) > element)
+			ret.push_back(element);
+		else
+			ret.push_back(vector.at(i));
+	return ret;
+}
+
 template<typename T>  std::vector<T> Utils::elementWiseProduct(const std::vector<T>& vector1, const std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
@@ -136,6 +148,7 @@ template std::vector<int> Utils::slice(const std::vector<int>& vector,int,int);
 template std::vector<float> Utils::slice(const std::vector<float>&, const std::vector<int>&);
 template std::vector<cv::Rect2f> Utils::slice(const std::vector<cv::Rect2f>&, const std::vector<int>&);
 template std::vector<float> Utils::elementWiseMaximum(const std::vector<float>&, float);
+template std::vector<float> Utils::elementWiseMinimum(const std::vector<float>&, float);
 template std::vector<float> Utils::elementWiseProduct(const std::vector<float>& vector1, const std::vector<float>& vector2);
 template std::vector<float> Utils::elementWiseDifference(const std::vector<float>& vector1, const std::vector<float>& vector2);
 template std::vector<float> Utils::elementWiseDivision(const std::vector<float>& vector1, const std::vector<float>& vector2);
