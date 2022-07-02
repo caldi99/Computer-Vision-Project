@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 int mainDaniela()
 {
 	Segmentator segmentator;
-	segmentator.segment_1("27.jpg");
+	segmentator.segment_1("01.jpg");
 	/*
 	Mat src = imread("01.jpg", IMREAD_COLOR);
 	Mat bin;

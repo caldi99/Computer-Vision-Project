@@ -63,7 +63,7 @@ void Segmentator::segment_1(cv::String pathImage)
                 min_value = B;
             }
 
-            if ((B > 95 && G > 40 && R > 20 && (max_value - min_value > 15) && abs(B - G) > 15 && B > G && B > R) || (B > 220 && G > 210 && R > 170 && abs(B - G) <= 15 && B > R && G > R)) {
+            if ((B > 75 && G > 20 && R > 5 && (max_value - min_value > 5) && abs(B - G) > 5 && B > G && B > R) || (B > 180 && G > 180 && R > 130 && abs(B - G) <= 35 && B > R && G > R)) {
                 
                 out_bf.at<cv::Vec3b>(i, j)[0] = R;
                 out_bf.at<cv::Vec3b>(i, j)[1] = G;
