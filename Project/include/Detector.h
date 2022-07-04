@@ -17,7 +17,6 @@
 #include "Utils.h"
 
 //TODO TO BETTER DETECT THE IMAGE :
-//ADD A POST DETECTION AFTER THE CNN FOR DEALING WITH OCCLUSIONS USING THRESHOLD OF PAPER
 //ADD A WAY TO UNDERSTAND IF THE CNN IS UNDECIDED (0.45 <= PROBABILITY <= 0.55) ON IF THE BLOB IS A HAND OR NOT
 //AFTER NMS, WITH THE USAGE OF THE PROBABILITIES, TAKE THE UNION OF THE BOXES IF THEY ARE CONNECTED AND WITH HIGH PROBABILITY => USE A LOWER STRIDE FOR HEIGTH
 /**
@@ -136,6 +135,22 @@ private:
 													 std::vector<float> probabilities = std::vector<float>());
 
 	/**
+	* This function given as input the bounding boxes removes the ones that contains occlusions
+	* @param image : The image for which removing the occlusion detections
+	* @param boxes : The bounding boxes before removing the occlusions
+	* @return : The bounding boxes after removing the occlusions
+	*/
+	std::vector<cv::Rect> removeOcclusions(cv::Mat image,
+		const const std::vector<cv::Rect>& boxes);
+
+	/**
+	* This function is used to check if inside the provided image there migth be an hand or not, it is used by removeOcclusions(..) function
+	* @param image : The image to check if it is an hand
+	* @return : True if it is an occlusion, false otherwise
+	*/
+	bool isOcclusion(cv::Mat image);
+
+	/**
 	* This function convert a vector of rectangles specified with integer values into a rectangle that uses float values
 	* @param boxes : The Bounding Boxes specified in integer coordinates
 	* @return : The corresponding Bounding Boxes with float coordinates
@@ -195,7 +210,7 @@ private:
 	//CONSTANTS
 	
 	//Scale for the gaussianpyramid
-	const float SCALE_PYRAMID = 1.5;
+	const float SCALE_PYRAMID = 1.5f;
 
 	//Kernel from cv::pyrDown() function
 	const cv::Mat KERNEL_PYRAMID = (cv::Mat_<float>(5, 5) << 1.0 / 256.0, 4.0 / 256.0, 6.0 / 256.0, 4.0 / 256.0, 1.0 / 256.0,
@@ -208,25 +223,28 @@ private:
 	const std::tuple<int, int> INITIAL_WINDOW_SIZE = std::make_tuple(168, 168);
 
 	//Strides
-	const float STRIDE_ROWS_FACTOR = 0.5;
-	const float STRIDE_COLS_FACTOR = 0.5;
+	const float STRIDE_ROWS_FACTOR = 0.5f;
+	const float STRIDE_COLS_FACTOR = 0.5f;
 
 	//Input CNN
 	const int WIDTH_INPUT_CNN = 224;
 	const int HEIGHT_INPUT_CNN = 224;
 
 	//Threshold used to understand if a blob is an image or not
-	const float THRESHOLD_DETECTION = 0.25;
+	const float THRESHOLD_DETECTION = 0.25f;
 
 	//Threshold used to understand how much two overlapping regions overlap each other
-	const float THRESHOLD_OVERLAPPING = 0.85;
+	const float THRESHOLD_OVERLAPPING = 0.70f;
 
 	//Image width and heigth
 	const int IMAGE_WIDTH = 1280;
 	const int IMAGE_HEIGTH = 720;
 
 	//Factor resizer for images from 21-30
-	const float FACTOR_RESIZER = 0.6;
+	const float FACTOR_RESIZER = 0.6f;
+
+	//Threshold Occlusion
+	const float THRESHOLD_OCCLUSION = 0.25f;
 };
 
 #endif // !DETECTOR_H

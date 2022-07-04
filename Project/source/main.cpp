@@ -48,8 +48,8 @@ int mainFinale(int argc, char* argv[])
 		//COMMON
 		"{help h usage ?||print this message}"
 		"{m model|../model/model.pb| path to the model}"
-		"{a annotation|../testset/det/01.txt | path to one of test set annotation}"
-		"{i image|../testset/rgb/01.jpg| path to one of test set image}"
+		"{a annotation|../testset/det/04.txt | path to one of test set annotation}"
+		"{i image|../testset/rgb/04.jpg| path to one of test set image}"
 
 		//Detection Parameters
 		"{d detect || run detection mode}"			

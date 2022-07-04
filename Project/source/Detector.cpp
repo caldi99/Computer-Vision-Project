@@ -138,9 +138,10 @@ std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 	}
 	
 	//Non maxima Suppression
-	std::vector<cv::Rect> finalBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
+	std::vector<cv::Rect> nmsBoundingBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
 
-	//TODO : Remove Bounding Boxes with occlusions
+	//Remove occlusions
+	std::vector<cv::Rect> finalBoxes = removeOcclusions(image, nmsBoundingBoxes);
 
 	return finalBoxes;
 }
@@ -151,7 +152,7 @@ std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
 	
 	//Scale initial window size
 	std::tuple<int, int> initialWindowSize;
-	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH) //TODO FOR IMAGES 21-30 BETTER TO USE 168 *0.6
+	if (image.rows != IMAGE_HEIGTH || image.cols != IMAGE_WIDTH)
 	{
 		float rowsWindow = (std::get<1>(INITIAL_WINDOW_SIZE) * FACTOR_RESIZER);
 		float colsWindow = (std::get<0>(INITIAL_WINDOW_SIZE) * FACTOR_RESIZER);
@@ -375,15 +376,23 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		std::vector<float> w = Utils::elementWiseMaximum(differenceXX2XX1, 0.0f);
 		std::vector<float> h = Utils::elementWiseMaximum(differenceYY2YY1, 0.0f);
 		
-		//Remaining Boxes
-		//std::vector<cv::Rect> listRemainingBoxes = createListBoxes(xx1, yy1, w, h);
-		
-		//Selected Rect
-		//cv::Rect selectedBox(x1.at(i), y1.at(i), x2.at(i) - x1.at(i), y2.at(i) - y1.at(i));
+		//Compute intersections
+		std::vector<float> inter = Utils::elementWiseProduct(w, h);
 
-		//Intersection over union
-		//std::vector<float> ious = intersectionOverUnionElementWise(listRemainingBoxes, selectedBox);
-				
+		//Compute unions
+		std::vector<float> partialUnion = Utils::elementWiseDifference(areaSliced, inter);
+		std::vector<float> trueUnion = Utils::elementWiseSum(partialUnion, area.at(i));
+
+		//Compute ious
+		std::vector<float> iou = Utils::elementWiseDivision(inter, trueUnion);
+		
+		//Update indices
+		std::vector<int> thresholded = Utils::greater(iou, THRESHOLD_OVERLAPPING);
+		thresholded.insert(thresholded.begin(), last);
+		Utils::deleteElementPositions(idxs, thresholded);		
+		
+		
+		/* TODO : OLD MANTAIN
 		//Compute Overlapping
 		std::vector<float> wH = Utils::elementWiseProduct(w, h);
 		std::vector<float> overlap = Utils::elementWiseDivision(wH, areaSliced);
@@ -392,11 +401,56 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		std::vector<int> thresholded = Utils::greater(overlap, THRESHOLD_OVERLAPPING);
 		thresholded.insert(thresholded.begin(), last);
 		Utils::deleteElementPositions(idxs, thresholded);
+		*/
 	}
 
 	//Slice boxesFloat and convert to integer coordinates
 	std::vector<cv::Rect2f> slicedBoxesFloat = Utils::slice(boxesFloat, pickedIndices);
 	return convertBoxesToIntCoordinates(slicedBoxesFloat);	
+}
+
+std::vector<cv::Rect> Detector::removeOcclusions(cv::Mat image, const const std::vector<cv::Rect>& boxes)
+{
+	std::vector<cv::Rect> ret;
+
+	for (int i = 0; i < boxes.size(); i++)
+	{
+		//Get ROI
+		cv::Range rowRange(boxes.at(i).y, boxes.at(i).y + boxes.at(i).height);
+		cv::Range colRange(boxes.at(i).x, boxes.at(i).x + boxes.at(i).width);
+		cv::Mat roi = image(rowRange, colRange);
+		
+		//Is an occlusion?
+		if (!isOcclusion(roi))
+			ret.push_back(boxes.at(i));
+	}
+	return ret;
+}
+
+bool Detector::isOcclusion(cv::Mat image)
+{
+	//Convert to YCrCb
+	cv::Mat imageCbCr;
+	cv::cvtColor(image, imageCbCr, cv::COLOR_BGR2YCrCb);
+
+	//Check if it migth be an hand
+	cv::Mat thresholded;
+	cv::inRange(imageCbCr, cv::Scalar(0, 133, 77), cv::Scalar(255, 173, 127), thresholded); //compute mask
+
+	float whitePixels = 0.0f;
+	for (int r = 0; r < thresholded.rows; r++)	
+		for (int c = 0; c < thresholded.cols; c++)		
+			if (thresholded.at<unsigned char>(r, c) == 255)
+				whitePixels += 1.0f;
+	
+	//Compute percentage of white (possibly) hand pixels
+	float percentage = whitePixels / (thresholded.rows * thresholded.cols);
+	
+	//Check if it is an occlusion
+	if (percentage < THRESHOLD_OCCLUSION)
+		return true;
+	else
+		return false;
 }
 
 std::vector<cv::Rect2f> Detector::convertBoxesToFloatCoordinates(const std::vector<cv::Rect>& boxes)
