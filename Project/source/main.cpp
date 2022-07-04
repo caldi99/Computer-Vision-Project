@@ -12,11 +12,13 @@ using namespace std;
 
 int mainDaniela();
 int mainFinale(int argc, char* argv[]);
+void detectAllImages();
 
 int main(int argc, char* argv[])
 {
 	//mainDaniela();
-	mainFinale(argc, argv);
+	//mainFinale(argc, argv);
+	detectAllImages();
 	
 }
 
@@ -155,4 +157,43 @@ int mainFinale(int argc, char* argv[])
 	}
 	
 	return 0;
+}
+
+
+void detectAllImages()
+{
+	//Create Detector
+	Detector detector;
+
+	//Set Model
+	detector.setModel("../model/model.pb");
+	
+	for (int i = 1; i <= 30; i++)
+	{
+		//Create Image Name
+		String imageName;
+		if (i < 10)
+			imageName = "0" + std::to_string(i);
+		else		
+			imageName = std::to_string(i);
+		
+		String pathImage = "../testset/rgb/" + imageName + ".jpg";
+		String pathGt = "../testset/det/" + imageName + ".txt";
+
+		//Read image and gt
+		detector.readImage(pathImage);
+		detector.readGroundTruth(pathGt);
+
+		cout << "DETECTOR IS RUNNING FOR : "<< std::to_string(i) << endl;
+
+		//Compute bounding boxes
+		vector<Rect> boundingBoxes = detector.detectHands();
+		
+		String outputPathIous = "../ious/";
+		String outputPathDetections = "../detections/";
+
+		//Save results
+		detector.saveDetections(outputPathDetections, boundingBoxes);
+		detector.saveIntersectionsOverUnions(outputPathIous, boundingBoxes);		
+	}
 }
