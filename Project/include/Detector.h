@@ -29,23 +29,22 @@ class Detector
 public:
 
 	/**
-	* This function will read the images inside pathImages 
-	* @param pathImages : The path were the images are
+	* This function will read the image inside pathImage
+	* @param pathImage : The path were the image is
 	*/
-	void readImages(cv::String pathImages);
+	void readImage(cv::String pathImage);
 
 	/**
-	* This function will read the ground truth inside pathGroundTruths
-	* @param pathGroundTruth : The path were the groundTruths are
+	* This function will read the ground truth inside pathGroundTruth
+	* @param pathGroundTruth : The path were the groundTruth is
 	*/
-	void readGroundTruth(cv::String pathGroundTruths);
+	void readGroundTruth(cv::String pathGroundTruth);
 
 	/**
-	* This function will return the bounding boxes for a given image
-	* @param nameImage : The filename of the image for which we need to detect things
+	* This function will return the bounding boxes for the image setted at the beginning
 	* @return : Bounding Boxes of the hands detected
 	*/
-	std::vector<cv::Rect> detectHands(cv::String nameImage);
+	std::vector<cv::Rect> detectHands();
 	
 	/**
 	* This function will set the path of the model
@@ -54,28 +53,24 @@ public:
 	void setModel(cv::String pathModel);
 	
 	/**
-	* This function get an image by its name
-	* @param imageName : The name of the image
+	* This function get an image
 	*/
-	cv::Mat getImgeByName(cv::String imageName);
+	cv::Mat getImage();
 
 	/**
-	* This function compute the IOUs, given the detections for a specific image and save the result inside outputFile
+	* This function compute the IOUs, given the detections and save the result inside outputFile
 	* @param outputFile : The path of the file where to save th IOUs
-	* @param nameImage : The name of the image for which computing the detections
-	* @param detections : The detections for the given image	
+	* @param detections : The detections for the image	
 	*/
 	void saveIntersectionsOverUnions(cv::String outputFile,
-									 cv::String nameImage,
 									 const std::vector<cv::Rect>& detections);
 	
 	/**
-	* This function compute the IOUs, given the detections for a specific image and save the result inside outputFile
+	* This function compute the IOUs, given the detections and save the result inside outputFile
 	* @param outputFile : The path of the file where to save th IOUs
-	* @param nameImage : The name of the image for which computing the detections
 	* @param detections : The detections for the given image
 	*/
-	void saveDetections(cv::String output,cv::String nameImage,const std::vector<cv::Rect>& detections);
+	void saveDetections(cv::String output,const std::vector<cv::Rect>& detections);
 
 private:
 	//FUNCTIONS
@@ -188,10 +183,10 @@ private:
 	//FIELD MEMBER
 	 
 	//Images to process
-	std::map<cv::String,cv::Mat> images;
+	std::tuple<cv::Mat,cv::String> image;
 
 	//Ground truth images
-	std::map<cv::String, std::vector<cv::Rect>> groundTruths;
+	std::vector<cv::Rect> groundTruth;
 
 	//Path to the CNN model
 	cv::String pathModel;

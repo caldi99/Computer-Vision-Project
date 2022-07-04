@@ -15,8 +15,8 @@ int mainFinale(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
 {
-	mainDaniela();
-	//mainFinale(argc, argv);
+	//mainDaniela();
+	mainFinale(argc, argv);
 	
 }
 
@@ -48,9 +48,8 @@ int mainFinale(int argc, char* argv[])
 		//COMMON
 		"{help h usage ?||print this message}"
 		"{m model|../model/model.pb| path to the model}"
-		"{a annotations|../testset/det/| path to the test set annotations}"
-		"{i images|../testset/rgb/| path to the test set images}"
-		"{n name |27| name of the image for which applying detection / segmentation}" 
+		"{a annotation|../testset/det/01.txt | path to one of test set annotation}"
+		"{i image|../testset/rgb/01.jpg| path to one of test set image}"
 
 		//Detection Parameters
 		"{d detect || run detection mode}"			
@@ -85,70 +84,75 @@ int mainFinale(int argc, char* argv[])
 	//Declare variables
 	Detector detector;
 
-	switch (mode)
+	try
 	{
-		case MODE::SEGMENT:
+		switch (mode)
 		{
-			cout << "YOU SELECTED SEGMENTATION MODE " << endl;
-
-			//TODO : CODE TO ADD
-			break;
-		}			
-		case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
-		{
-			cout << "YOU SELECTED DETECTOR MODE " << endl;
-
-			detector.setModel(parser.get<String>("m"));
-			detector.readGroundTruth(parser.get<String>("a"));
-			detector.readImages(parser.get<String>("i"));
-			
-			//Get Image Name
-			String imageName = parser.get<String>("n");
-
-			//Get Image By Name
-			Mat image = detector.getImgeByName(imageName);
-			
-			cout << "DETECTOR IS RUNNING " << endl;
-
-			//Detect Bounding Boxes Image
-			vector<Rect> boundingBoxes = detector.detectHands(imageName);
-
-			String outputPathIous, outputPathDetections;
-
-			if (parser.has("opd") && parser.has("opious")) //Both
+			case MODE::SEGMENT:
 			{
-				outputPathDetections = parser.get<String>("opd");
-				outputPathIous = parser.get<String>("opious");
-				cout << "SAVING DETECTIONS IN " + outputPathDetections << endl;
-				cout << "SAVING IOUS IN " + outputPathIous << endl;
-				detector.saveDetections(outputPathDetections, imageName, boundingBoxes);
-				detector.saveIntersectionsOverUnions(outputPathIous, imageName, boundingBoxes);
-			}
-			else if (parser.has("opd")) //only
-			{
-				outputPathDetections = parser.get<String>("opd");
-				cout << "SAVING DETECTIONS IN " + outputPathDetections << endl;
-				detector.saveDetections(outputPathDetections, imageName, boundingBoxes);
-			}
-			else if (parser.has("opious"))
-			{				
-				outputPathIous = parser.get<String>("opious");
-				cout << "SAVING IOUS IN " + outputPathIous << endl;
-				detector.saveIntersectionsOverUnions(outputPathIous, imageName, boundingBoxes);
-			}
+				cout << "YOU SELECTED SEGMENTATION MODE " << endl;
 
-			//In each situation show the image and its boxes 
-			for (int i = 0; i < boundingBoxes.size(); i++)
-				rectangle(image, boundingBoxes.at(i), cv::Scalar(255, 0, 0));
-			imshow(imageName, image);
-			waitKey();
-			break;
+				//TODO : CODE TO ADD
+				break;
+			}
+			case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
+			{
+				cout << "YOU SELECTED DETECTOR MODE " << endl;
+
+				detector.setModel(parser.get<String>("m"));
+				detector.readGroundTruth(parser.get<String>("a"));
+				detector.readImage(parser.get<String>("i"));				
+
+				//Get Image 
+				Mat image = detector.getImage();
+
+				cout << "DETECTOR IS RUNNING " << endl;
+
+				//Detect Bounding Boxes Image
+				vector<Rect> boundingBoxes = detector.detectHands();
+
+				String outputPathIous, outputPathDetections;
+
+				if (parser.has("opd") && parser.has("opious")) //Both
+				{
+					outputPathDetections = parser.get<String>("opd");
+					outputPathIous = parser.get<String>("opious");
+					cout << "SAVING DETECTIONS IN " + outputPathDetections << endl;
+					cout << "SAVING IOUS IN " + outputPathIous << endl;
+					detector.saveDetections(outputPathDetections, boundingBoxes);
+					detector.saveIntersectionsOverUnions(outputPathIous, boundingBoxes);
+				}
+				else if (parser.has("opd")) //only
+				{
+					outputPathDetections = parser.get<String>("opd");
+					cout << "SAVING DETECTIONS IN " + outputPathDetections << endl;
+					detector.saveDetections(outputPathDetections, boundingBoxes);
+				}
+				else if (parser.has("opious"))
+				{
+					outputPathIous = parser.get<String>("opious");
+					cout << "SAVING IOUS IN " + outputPathIous << endl;
+					detector.saveIntersectionsOverUnions(outputPathIous, boundingBoxes);
+				}
+
+				//In each situation show the image and its boxes 
+				for (int i = 0; i < boundingBoxes.size(); i++)
+					rectangle(image, boundingBoxes.at(i), cv::Scalar(255, 0, 0));
+				imshow("Image", image);
+				waitKey();
+				break;
+			}
+			case MODE::ERROR:
+			{
+				cout << "Error, You need to execute this file by adding into the command line either -detect or -segment or both";
+				break;
+			}
 		}
-		case MODE::ERROR:
-		{
-			cout << "Error, You need to execute this file by adding into the command line either -detect or -segment or both";
-			break;
-		}			
 	}
+	catch (exception e)
+	{
+		cout << "AN ERROR OCCURED : " << endl << e.what();
+	}
+	
 	return 0;
 }

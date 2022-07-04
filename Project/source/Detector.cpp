@@ -9,65 +9,47 @@
 * @author : Francesco Caldivezzi
 */
 
-void Detector::readImages(cv::String pathImages)
+void Detector::readImage(cv::String pathImage)
 {
-	//Read all the paths of the images
-	std::vector<cv::String> pathSingleImages;
-	cv::glob(pathImages, pathSingleImages);
-	//Store the images inside the images vector
-	for (int i = 0; i < pathSingleImages.size(); i++)
-	{
-		//Split the string in order to obtain the name of the file
-		std::vector<cv::String> splits = Utils::split(pathSingleImages.at(i), '\\');
-		cv::String fileExtension = splits.at(splits.size() - 1);
-		splits = Utils::split(fileExtension, '.');
+	//Read the image
+	cv::String actualPath = cv::samples::findFile(pathImage);
+	cv::Mat imageRead = cv::imread(actualPath);
 
-		//Read image
-		cv::Mat image = cv::imread(pathSingleImages.at(i));
-		images.insert(std::pair<cv::String, cv::Mat>(splits.at(0), image));
-	}		
+	//Test if the image is correct
+	if (imageRead.empty())
+		throw std::exception("The image provided is not correct !");
+
+	//Get name of the image
+	std::vector<cv::String> parts = Utils::split(pathImage, '/');
+	cv::String name = Utils::split(parts.at(parts.size() - 1), '.').at(0);
+
+	//Save "image"
+	image = std::make_tuple(imageRead, name);
 }
 
-void Detector::readGroundTruth(cv::String pathGroundTruths)
+void Detector::readGroundTruth(cv::String pathGroundTruth)
 {
-	//Read all the paths of the ground truth
-	std::vector<cv::String> pathSingleGroundTruths;
-	cv::glob(pathGroundTruths, pathSingleGroundTruths);
-	//Store the ground truth inside the groundTruth vecto
-	for (int i = 0; i < pathSingleGroundTruths.size(); i++)
+	//Read content of the file
+	std::ifstream file(pathGroundTruth);
+	cv::String line;
+	while (std::getline(file, line))
 	{
-		//Split the string in order to obtain the name of the file
-		std::vector<cv::String> splits = Utils::split(pathSingleGroundTruths.at(i), '\\');
-		cv::String fileExtension = splits.at(splits.size() - 1);
-		splits = Utils::split(fileExtension, '.');
-		
-		//Read content of the file
-		std::vector<cv::Rect> groundTruthBoundingBoxes;
-		std::ifstream file(pathSingleGroundTruths.at(i));
-		cv::String line;
-		while (std::getline(file,line))
-		{
-			std::vector<cv::String> split = Utils::split(line, '\t');
-			if (split.size() == 1) //then separator is " "
-				split = Utils::split(line, ' ');
+		std::vector<cv::String> split = Utils::split(line, '\t');
+		if (split.size() == 1) //then separator is " "
+			split = Utils::split(line, ' ');
 
-			groundTruthBoundingBoxes.push_back(cv::Rect(std::stoi(split.at(0)),
-														std::stoi(split.at(1)),
-														std::stoi(split.at(2)),
-														std::stoi(split.at(3))));
-		}
-		//Close The file
-		file.close();
-
-		//Save informations
-		groundTruths.insert(std::pair<cv::String,std::vector<cv::Rect>>(splits.at(0), groundTruthBoundingBoxes));
+		groundTruth.push_back(cv::Rect(std::stoi(split.at(0)),
+			std::stoi(split.at(1)),
+			std::stoi(split.at(2)),
+			std::stoi(split.at(3))));
 	}
+	//Close The file
+	file.close();
 }
 
-std::vector<cv::Rect> Detector::detectHands(cv::String nameImage)
+std::vector<cv::Rect> Detector::detectHands()
 {
-	cv::Mat image = images.at(nameImage);
-	return getBoudingBoxesDetections(image);
+	return getBoudingBoxesDetections(std::get<0>(image));
 }
 
 void Detector::setModel(cv::String pathModel)
@@ -75,24 +57,22 @@ void Detector::setModel(cv::String pathModel)
 	this->pathModel = pathModel;
 }
 
-cv::Mat Detector::getImgeByName(cv::String imageName)
+cv::Mat Detector::getImage()
 {
-	return images.at(imageName);
+	return std::get<0>(image);
 }
 
-void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nameImage,const std::vector<cv::Rect>& detections)
+void Detector::saveIntersectionsOverUnions(cv::String outputPath,const std::vector<cv::Rect>& detections)
 {
 	//Get ground truths of the image
-	std::vector<cv::Rect> groundTruthBoundingBoxes = groundTruths.at(nameImage);
-
-	std::ofstream file(outputPath + Utils::split(nameImage, '.').at(0) + ".txt");
-	for (int i = 0; i < groundTruthBoundingBoxes.size(); i++)
+	std::ofstream file(outputPath + std::get<1>(image) +  ".txt");
+	for (int i = 0; i < groundTruth.size(); i++)
 	{
 		cv::String row;
 		if (!detections.empty())
 		{
 			//Compute Intersection over union between detections and ground truth
-			std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruthBoundingBoxes.at(i));
+			std::vector<float> ious = intersectionOverUnionElementWise(detections, groundTruth.at(i));
 
 			//Take the best Intersection over union
 			float iou = *std::max_element(ious.begin(), ious.end());
@@ -103,18 +83,18 @@ void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nam
 				", Y : " + std::to_string(detections.at(position).y) +
 				", W : " + std::to_string(detections.at(position).width) +
 				", H : " + std::to_string(detections.at(position).width) + " ] " +
-				"Bounding Box Ground Truth : [ X : " + std::to_string(groundTruthBoundingBoxes.at(i).x) +
-				", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
-				", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
-				", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
+				"Bounding Box Ground Truth : [ X : " + std::to_string(groundTruth.at(i).x) +
+				", Y : " + std::to_string(groundTruth.at(i).y) +
+				", W : " + std::to_string(groundTruth.at(i).width) +
+				", H : " + std::to_string(groundTruth.at(i).width) + " ] " +
 				"Intersection over union value : " + std::to_string(iou);			
 		}
 		else
 		{
-			row = "Bounding Box Ground Truth : [ X : " + std::to_string(groundTruthBoundingBoxes.at(i).x) +
-				", Y : " + std::to_string(groundTruthBoundingBoxes.at(i).y) +
-				", W : " + std::to_string(groundTruthBoundingBoxes.at(i).width) +
-				", H : " + std::to_string(groundTruthBoundingBoxes.at(i).width) + " ] " +
+			row = "Bounding Box Ground Truth : [ X : " + std::to_string(groundTruth.at(i).x) +
+				", Y : " + std::to_string(groundTruth.at(i).y) +
+				", W : " + std::to_string(groundTruth.at(i).width) +
+				", H : " + std::to_string(groundTruth.at(i).width) + " ] " +
 				"Intersection over union value : " + std::to_string(0);
 		}
 		file << row << std::endl;		
@@ -122,20 +102,20 @@ void Detector::saveIntersectionsOverUnions(cv::String outputPath, cv::String nam
 	file.close();
 }
 
-void Detector::saveDetections(cv::String output,cv::String nameImage,const std::vector<cv::Rect>& detections)
+void Detector::saveDetections(cv::String output,const std::vector<cv::Rect>& detections)
 {
 	//Construct name of the image that we are going to save
-	cv::String nameFileExtension = Utils::split(nameImage, '.').at(0) + "_detections.jpg";
+	cv::String nameFileExtension = std::get<1>(image) + "_detections.jpg";
 	
-	//Get Image
-	cv::Mat image = images.at(nameImage);
+	//Copy Image
+	cv::Mat imageCloned = std::get<0>(image).clone();
 
 	//Draw rectangles
 	for (int i = 0; i < detections.size(); i++)
-		cv::rectangle(image, detections.at(i), cv::Scalar(0, 255, 0));
+		cv::rectangle(imageCloned, detections.at(i), cv::Scalar(0, 255, 0));
 	
 	//Save Image
-	cv::imwrite(output + nameFileExtension, image);
+	cv::imwrite(output + nameFileExtension, imageCloned);
 }
 
 std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
@@ -159,6 +139,8 @@ std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 	
 	//Non maxima Suppression
 	std::vector<cv::Rect> finalBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
+
+	//TODO : Remove Bounding Boxes with occlusions
 
 	return finalBoxes;
 }
