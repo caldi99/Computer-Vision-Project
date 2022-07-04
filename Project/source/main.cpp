@@ -168,7 +168,7 @@ void detectAllImages()
 	//Set Model
 	detector.setModel("../model/model.pb");
 	
-	for (int i = 1; i <= 30; i++)
+	for (int i = 22; i <= 30; i++)
 	{
 		//Create Image Name
 		String imageName;

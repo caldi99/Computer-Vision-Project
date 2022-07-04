@@ -29,6 +29,9 @@ void Detector::readImage(cv::String pathImage)
 
 void Detector::readGroundTruth(cv::String pathGroundTruth)
 {
+	//Clear the size
+	groundTruth.clear();
+
 	//Read content of the file
 	std::ifstream file(pathGroundTruth);
 	cv::String line;
