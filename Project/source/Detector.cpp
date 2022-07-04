@@ -122,7 +122,7 @@ void Detector::saveDetections(cv::String output,const std::vector<cv::Rect>& det
 }
 
 std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
-{
+{	
 	//Create pyramid
 	std::vector<cv::Mat> pyramid = getGaussianPyramid(image);
 
@@ -143,10 +143,13 @@ std::vector<cv::Rect> Detector::getBoudingBoxesDetections(cv::Mat image)
 	//Non maxima Suppression
 	std::vector<cv::Rect> nmsBoundingBoxes = nonMaximaSuppression(allBoundingBoxesHands,allProbabilities);
 
-	//Remove occlusions
-	std::vector<cv::Rect> finalBoxes = removeOcclusions(image, nmsBoundingBoxes);
-
-	return finalBoxes;
+	//Remove occlusions only if the image is not a grayscale image	
+	std::vector<cv::Rect> finalBoxes;
+	
+	if (isGrayScale(image))
+		return nmsBoundingBoxes;
+	else
+		return removeOcclusions(image, nmsBoundingBoxes);
 }
 
 std::vector<cv::Mat> Detector::getGaussianPyramid(cv::Mat image)
@@ -514,4 +517,23 @@ std::vector<cv::Rect> Detector::createListBoxes(const std::vector<float>& x1s, c
 		rectangles.push_back(cv::Rect(x1s.at(i), y1s.at(i), ws.at(i), hs.at(i)));
 
 	return rectangles;
+}
+
+bool Detector::isGrayScale(cv::Mat image)
+{
+	std::vector<cv::Mat> bgr;
+	cv::split(image, bgr);
+
+	cv::Mat bChannel = bgr.at(0);
+	cv::Mat gChannel = bgr.at(1);
+	cv::Mat rChannel = bgr.at(2);
+
+	for (int r = 0; r < image.rows; r++)	
+		for (int c = 0; c < image.cols; c++)		
+			if (bChannel.at<unsigned char>(r, c) != gChannel.at<unsigned char>(r, c) ||
+				bChannel.at<unsigned char>(r, c) != rChannel.at<unsigned char>(r, c) ||
+				gChannel.at<unsigned char>(r, c) != rChannel.at<unsigned char>(r, c))
+				return false;
+
+	return true;
 }

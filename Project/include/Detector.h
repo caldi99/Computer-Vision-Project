@@ -195,6 +195,13 @@ private:
 										  const std::vector<float>& ws, 
 										  const std::vector<float>& hs);
 
+	/**
+	* This function given an image check if it is an actual gray scale one or not
+	* @param image : the image to chek if it is a grayscale 
+	* @return : True if the image is a true gray scale one, false otherwise
+	*/
+	bool isGrayScale(cv::Mat image);
+
 	//FIELD MEMBER
 	 
 	//Images to process
