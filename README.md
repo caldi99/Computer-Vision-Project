@@ -91,8 +91,8 @@ Notice that, you can skip this process and download immediatly the `model.pb` fi
 In order to detect hands on an image, you need to execute the `C++` code i.e. (TODO ADD COMMAND) with the following, possibiles parameters :
 
 - `-m` or `--model` : to specify the path of the model for detection, default value : ../model/model.pb
-- `-i` or `--image` : to specify the path of the image for which detecting hands, default value : ../testset/rgb/01.txt
-- `-a` or `--annotation` : to specify the path of the annotation for the image for which detecting hands, default value : ../testset/det/01.txt
+- `-i` or `--image` : to specify the path of the image for which detecting hands, default value : `../testset/rgb/01.jpg`
+- `-a` or `--annotation` : to specify the path of the annotation for the image for which detecting hands, default value : `../testset/det/01.txt`
 - `-d` or `--detect` : to activativate the detection mode
 - Optional `--opd` : to specify the output path where to store the image with the bounding boxes drawn
 - Optional `--opius` : to specify the output path where to store the ious results of the image
