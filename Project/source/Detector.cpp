@@ -415,7 +415,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 	return convertBoxesToIntCoordinates(slicedBoxesFloat);	
 }
 
-std::vector<cv::Rect> Detector::removeOcclusions(cv::Mat image, const const std::vector<cv::Rect>& boxes)
+std::vector<cv::Rect> Detector::removeOcclusions(cv::Mat image, const std::vector<cv::Rect>& boxes)
 {
 	std::vector<cv::Rect> ret;
 
