@@ -19,7 +19,10 @@ Overview :
 
 ## Compiling the C++ Code
 
-TODO : ADD INSTRUCTIONS ON HOW TO COMPILE
+In order to compile the code, you need to follow the upcoming steps :
+- Go inside the `Project` directory i.e. `cd Project`
+- Create a directory called `build` i.e. `mkdir build`
+- Execute the following two commands `cmake ..` and `cmake --build .`
 
 ## Hand Detection
 
@@ -88,7 +91,7 @@ Notice that, you can skip this process and download immediatly the `model.pb` fi
 
 ### Detect Hands on images
 
-In order to detect hands on an image, you need to execute the `C++` code i.e. (TODO ADD COMMAND) with the following, possibiles parameters :
+In order to detect hands on an image, you need to execute the `C++` code i.e. `./projectGroup05` with the following, possibiles parameters :
 
 - `-m` or `--model` : to specify the path of the model for detection, default value : ../model/model.pb
 - `-i` or `--image` : to specify the path of the image for which detecting hands, default value : `../testset/rgb/01.jpg`
@@ -99,9 +102,7 @@ In order to detect hands on an image, you need to execute the `C++` code i.e. (T
 
 Example of a command :
 
-`TODO : NAME_COMMAND C++ -d -opd="../detections/" -opious="../ious/"`
-
-
+`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_annotations" -d --opd="path_save_detection_result" --opious="path_save_ious"`
 
 ## Hand Segmentation
 
