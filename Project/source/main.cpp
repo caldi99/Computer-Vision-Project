@@ -12,13 +12,13 @@ using namespace std;
 
 int mainDaniela();
 int mainFinale(int argc, char* argv[]);
-void detectAllImages();
+//void detectAllImages();
 
 int main(int argc, char* argv[])
 {
 	//mainDaniela();
-	//mainFinale(argc, argv);
-	detectAllImages();
+	mainFinale(argc, argv);
+	//detectAllImages();
 	
 }
 
@@ -160,7 +160,7 @@ int mainFinale(int argc, char* argv[])
 }
 
 
-void detectAllImages()
+/*void detectAllImages()
 {
 	//Create Detector
 	Detector detector;
@@ -196,4 +196,4 @@ void detectAllImages()
 		detector.saveDetections(outputPathDetections, boundingBoxes);
 		detector.saveIntersectionsOverUnions(outputPathIous, boundingBoxes);		
 	}
-}
+}*/
