@@ -47,7 +47,7 @@ In order to train the CNN you need to follow the following steps :
 
 - if we want to train locally the CNN we need to follow the steps lists below :
 	- First, you need to make sure that all the dependancies needed for the training process are satified. To do so, you need to check that in your enviroment (conda / pip), the following packages are installed :
-	  - tensorflow (better if gpu version to do so follow the following steps : TODO)
+	  - tensorflow (better if gpu version)
 	  - opencv
 	  - scikitlearn
 	  - numpy
