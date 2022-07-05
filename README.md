@@ -106,17 +106,3 @@ Example of a command :
 ## Hand Segmentation
 
 TODO COMPLETE
-
-## Examples of Hand Detections
-
-- Orginal Image :
-
-<p align="center">
-  <img src="examples/28.jpg" />
-</p>
-
-- Image with Detections : 
-
-<p align="center">
-  <img src="examples/28_detections.jpg" />
-</p>
