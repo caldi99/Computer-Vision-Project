@@ -141,7 +141,7 @@ private:
 	* @return : The bounding boxes after removing the occlusions
 	*/
 	std::vector<cv::Rect> removeOcclusions(cv::Mat image,
-		const const std::vector<cv::Rect>& boxes);
+		const std::vector<cv::Rect>& boxes);
 
 	/**
 	* This function is used to check if inside the provided image there migth be an hand or not, it is used by removeOcclusions(..) function
