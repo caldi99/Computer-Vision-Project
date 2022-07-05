@@ -1,0 +1,36 @@
+
+\documentclass[12pt]{report}
+
+%include of the packages
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {figures/} }
+\usepackage{biblatex}
+\usepackage{verbatim}
+\usepackage{subfiles}
+\usepackage[subpreambles=true]{standalone}
+\usepackage{import}
+\graphicspath{{images/}}
+
+
+\begin{document}
+\input{titlepage}
+\tableofcontents\newpage
+
+\chapter{Hand Detection}
+\input{chapters/detection}
+
+\chapter{Hand Segmentation}
+\input{chapters/segmentation}
+
+\chapter{Results}
+\input{chapters/results}
+
+\chapter{Contribution}
+\input{chapters/contribution}
+
+
+\end{document}

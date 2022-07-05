@@ -44,6 +44,7 @@ Project/x64/
 Data/
 Dataset/
 testset/
+old_results
 
 #model
 model/
@@ -59,3 +60,7 @@ __pycache__
 *.h5
 *.pb
 *.pbtx
+
+#Other stuff
+detections/
+ious/
