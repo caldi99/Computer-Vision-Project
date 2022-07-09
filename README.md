@@ -32,7 +32,7 @@ To create the dataset in order to train our model we need to follow the steps li
 - Dowload the hand_over_face Dataset from : https://drive.google.com/file/d/1hHUvINGICvOGcaDgA5zMbzAIUv7ewDd3
 - Dowload the TestSet from : https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing
 - Put all of those files in the root directory 
-- Execute `python_scripts/build.py` i.e. : `python python_scripts/extract.py` or `cd python_scripts` and then `python build.py` and follow the *instructions* you will asked to execute some matlab code, please do it!!
+- Execute `python_scripts/build.py` i.e. : `python python_scripts/build.py` or `cd python_scripts` and then `python build.py` and follow the *instructions* you will asked to execute some matlab code, please do it!!
 - Go inside the directory `dataset/dataset/` and type `ctrl + a` on the keyboad, and rigth click and compress as a `.zip` file.
 
 Notice that, you can skip the above steps and download immediatly the `dataset.zip` file from : https://drive.google.com/file/d/1AxwsNnBCtxB2LLJ1q_N-YbTov9zbgKMh/view?usp=sharing
