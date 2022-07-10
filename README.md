@@ -15,11 +15,16 @@ Overview :
     * [Model Conversion](#converting-the-h5-into-the-model-supported-by-opencv-library)
     * [Inference](#detect-hands-on-images)
 * [Hand Segmentation](#hand-segmentation)
-* [Examples Hand Detection](#examples-of-hand-detections)
+	* TODO: Dataset creation, Training, Model
+	* 
+	* [Inference](#segment-hands-on-images)
 
 ## Compiling the C++ Code
 
-TODO : ADD INSTRUCTIONS ON HOW TO COMPILE
+In order to compile the code, you need to follow the upcoming steps :
+- Go inside the `Project` directory i.e. `cd Project`
+- Create a directory called `build` i.e. `mkdir build`
+- Execute the following two commands `cmake ..` and `cmake --build .`
 
 ## Hand Detection
 
@@ -30,7 +35,7 @@ To create the dataset in order to train our model we need to follow the steps li
 - Dowload the hand_over_face Dataset from : https://drive.google.com/file/d/1hHUvINGICvOGcaDgA5zMbzAIUv7ewDd3
 - Dowload the TestSet from : https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing
 - Put all of those files in the root directory 
-- Execute `python_scripts/build.py` i.e. : `python python_scripts/extract.py` or `cd python_scripts` and then `python build.py` and follow the *instructions* you will asked to execute some matlab code, please do it!!
+- Execute `python_scripts/build.py` i.e. : `python python_scripts/build.py` or `cd python_scripts` and then `python build.py` and follow the *instructions* you will asked to execute some matlab code, please do it!!
 - Go inside the directory `dataset/dataset/` and type `ctrl + a` on the keyboad, and rigth click and compress as a `.zip` file.
 
 Notice that, you can skip the above steps and download immediatly the `dataset.zip` file from : https://drive.google.com/file/d/1AxwsNnBCtxB2LLJ1q_N-YbTov9zbgKMh/view?usp=sharing
@@ -88,21 +93,39 @@ Notice that, you can skip this process and download immediatly the `model.pb` fi
 
 ### Detect Hands on images
 
-In order to detect hands on an image, you need to execute the `C++` code i.e. (TODO ADD COMMAND) with the following, possibiles parameters :
+In order to detect hands on an image, you need to execute the `C++` code i.e. `./projectGroup05` with the following, possibiles parameters :
 
-- `-m` or `--model` : to specify the path of the model for detection, default value : ../model/model.pb
+- `-m` or `--model` : to specify the path of the model for detection
 - `-i` or `--image` : to specify the path of the image for which detecting hands, default value : `../testset/rgb/01.jpg`
-- `-a` or `--annotation` : to specify the path of the annotation for the image for which detecting hands, default value : `../testset/det/01.txt`
+- `-a` or `--annotation` : to specify the path of the annotation for the image for which detecting hands
 - `-d` or `--detect` : to activativate the detection mode
 - Optional `--opd` : to specify the output path where to store the image with the bounding boxes drawn
 - Optional `--opius` : to specify the output path where to store the ious results of the image
 
+Notice that, at least one of the two optional parameters, must be included into the command line execution instruction.
+
 Example of a command :
 
-`TODO : NAME_COMMAND C++ -d -opd="../detections/" -opious="../ious/"`
-
-
+`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_annotations" -d --opd="path_save_detection_result" --opious="path_save_ious"`
 
 ## Hand Segmentation
-
 TODO COMPLETE
+
+### Segment Hands on images
+
+In order to segment hands on an image, you need to execute the `C++` code i.e. `./projectGroup05` with the following, possibiles parameters :
+- `-m` or `--model` : to specify the path of the model for segmentation
+- `-i` or `--image` : to specify the path of the image for which detecting hands, default value : `../testset/rgb/01.jpg`
+- `-a` or `--annotation` : to specify the path of the annotation for the image, i.e. the path to the ground truth mask
+- `-s` or `--segment` : to activativate the segmentation mode
+- Optional `--ops` : to specify the output path where to store the image with hands segmented drawn
+- Optional `--oppa` : to specify the output path where to store the pixel accuracy results of the image
+
+Notice that, at least one of the two optional parameters, must be included into the command line execution instruction.
+
+Example of a command :
+`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_masks" -s --ops="path_save_segmentation_result" --oppa="path_save_pixelaccuracy"`
+
+
+
+

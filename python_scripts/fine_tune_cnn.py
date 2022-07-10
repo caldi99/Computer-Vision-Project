@@ -11,10 +11,9 @@
             test/
                 hand/
                 no_hand/
-        configs/
-            config.py        
+        config/
+            configs.py        
         fine_tune_cnn.py
-        test_model.py
 """
 
 #MY IMPORTS

@@ -17,7 +17,7 @@ void Detector::readImage(cv::String pathImage)
 
 	//Test if the image is correct
 	if (imageRead.empty())
-		throw std::exception("The image provided is not correct !");
+		throw std::invalid_argument("The image provided is not correct !");
 
 	//Get name of the image
 	std::vector<cv::String> parts = Utils::split(pathImage, '/');
@@ -415,7 +415,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 	return convertBoxesToIntCoordinates(slicedBoxesFloat);	
 }
 
-std::vector<cv::Rect> Detector::removeOcclusions(cv::Mat image, const const std::vector<cv::Rect>& boxes)
+std::vector<cv::Rect> Detector::removeOcclusions(cv::Mat image, const std::vector<cv::Rect>& boxes)
 {
 	std::vector<cv::Rect> ret;
 
@@ -511,7 +511,7 @@ std::vector<cv::Rect> Detector::createListBoxes(const std::vector<float>& x1s, c
 	std::vector<cv::Rect> rectangles;		
 
 	if (x1s.size() != y1s.size() || x1s.size() != ws.size() || x1s.size() != hs.size() || y1s.size() != ws.size() || y1s.size() != hs.size() || ws.size() != hs.size())
-		throw std::exception("SIZES DIFFERENT!!");
+		throw std::length_error("SIZES DIFFERENT!!");
 
 	for (int i = 0; i < x1s.size(); i++)
 		rectangles.push_back(cv::Rect(x1s.at(i), y1s.at(i), ws.at(i), hs.at(i)));

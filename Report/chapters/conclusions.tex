@@ -1,0 +1,12 @@
+\section{Results Discussions}
+For what concerns the detection part, we can immediately observe that, some images have bounding boxes well detected, others instead not or they do not have any detections at all. 
+The main reason why there are those problems are :
+\begin{itemize}
+    \item Some of the images contains hands with different point of view and, by using a window with static size for all the images (different size for images from 01 to 20 and from 21 to 30) there are multiple detections for the same hand because it is too big compared to the window size. (This can be seen in images like 17,18.19,20 etc.)
+    \item Moreover, other images have no detection at all, and this may be cause by the fact that some of the hands have very strong illumination like images 21 and 30.
+\end{itemize}
+Therefore, even if the result is not 100\% accurate, still it's quite good, because there are only 14 values of the IOU out of 68. So, we can say that the main issue of this solution is the time taken for processing a single image which is very high.
+
+
+\section{Future Works}
+To solve the problems of the detection solution proposed, we can adopt more sophisticated techniques like ad-hoc Neural Networks that are able to recognize objects, by fine-tuning them, in order to recognize only hands (i.e. Yolo, Fast-RCNN, Faster-RCNN, SSD).

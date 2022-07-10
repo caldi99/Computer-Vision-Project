@@ -52,7 +52,8 @@ public:
 	void setModel(cv::String pathModel);
 	
 	/**
-	* This function get an image
+	* This function will get the image read with readImage function
+	* @return : The image read with readImage function
 	*/
 	cv::Mat getImage();
 
@@ -141,7 +142,7 @@ private:
 	* @return : The bounding boxes after removing the occlusions
 	*/
 	std::vector<cv::Rect> removeOcclusions(cv::Mat image,
-		const const std::vector<cv::Rect>& boxes);
+		const std::vector<cv::Rect>& boxes);
 
 	/**
 	* This function is used to check if inside the provided image there migth be an hand or not, it is used by removeOcclusions(..) function
@@ -204,10 +205,10 @@ private:
 
 	//FIELD MEMBER
 	 
-	//Images to process
+	//Image to process
 	std::tuple<cv::Mat,cv::String> image;
 
-	//Ground truth images
+	//Ground truth image
 	std::vector<cv::Rect> groundTruth;
 
 	//Path to the CNN model

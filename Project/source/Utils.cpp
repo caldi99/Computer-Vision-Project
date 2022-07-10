@@ -68,7 +68,7 @@ std::vector<T> Utils::elementWiseMinimum(const std::vector<T>& vector, T element
 template<typename T>  std::vector<T> Utils::elementWiseProduct(const std::vector<T>& vector1, const std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
-		throw std::exception("VECTORS OF DIFFERENT SIZES");
+		throw std::length_error("VECTORS OF DIFFERENT SIZES");
 
 	std::vector<T> ret;
 	for (int i = 0; i < vector1.size(); i++)	
@@ -79,7 +79,7 @@ template<typename T>  std::vector<T> Utils::elementWiseProduct(const std::vector
 template<typename T>  std::vector<T> Utils::elementWiseDifference(const std::vector<T>& vector1, const std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
-		throw std::exception("VECTORS OF DIFFERENT SIZES");
+		throw std::length_error("VECTORS OF DIFFERENT SIZES");
 
 	std::vector<T> ret;
 	for (int i = 0; i < vector1.size(); i++)
@@ -90,7 +90,7 @@ template<typename T>  std::vector<T> Utils::elementWiseDifference(const std::vec
 template<typename T>  std::vector<T> Utils::elementWiseDivision(const std::vector<T>& vector1, const std::vector<T>& vector2)
 {
 	if (vector1.size() != vector2.size())
-		throw std::exception("VECTORS OF DIFFERENT SIZES");
+		throw std::length_error("VECTORS OF DIFFERENT SIZES");
 
 	std::vector<T> ret;
 	for (int i = 0; i < vector1.size(); i++)
@@ -123,7 +123,7 @@ template<typename T> void Utils::deleteElementPositions(std::vector<T>& vector, 
 	positions.erase(std::unique(positions.begin(), positions.end()), positions.end());
 
 	if (positions.size() > vector.size())
-		throw std::exception("MORE POSITIONS THAN ELEMENTS");
+		throw std::invalid_argument("MORE POSITIONS THAN ELEMENTS");
 
 	for (int i = 0; i < positions.size(); i++)	
 		vector.erase(vector.begin() + positions.at(i));	

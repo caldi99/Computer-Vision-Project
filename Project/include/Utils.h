@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#include <exception>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 
