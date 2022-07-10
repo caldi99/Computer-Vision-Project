@@ -52,7 +52,8 @@ public:
 	void setModel(cv::String pathModel);
 	
 	/**
-	* This function get an image
+	* This function will get the image read with readImage function
+	* @return : The image read with readImage function
 	*/
 	cv::Mat getImage();
 
