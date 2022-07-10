@@ -9,8 +9,6 @@
 //STL
 #include <vector>
 #include <tuple>
-#include <unordered_map>
-
 
 //TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
 
@@ -53,8 +51,6 @@ public:
 	* @return : The image read with readImage function
 	*/
 	cv::Mat getImage();
-
-
 
 private:
 	//FIELD MEMBER

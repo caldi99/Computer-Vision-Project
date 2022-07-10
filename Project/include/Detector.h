@@ -205,10 +205,10 @@ private:
 
 	//FIELD MEMBER
 	 
-	//Images to process
+	//Image to process
 	std::tuple<cv::Mat,cv::String> image;
 
-	//Ground truth images
+	//Ground truth image
 	std::vector<cv::Rect> groundTruth;
 
 	//Path to the CNN model
