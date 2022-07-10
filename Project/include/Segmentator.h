@@ -26,14 +26,13 @@ public:
 	*/
 	void segment_1(cv::String pathImage);
 
-
-
 	/**
 	* This function will read the image to segment inside pathImage
 	* @param pathImage : The path were the image is
 	*/
 	void readImage(cv::String pathImage);
 
+	//TODO : need to read it as a grayscale image?
 	/**
 	* This function will read the ground truth inside pathGroundTruth
 	* @param pathGroundTruth : The path were the groundTruth mask is
@@ -55,7 +54,13 @@ public:
 private:
 	//FIELD MEMBER
 
+	//Image to process
+	std::tuple<cv::Mat, cv::String> image;
+
 	//Path to the CNN model
 	cv::String pathModel;
+
+	//Ground Truth Mask
+	cv::Mat groundTruth;
 };
 #endif // !SEGMENTATOR_H

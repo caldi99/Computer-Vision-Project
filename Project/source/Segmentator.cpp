@@ -1,5 +1,7 @@
-#include "../include/Segmentator.h"
 
+//MY IMPORTS
+#include "../include/Segmentator.h"
+#include "../include/Utils.h"
 
 /**
 * This file represent the Segmentator module
@@ -84,7 +86,44 @@ void Segmentator::segment_1(cv::String pathImage)
     
 }
 
+void Segmentator::readImage(cv::String pathImage)
+{
+    //Read the image
+    cv::String actualPath = cv::samples::findFile(pathImage);
+    cv::Mat imageRead = cv::imread(actualPath);
+
+    //Test if the image is correct
+    if (imageRead.empty())
+        throw std::invalid_argument("The image provided is not correct !");
+
+    //Get name of the image
+    std::vector<cv::String> parts = Utils::split(pathImage, '/');
+    cv::String name = Utils::split(parts.at(parts.size() - 1), '.').at(0);
+
+    //Save "image"
+    image = std::make_tuple(imageRead, name);
+}
+
+void Segmentator::readGroundTruth(cv::String pathGroundTruth)
+{
+    //Read the image
+    cv::String actualPath = cv::samples::findFile(pathGroundTruth);
+    cv::Mat imageRead = cv::imread(actualPath);
+
+    //Test if the image is correct
+    if (imageRead.empty())
+        throw std::invalid_argument("The Ground Truth mask provided is not correct !");
+
+    //Save "ground truth"
+    groundTruth = imageRead;
+}
+
 void Segmentator::setModel(cv::String pathModel)
 {
     this->pathModel = pathModel;
+}
+
+cv::Mat Segmentator::getImage()
+{
+    return std::get<0>(image);
 }
