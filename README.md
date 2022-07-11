@@ -120,11 +120,11 @@ In order to segment hands on an image, you need to execute the `C++` code i.e. `
 - `-s` or `--segment` : to activativate the segmentation mode
 - Optional `--ops` : to specify the output path where to store the image with hands segmented drawn
 - Optional `--oppa` : to specify the output path where to store the pixel accuracy results of the image
-
-Notice that, at least one of the two optional parameters, must be included into the command line execution instruction.
+- Optional `--opbwm` : to specify the output path where to store the B&W mask
+Notice that, at least one of the three optional parameters, must be included into the command line execution instruction.
 
 Example of a command :
-`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_masks" -s --ops="path_save_segmentation_result" --oppa="path_save_pixelaccuracy"`
+`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_masks" -s --ops="path_save_segmentation_result" --oppa="path_save_pixelaccuracy" --opbwm="path_save_b&w_mask"`
 
 
 
