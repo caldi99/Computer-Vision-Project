@@ -62,6 +62,7 @@ int mainFinale(int argc, char* argv[])
 		"{s segment || run segmentation mode}"
 		"{ops || path where the image with inside segmentations will be stored }" // output path segmentations ../segmentations/
 		"{oppa || path where pixel accuracy results for the image will be stored }" // output path pixel accuracies ../pixelaccuracies/
+		//TODO: PARAMETER TO SAVE B&W MASK
 		;
 
 	//Parse command line
@@ -100,8 +101,8 @@ int mainFinale(int argc, char* argv[])
 				segmentator.readGroundTruth(parser.get<String>("a"));
 				segmentator.readImage(parser.get<String>("i"));
 
-				//Get Image 
-				Mat image = segmentator.getImage();
+				//Get B&W mask
+				cv::Mat maskBW = segmentator.getSegmentationMaskBW();
 
 				cout << "SEGMENTATOR IS RUNNING " << endl;
 

@@ -35,9 +35,10 @@ public:
 
 	/**
 	* This function compute the image with segmented hands of different colors
+	* param bwMask : The BW mask
 	* @return : The image with segmented hands of different colors
 	*/
-	cv::Mat getImageWithSegmentations();
+	cv::Mat getImageWithSegmentations(cv::Mat bwMask);
 
 	/**
 	* This function computes the Pixel Accuracies, given the B&W mask and save the result inside outputFile
@@ -75,15 +76,16 @@ public:
 	*/
 	void setModel(cv::String pathModel);
 
-	/**
-	* This function will get the image read with readImage function
-	* @return : The image read with readImage function
-	*/
-	cv::Mat getImage();
 
 private:	
 	//FUNCTIONS
 	
+	/**
+	* This function converts the output of the CNN to a B&W mask
+	* @param outputCNN : The ouput of the CNN
+	* @return : The B&W mask
+	*/
+	cv::Mat convertOutputCNNToBWMask(cv::Mat outputCNN);
 	
 	
 	
@@ -108,6 +110,8 @@ private:
 	const int WIDTH_INPUT_CNN = 224;
 	const int HEIGHT_INPUT_CNN = 224;
 
+	//Threshold CNN
+	const float THRESHOLD_CNN = 0.5;
 
 };
 #endif // !SEGMENTATOR_H

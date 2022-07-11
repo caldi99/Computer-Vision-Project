@@ -96,10 +96,11 @@ cv::Mat Segmentator::getSegmentationMaskBW()
 
     //Forward
     std::vector<cv::Mat> output = network.forward();
+    
+    //Get Raw Mask
+    cv::Mat rawMaskBW = convertOutputCNNToBWMask(output.at(0));
 
-    //TODO: CONVERT MASK TO IMAGE, APPLY OPERATIONS ETC.. RESIZE ETC..
-    cv::Mat maskToProcess = output.at(0);
-
+    //TODO : APPLY DILATION EROSION RESIZE??
 }
 
 void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)
@@ -148,7 +149,17 @@ void Segmentator::setModel(cv::String pathModel)
     this->pathModel = pathModel;
 }
 
-cv::Mat Segmentator::getImage()
+cv::Mat Segmentator::convertOutputCNNToBWMask(cv::Mat outputCNN)
 {
-    return std::get<0>(image);
+    cv::Mat ret(outputCNN.rows, outputCNN.cols, CV_8UC1);
+    
+    //Convert probabilities into pixels Black and White
+    for (int r = 0; r < outputCNN.rows; r++)    
+        for (int c = 0; c < outputCNN.cols; c++)        
+            if (outputCNN.at<float>(r, c) > THRESHOLD_CNN)
+                ret.at<unsigned char>(r, c) = 255;
+            else 
+                ret.at<unsigned char>(r, c) = 0;
+    
+    return ret;
 }
