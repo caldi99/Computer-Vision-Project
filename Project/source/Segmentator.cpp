@@ -151,8 +151,14 @@ void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)
 {
     //Get ground truths of the image
     std::ofstream file(outputPath + std::get<1>(image) + ".txt");
-    //TODO CALL FUNCTION FOR PIXEL ACCURACY AND SAVE THE RESULT
 
+    //Compute Pixel Accuracy
+    float pixelAccurcy = computePixelAccuracy(bwMask);
+
+    //Write Pixel Accuracy
+    file << "PIXEL ACCURACY : " << pixelAccurcy;
+
+    //Close File
     file.close();
 }
 
@@ -178,7 +184,7 @@ void Segmentator::readGroundTruth(cv::String pathGroundTruth)
 {
     //Read the image
     cv::String actualPath = cv::samples::findFile(pathGroundTruth);
-    cv::Mat imageRead = cv::imread(actualPath);
+    cv::Mat imageRead = cv::imread(actualPath, cv::IMREAD_GRAYSCALE);
 
     //Test if the image is correct
     if (imageRead.empty())

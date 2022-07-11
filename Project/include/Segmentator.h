@@ -41,25 +41,25 @@ public:
 	cv::Mat getImageWithSegmentations(cv::Mat bwMask);
 
 	/**
-	* This function computes the Pixel Accuracies, given the B&W mask and save the result inside outputFile
-	* @param outputFile : The path of the file where to save the Pixel Accuracies 
+	* This function computes the Pixel Accuracies, given the B&W mask and save the result inside pathPixelAccuarcy
+	* @param pathPixelAccuarcy : The path of the file where to save the Pixel Accuracies 
 	* @param bwMask : The B&W mask
 	*/
-	void savePixelAccuracies(cv::String outputFile, cv::Mat bwMask);
+	void savePixelAccuracies(cv::String pathPixelAccuarcy, cv::Mat bwMask);
 
 	/**
-	* This function save the image with segmented hands of different colors inside ouput, given the B&W mask
-	* @param outputPath : The path where to save the image with segmentations
+	* This function save the image with segmented hands of different colors inside pathSegmentation, given the B&W mask
+	* @param pathSegmentation : The path where to save the image with segmentations
 	* @param bwMask : The B&W mask
 	*/
-	void saveSegmentations(cv::String outputPath, cv::Mat bwMask);
+	void saveSegmentations(cv::String pathSegmentation, cv::Mat bwMask);
 
 	/**
-	* This function is used to save the B&W in outputFile
-	* @param outputFile : Path where to save the B&W mask
+	* This function is used to save the B&W in pathSegmentationMaskBW
+	* @param pathSegmentationMaskBW : Path where to save the B&W mask
 	* @param bwMask : B&W mask to save
 	*/
-	void saveSegmentationMaskBW(cv::String outputFile, cv::Mat bwMask);
+	void saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, cv::Mat bwMask);
 
 	/**
 	* This function will read the image to segment inside pathImage
@@ -67,7 +67,6 @@ public:
 	*/
 	void readImage(cv::String pathImage);
 
-	//TODO : need to read it as a grayscale image?
 	/**
 	* This function will read the ground truth inside pathGroundTruth
 	* @param pathGroundTruth : The path were the groundTruth mask is
@@ -90,9 +89,13 @@ private:
 	* @return : The B&W mask
 	*/
 	cv::Mat convertOutputCNNToBWMask(cv::Mat outputCNN);
-	
-	
-	
+		
+	/**
+	* This function compute the Pixel Accuracy given the mask and ground thruth
+	* @param mask : The mask with which compute the Pixel Accuracy
+	* @return : The Pixel accuracy value
+	*/
+	float computePixelAccuracy(cv::Mat mask);
 	
 	//FIELD MEMBER
 

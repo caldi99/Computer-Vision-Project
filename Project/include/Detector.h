@@ -58,19 +58,19 @@ public:
 	cv::Mat getImage();
 
 	/**
-	* This function compute the IOUs, given the detections and save the result inside outputFile
-	* @param outputFile : The path of the file where to save the IOUs
+	* This function compute the IOUs, given the detections and save the result inside pathOutputFile
+	* @param pathOutputFile : The path of the file where to save the IOUs
 	* @param detections : The detections for the image	
 	*/
-	void saveIntersectionsOverUnions(cv::String outputFile,
+	void saveIntersectionsOverUnions(cv::String pathOutputFile,
 									 const std::vector<cv::Rect>& detections);
 	
 	/**
-	* This function save the image with the bounding boxes inside of it inside output
-	* @param output : The path where to save the image with bounding boxes
+	* This function save the image with the bounding boxes inside of it inside pathOutputImage
+	* @param pathOutputImage : The path where to save the image with bounding boxes
 	* @param detections : The detections for the given image
 	*/
-	void saveDetections(cv::String output,const std::vector<cv::Rect>& detections);
+	void saveDetections(cv::String pathOutputImage,const std::vector<cv::Rect>& detections);
 
 private:
 	//FUNCTIONS
