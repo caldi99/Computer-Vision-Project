@@ -11,11 +11,9 @@
 #include <tuple>
 #include <fstream>
 
-//TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
-
 /**
 * This class represent the Segmentator Module 
-* @author : Daniela Cuza and Simone D'antimo
+* @author : Daniela Cuza, Simone D'antimo and Francesco Caldivezzi
 */
 class Segmentator
 {
@@ -38,28 +36,28 @@ public:
 	* param bwMask : The BW mask
 	* @return : The image with segmented hands of different colors
 	*/
-	cv::Mat getImageWithSegmentations(cv::Mat bwMask);
+	cv::Mat getImageWithSegmentations(const cv::Mat& bwMask);
 
 	/**
 	* This function computes the Pixel Accuracies, given the B&W mask and save the result inside pathPixelAccuarcy
 	* @param pathPixelAccuarcy : The path of the file where to save the Pixel Accuracies 
 	* @param bwMask : The B&W mask
 	*/
-	void savePixelAccuracies(cv::String pathPixelAccuarcy, cv::Mat bwMask);
+	void savePixelAccuracies(cv::String pathPixelAccuarcy, const cv::Mat& bwMask);
 
 	/**
 	* This function save the image with segmented hands of different colors inside pathSegmentation, given the B&W mask
 	* @param pathSegmentation : The path where to save the image with segmentations
 	* @param bwMask : The B&W mask
 	*/
-	void saveSegmentations(cv::String pathSegmentation, cv::Mat bwMask);
+	void saveSegmentations(cv::String pathSegmentation, const cv::Mat& bwMask);
 
 	/**
 	* This function is used to save the B&W in pathSegmentationMaskBW
 	* @param pathSegmentationMaskBW : Path where to save the B&W mask
 	* @param bwMask : B&W mask to save
 	*/
-	void saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, cv::Mat bwMask);
+	void saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, const cv::Mat& bwMask);
 
 	/**
 	* This function will read the image to segment inside pathImage
@@ -118,7 +116,6 @@ private:
 		float pixelAccuracy = 0.0f;
 	};
 
-
 	//FUNCTIONS
 	
 	/**
@@ -126,17 +123,15 @@ private:
 	* @param outputCNN : The ouput of the CNN
 	* @return : The B&W mask
 	*/
-	cv::Mat convertOutputCNNToBWMask(cv::Mat outputCNN);
+	cv::Mat convertOutputCNNToBWMask(const cv::Mat& outputCNN);
 		
 	/**
 	* This function compute the Pixel Accuracy given the mask and ground thruth
 	* @param bwMask : The mask with which compute the Pixel Accuracy
 	* @return : The Pixel accuracy value
 	*/
-	EvaluationData computePixelAccuracy(cv::Mat bwMask);
-	
-	
-
+	EvaluationData computePixelAccuracy(const cv::Mat& bwMask);
+		
 	//CONSTANTS
 	
 	//Input CNN
@@ -146,5 +141,7 @@ private:
 	//Threshold CNN
 	const float THRESHOLD_CNN = 0.5f;
 
+	//255 value pixel
+	const int HIGHEST_VALUE = 255;
 };
 #endif // !SEGMENTATOR_H

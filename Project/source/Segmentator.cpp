@@ -5,7 +5,7 @@
 
 /**
 * This file represent the Segmentator module
-* @author : Daniela Cuza and Simone D'antimo
+* @author : Daniela Cuza, Simone D'antimo and Francesco Caldivezzi
 */
 /*
 void Segmentator::segment_1(cv::String pathImage)
@@ -106,12 +106,12 @@ cv::Mat Segmentator::getSegmentationMaskBW()
 
     //Threshold the resized image
     cv::Mat thresholded;
-    cv::threshold(rawMaskResized, thresholded, 1, 255, cv::THRESH_BINARY);
+    cv::threshold(rawMaskResized, thresholded, 1, HIGHEST_VALUE, cv::THRESH_BINARY);
     
     return thresholded;    
 }
 
-cv::Mat Segmentator::getImageWithSegmentations(cv::Mat bwMask)
+cv::Mat Segmentator::getImageWithSegmentations(const cv::Mat& bwMask)
 {
     //TODO : APPLY DILATION EROSION BEFORE AND AFTER ??
 
@@ -127,7 +127,7 @@ cv::Mat Segmentator::getImageWithSegmentations(cv::Mat bwMask)
     
     //Random Colors
     for (int i = 1; i < colors.size(); i++)    
-        colors.at(i) = cv::Vec3b((std::rand() % 255), (std::rand() % 255), (std::rand() % 255));
+        colors.at(i) = cv::Vec3b((std::rand() % HIGHEST_VALUE), (std::rand() % HIGHEST_VALUE), (std::rand() % HIGHEST_VALUE));
     
     //Create mask with colored components
     cv::Mat colorMask(bwMask.rows, bwMask.cols, CV_8UC3);
@@ -147,7 +147,7 @@ cv::Mat Segmentator::getImageWithSegmentations(cv::Mat bwMask)
     return ret;
 }
 
-void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)
+void Segmentator::savePixelAccuracies(cv::String outputPath, const cv::Mat& bwMask)
 {
     //Get ground truths of the image
     std::ofstream file(outputPath + std::get<1>(image) + ".txt");
@@ -168,7 +168,7 @@ void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)
     file.close();
 }
 
-void Segmentator::saveSegmentations(cv::String pathSegmentation, cv::Mat bwMask)
+void Segmentator::saveSegmentations(cv::String pathSegmentation, const cv::Mat& bwMask)
 {
     //Construct name of the image that we are going to save
     cv::String nameFileExtension = std::get<1>(image) + "_segmentations.jpg";
@@ -180,7 +180,7 @@ void Segmentator::saveSegmentations(cv::String pathSegmentation, cv::Mat bwMask)
     cv::imwrite(pathSegmentation + nameFileExtension, imageToSave);
 }
 
-void Segmentator::saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, cv::Mat bwMask)
+void Segmentator::saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, const cv::Mat& bwMask)
 {
     //Construct name of the image that we are going to save
     cv::String nameFileExtension = std::get<1>(image) + "_bwmask.jpg";
@@ -226,7 +226,7 @@ void Segmentator::setModel(cv::String pathModel)
     this->pathModel = pathModel;
 }
 
-cv::Mat Segmentator::convertOutputCNNToBWMask(cv::Mat outputCNN)
+cv::Mat Segmentator::convertOutputCNNToBWMask(const cv::Mat& outputCNN)
 {
     cv::Mat ret(outputCNN.rows, outputCNN.cols, CV_8UC1);
     
@@ -234,14 +234,14 @@ cv::Mat Segmentator::convertOutputCNNToBWMask(cv::Mat outputCNN)
     for (int r = 0; r < outputCNN.rows; r++)    
         for (int c = 0; c < outputCNN.cols; c++)        
             if (outputCNN.at<float>(r, c) > THRESHOLD_CNN)
-                ret.at<unsigned char>(r, c) = 255;
+                ret.at<unsigned char>(r, c) = HIGHEST_VALUE;
             else 
                 ret.at<unsigned char>(r, c) = 0;
     
     return ret;
 }
 
-Segmentator::EvaluationData Segmentator::computePixelAccuracy(cv::Mat bwMask)
+Segmentator::EvaluationData Segmentator::computePixelAccuracy(const cv::Mat& bwMask)
 {
     unsigned char intensity;
     unsigned char intensityTrue;
@@ -254,20 +254,19 @@ Segmentator::EvaluationData Segmentator::computePixelAccuracy(cv::Mat bwMask)
         {
             intensity = bwMask.at<unsigned char>(i, j);
             intensityTrue = groundTruth.at<unsigned char>(i, j);
-            if (intensityTrue == 255)            
-                if (intensity == 255)
+            if (intensityTrue == HIGHEST_VALUE)
+                if (intensity == HIGHEST_VALUE)
                     maskEvaluation.tp++; //both pixel white -> true positive
                 else
                     maskEvaluation.fn++; //pixel should be white but is black -> false negative
             
             else             
-                if (intensity == 255)
+                if (intensity == HIGHEST_VALUE)
                     maskEvaluation.fp++; //Pixel should be black, but is white --> false positive
                 else
                     maskEvaluation.tn++; // both pixel black --> true negative    
             
-        }
-    
+        }    
 
     //Compute recall, precision and pixel accuracy
     maskEvaluation.recall = static_cast<float> (maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fn));
