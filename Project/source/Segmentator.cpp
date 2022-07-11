@@ -5,7 +5,7 @@
 
 /**
 * This file represent the Segmentator module
-* @author : Daniela Cuza and Francesco Caldivezzi
+* @author : Daniela Cuza and Simone D'antimo
 */
 /*
 void Segmentator::segment_1(cv::String pathImage)
@@ -152,14 +152,41 @@ void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)
     //Get ground truths of the image
     std::ofstream file(outputPath + std::get<1>(image) + ".txt");
 
-    //Compute Pixel Accuracy
-    float pixelAccurcy = computePixelAccuracy(bwMask);
+    //Compute Evaluations
+    EvaluationData evalutation = computePixelAccuracy(bwMask);
 
-    //Write Pixel Accuracy
-    file << "PIXEL ACCURACY : " << pixelAccurcy;
+    //Write Evaluations
+    file << "TRUE POSIVE : " << evalutation.tp << std::endl <<
+        "TRUE NEGATIVE : " << evalutation.tn << std::endl <<
+        "FALSE POSIVE : " << evalutation.fp << std::endl <<
+        "FALSE NEGATIVE : " << evalutation.tn << std::endl <<
+        "PRECISION : " << evalutation.precision << std::endl <<
+        "RECALL : " << evalutation.recall << std::endl <<
+        "PIXEL ACCURACY : " << evalutation.pixelAccuracy << std::endl;
 
     //Close File
     file.close();
+}
+
+void Segmentator::saveSegmentations(cv::String pathSegmentation, cv::Mat bwMask)
+{
+    //Construct name of the image that we are going to save
+    cv::String nameFileExtension = std::get<1>(image) + "_segmentations.jpg";
+
+    //Get Image Segmented
+    cv::Mat imageToSave = getImageWithSegmentations(bwMask);
+
+    //Save Image
+    cv::imwrite(pathSegmentation + nameFileExtension, imageToSave);
+}
+
+void Segmentator::saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, cv::Mat bwMask)
+{
+    //Construct name of the image that we are going to save
+    cv::String nameFileExtension = std::get<1>(image) + "_bwmask.jpg";
+
+    //Save Image
+    cv::imwrite(pathSegmentationMaskBW + nameFileExtension, bwMask);
 }
 
 void Segmentator::readImage(cv::String pathImage)
@@ -212,4 +239,43 @@ cv::Mat Segmentator::convertOutputCNNToBWMask(cv::Mat outputCNN)
                 ret.at<unsigned char>(r, c) = 0;
     
     return ret;
+}
+
+Segmentator::EvaluationData Segmentator::computePixelAccuracy(cv::Mat bwMask)
+{
+    unsigned char intensity;
+    unsigned char intensityTrue;
+    EvaluationData maskEvaluation;
+    unsigned char tmp = 0;
+
+    //For every pixel calculate false positive, false negatives, true positive, true negatives
+    for (int i = 0; i < bwMask.rows; i++)    
+        for (int j = 0; j < bwMask.cols; j++) 
+        {
+            intensity = bwMask.at<unsigned char>(i, j);
+            intensityTrue = groundTruth.at<unsigned char>(i, j);
+            if (intensityTrue == 255)            
+                if (intensity == 255)
+                    maskEvaluation.tp++; //both pixel white -> true positive
+                else
+                    maskEvaluation.fn++; //pixel should be white but is black -> false negative
+            
+            else             
+                if (intensity == 255)
+                    maskEvaluation.fp++; //Pixel should be black, but is white --> false positive
+                else
+                    maskEvaluation.tn++; // both pixel black --> true negative    
+            
+        }
+    
+
+    //Compute recall, precision and pixel accuracy
+    maskEvaluation.recall = static_cast<float> (maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fn));
+    
+    maskEvaluation.precision = static_cast<float>(maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fp));
+    
+    maskEvaluation.pixelAccuracy = static_cast<float> ((maskEvaluation.tn + maskEvaluation.tp) /
+        (maskEvaluation.tn + maskEvaluation.tp + maskEvaluation.fn + maskEvaluation.fp));
+
+    return maskEvaluation;
 }

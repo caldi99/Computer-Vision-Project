@@ -15,7 +15,7 @@
 
 /**
 * This class represent the Segmentator Module 
-* @author : Daniela Cuza and Francesco Caldivezzi
+* @author : Daniela Cuza and Simone D'antimo
 */
 class Segmentator
 {
@@ -81,22 +81,7 @@ public:
 
 
 private:	
-	//FUNCTIONS
-	
-	/**
-	* This function converts the output of the CNN to a B&W mask
-	* @param outputCNN : The ouput of the CNN
-	* @return : The B&W mask
-	*/
-	cv::Mat convertOutputCNNToBWMask(cv::Mat outputCNN);
-		
-	/**
-	* This function compute the Pixel Accuracy given the mask and ground thruth
-	* @param mask : The mask with which compute the Pixel Accuracy
-	* @return : The Pixel accuracy value
-	*/
-	float computePixelAccuracy(cv::Mat mask);
-	
+
 	//FIELD MEMBER
 
 	//Image to process
@@ -108,8 +93,49 @@ private:
 	//Ground Truth Mask
 	cv::Mat groundTruth;
 
-	
+	//Struct for containing Data regaring pixel accuracy
+	struct EvaluationData {
 
+		//false positive
+		int fp = 0;
+
+		//false negative
+		int fn = 0;
+
+		//true positive
+		int tp = 0;
+
+		//true negative
+		int tn = 0;
+
+		//Recall = TruePositives / (TruePositives + FalseNegatives)
+		float recall = 0.0f;
+
+		//Precision = TruePositives / (TruePositives + FalsePositives)
+		float precision = 0.0f;
+
+		//Pixel Accuracy = (TrueNegatives + TruePositives) / (TruePositives + FalsePositives + TrueNegatives + TruePositives)
+		float pixelAccuracy = 0.0f;
+	};
+
+
+	//FUNCTIONS
+	
+	/**
+	* This function converts the output of the CNN to a B&W mask
+	* @param outputCNN : The ouput of the CNN
+	* @return : The B&W mask
+	*/
+	cv::Mat convertOutputCNNToBWMask(cv::Mat outputCNN);
+		
+	/**
+	* This function compute the Pixel Accuracy given the mask and ground thruth
+	* @param bwMask : The mask with which compute the Pixel Accuracy
+	* @return : The Pixel accuracy value
+	*/
+	EvaluationData computePixelAccuracy(cv::Mat bwMask);
+	
+	
 
 	//CONSTANTS
 	
@@ -118,7 +144,7 @@ private:
 	const int HEIGHT_INPUT_CNN = 224;
 
 	//Threshold CNN
-	const float THRESHOLD_CNN = 0.5;
+	const float THRESHOLD_CNN = 0.5f;
 
 };
 #endif // !SEGMENTATOR_H
