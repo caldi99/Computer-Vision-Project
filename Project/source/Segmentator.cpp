@@ -100,7 +100,51 @@ cv::Mat Segmentator::getSegmentationMaskBW()
     //Get Raw Mask
     cv::Mat rawMaskBW = convertOutputCNNToBWMask(output.at(0));
 
-    //TODO : APPLY DILATION EROSION RESIZE??
+    //Resize the Raw Mask
+    cv::Mat rawMaskResized;
+    cv::resize(rawMaskBW, rawMaskResized,cv::Size(std::get<0>(image).cols, std::get<0>(image).rows), cv::INTER_CUBIC);
+
+    //Threshold the resized image
+    cv::Mat thresholded;
+    cv::threshold(rawMaskResized, thresholded, 1, 255, cv::THRESH_BINARY);
+    
+    return thresholded;    
+}
+
+cv::Mat Segmentator::getImageWithSegmentations(cv::Mat bwMask)
+{
+    //TODO : APPLY DILATION EROSION BEFORE AND AFTER ??
+
+    //Get Connected components of the B&W image
+    cv::Mat labelImage(bwMask.rows, bwMask.cols, CV_32S);
+    int nLabels = cv::connectedComponents(bwMask, labelImage, 8, CV_32S);
+    
+    //Create random colors for coloring the hands in the image
+    std::vector<cv::Vec3b> colors(nLabels);    
+    
+    //Background
+    colors.at(0) = cv::Vec3b(0, 0, 0); 
+    
+    //Random Colors
+    for (int i = 1; i < colors.size(); i++)    
+        colors.at(i) = cv::Vec3b((std::rand() % 255), (std::rand() % 255), (std::rand() % 255));
+    
+    //Create mask with colored components
+    cv::Mat colorMask(bwMask.rows, bwMask.cols, CV_8UC3);
+    for (int r = 0; r < colorMask.rows; r++)
+        for (int c = 0; c < colorMask.cols; c++)       
+            colorMask.at<cv::Vec3b>(r, c) = colors.at(labelImage.at<int>(r, c));
+
+    //Create image with colored hands
+    cv::Mat ret(bwMask.rows, bwMask.cols, CV_8UC3);
+    for(int r = 0; r < ret.rows; r++)
+        for (int c = 0; c < ret.cols; c++)
+            if (colorMask.at<cv::Vec3b>(r, c) == colors.at(0)) // If background then pixel orginal image            
+                ret.at<cv::Vec3b>(r, c) = std::get<0>(image).at<cv::Vec3b>(r, c);
+            else 
+                ret.at<cv::Vec3b>(r, c) = colorMask.at<cv::Vec3b>(r, c);
+
+    return ret;
 }
 
 void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)

@@ -49,13 +49,17 @@ public:
 
 	/**
 	* This function save the image with segmented hands of different colors inside ouput, given the B&W mask
-	* @param ouput : The path where to save the image with segmentations
+	* @param outputPath : The path where to save the image with segmentations
 	* @param bwMask : The B&W mask
 	*/
-	void saveSegmentations(cv::String output, cv::Mat bwMask);
+	void saveSegmentations(cv::String outputPath, cv::Mat bwMask);
 
-	//TODO:THINK IF NECESSARY
-	void saveSegmentationMaskBW();
+	/**
+	* This function is used to save the B&W in outputFile
+	* @param outputFile : Path where to save the B&W mask
+	* @param bwMask : B&W mask to save
+	*/
+	void saveSegmentationMaskBW(cv::String outputFile, cv::Mat bwMask);
 
 	/**
 	* This function will read the image to segment inside pathImage

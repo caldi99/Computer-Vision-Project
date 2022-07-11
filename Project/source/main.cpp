@@ -62,7 +62,7 @@ int mainFinale(int argc, char* argv[])
 		"{s segment || run segmentation mode}"
 		"{ops || path where the image with inside segmentations will be stored }" // output path segmentations ../segmentations/
 		"{oppa || path where pixel accuracy results for the image will be stored }" // output path pixel accuracies ../pixelaccuracies/
-		//TODO: PARAMETER TO SAVE B&W MASK
+		"{opbwm || path where the B&W mask will be stored }" //output path black and white mask ../mask/
 		;
 
 	//Parse command line
@@ -102,20 +102,56 @@ int mainFinale(int argc, char* argv[])
 				segmentator.readImage(parser.get<String>("i"));
 
 				//Get B&W mask
-				cv::Mat maskBW = segmentator.getSegmentationMaskBW();
+				cv::Mat bwMask = segmentator.getSegmentationMaskBW();
 
 				cout << "SEGMENTATOR IS RUNNING " << endl;
 
-				//TODO : think to what functions to call from here on
+				String outputPathPixelAccuracy, outputPathSegmentations, outputPathBWMask;
 
-				if (parser.has("ops") && parser.has("oppa")) 
+				if (parser.has("ops") && parser.has("oppa") && parser.has("opbwm"))
 				{
+					outputPathSegmentations = parser.get<String>("ops");
+					outputPathPixelAccuracy = parser.get<String>("oppa");
+					outputPathBWMask = parser.get<String>("opbwm");
+					segmentator.saveSegmentations(outputPathSegmentations, bwMask);
+					segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
+					segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
 				}
-				else if (parser.has("ops")) //only
+				else if (parser.has("ops") && parser.has("oppa"))
 				{
+					outputPathSegmentations = parser.get<String>("ops");
+					outputPathPixelAccuracy = parser.get<String>("oppa");
+					segmentator.saveSegmentations(outputPathSegmentations, bwMask);
+					segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
+				}
+				else if (parser.has("ops") && parser.has("opbwm"))
+				{
+					outputPathSegmentations = parser.get<String>("ops");
+					outputPathBWMask = parser.get<String>("opbwm");
+					segmentator.saveSegmentations(outputPathSegmentations, bwMask);
+					segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
+				}
+				else if (parser.has("oppa") && parser.has("opbwm"))
+				{
+					outputPathPixelAccuracy = parser.get<String>("oppa");
+					outputPathBWMask = parser.get<String>("opbwm");
+					segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
+					segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
+				}
+				else if (parser.has("ops"))
+				{
+					outputPathSegmentations = parser.get<String>("ops");
+					segmentator.saveSegmentations(outputPathSegmentations, bwMask);
 				}
 				else if (parser.has("oppa"))
 				{
+					outputPathPixelAccuracy = parser.get<String>("oppa");
+					segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
+				}
+				else if(parser.has("opbwm"))
+				{ 
+					outputPathBWMask = parser.get<String>("opbwm");
+					segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
 				}
 				else
 				{
