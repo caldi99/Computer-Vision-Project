@@ -7,7 +7,7 @@
 * This file represent the Segmentator module
 * @author : Daniela Cuza and Francesco Caldivezzi
 */
-
+/*
 void Segmentator::segment_1(cv::String pathImage)
 {
 	// **********  read the image ************** //
@@ -84,6 +84,31 @@ void Segmentator::segment_1(cv::String pathImage)
 
     
     
+}*/
+
+cv::Mat Segmentator::getSegmentationMaskBW()
+{
+    //Read Model
+    cv::dnn::Net network = cv::dnn::readNetFromONNX(pathModel);
+
+    //Set input
+    network.setInput(cv::dnn::blobFromImage(std::get<0>(image), 1.0, cv::Size(WIDTH_INPUT_CNN, HEIGHT_INPUT_CNN), true, false));
+
+    //Forward
+    std::vector<cv::Mat> output = network.forward();
+
+    //TODO: CONVERT MASK TO IMAGE, APPLY OPERATIONS ETC.. RESIZE ETC..
+    cv::Mat maskToProcess = output.at(0);
+
+}
+
+void Segmentator::savePixelAccuracies(cv::String outputPath, cv::Mat bwMask)
+{
+    //Get ground truths of the image
+    std::ofstream file(outputPath + std::get<1>(image) + ".txt");
+    //TODO CALL FUNCTION FOR PIXEL ACCURACY AND SAVE THE RESULT
+
+    file.close();
 }
 
 void Segmentator::readImage(cv::String pathImage)

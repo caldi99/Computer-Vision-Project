@@ -9,6 +9,7 @@
 //STL
 #include <vector>
 #include <tuple>
+#include <fstream>
 
 //TODO THINK OF WHAT CAN BE PASSED AS REFERENCE
 
@@ -24,7 +25,36 @@ public:
 	* This function will read the images inside pathImages
 	* @param pathImages : The path were the images are
 	*/
-	void segment_1(cv::String pathImage);
+	//void segment_1(cv::String pathImage);
+
+	/**
+	* This function computes the B&W mask.
+	* @return : The B&W Mask
+	*/
+	cv::Mat getSegmentationMaskBW();
+
+	/**
+	* This function compute the image with segmented hands of different colors
+	* @return : The image with segmented hands of different colors
+	*/
+	cv::Mat getImageWithSegmentations();
+
+	/**
+	* This function computes the Pixel Accuracies, given the B&W mask and save the result inside outputFile
+	* @param outputFile : The path of the file where to save the Pixel Accuracies 
+	* @param bwMask : The B&W mask
+	*/
+	void savePixelAccuracies(cv::String outputFile, cv::Mat bwMask);
+
+	/**
+	* This function save the image with segmented hands of different colors inside ouput, given the B&W mask
+	* @param ouput : The path where to save the image with segmentations
+	* @param bwMask : The B&W mask
+	*/
+	void saveSegmentations(cv::String output, cv::Mat bwMask);
+
+	//TODO:THINK IF NECESSARY
+	void saveSegmentationMaskBW();
 
 	/**
 	* This function will read the image to segment inside pathImage
@@ -51,7 +81,13 @@ public:
 	*/
 	cv::Mat getImage();
 
-private:
+private:	
+	//FUNCTIONS
+	
+	
+	
+	
+	
 	//FIELD MEMBER
 
 	//Image to process
@@ -62,5 +98,16 @@ private:
 
 	//Ground Truth Mask
 	cv::Mat groundTruth;
+
+	
+
+
+	//CONSTANTS
+	
+	//Input CNN
+	const int WIDTH_INPUT_CNN = 224;
+	const int HEIGHT_INPUT_CNN = 224;
+
+
 };
 #endif // !SEGMENTATOR_H
