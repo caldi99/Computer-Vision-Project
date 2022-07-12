@@ -10,9 +10,8 @@
 using namespace cv;
 using namespace std;
 
-int mainDaniela();
-//int mainFinale(int argc, char* argv[]);
 //void detectAllImages();
+//void segmentAllImages();
 
 enum MODE {
 	DETECT, SEGMENT, ERROR
@@ -133,8 +132,11 @@ int main(int argc, char* argv[])
 				cout << "Error, You need to execute this file by adding into the command line either -ops or -oppa or both";
 				return 1;
 			}
-			//TODO: Show the final image here with hands segmentated
 
+			//Show image with segmentations
+			Mat image = segmentator.getImageWithSegmentations(bwMask);
+			imshow("Image", image);
+			waitKey();
 			break;
 		}
 		case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
@@ -202,31 +204,48 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	return 0;
-	
-}
 
-int mainDaniela()
-{
-	Segmentator segmentator;
-	//segmentator.segment_1("01.jpg");
-	/*
-	Mat src = imread("01.jpg", IMREAD_COLOR);
-	Mat bin;
-	Mat lap;
-	PreProcSegmentator p;
-	p.getPreFiltered(src, bin, lap);
-	imshow("b", bin);
-	imshow("l", lap);
-	*/
-	cv::waitKey(0);
-	return 0;
 }
-
 
 /*
-int mainFinale(int argc, char* argv[]) 
+void segmentAllImages()
 {
-	
+	//Create Segmentator
+	Segmentator segmentator;
+
+	//Set Model
+	segmentator.setModel("../model/model.onnx");
+
+	for (int i = 1; i <= 30; i++)
+	{
+		//Create Image Name
+		String imageName;
+		if (i < 10)
+			imageName = "0" + std::to_string(i);
+		else
+			imageName = std::to_string(i);
+
+		String pathImage = "../testset/rgb/" + imageName + ".jpg";
+		String pathGt = "../testset/mask/" + imageName + ".png";
+
+		//Read image and gt
+		segmentator.readImage(pathImage);
+		segmentator.readGroundTruth(pathGt);
+
+		cout << "SEGMENTATOR IS RUNNING FOR : " << std::to_string(i) << endl;
+
+		//Get B&W mask
+		cv::Mat bwMask = segmentator.getSegmentationMaskBW();
+
+		String outputPathPixelAccuracy = "../pixelaccuracy/";
+		String outputPathSegmentations = "../segmentations/";
+		String outputPathBWMask = "../bwmask/";
+		
+		//Save Results
+		segmentator.saveSegmentations(outputPathSegmentations, bwMask);
+		segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
+		segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
+	}
 }*/
 
 
@@ -237,16 +256,16 @@ int mainFinale(int argc, char* argv[])
 
 	//Set Model
 	detector.setModel("../model/model.pb");
-	
+
 	for (int i = 1; i <= 30; i++)
 	{
 		//Create Image Name
 		String imageName;
 		if (i < 10)
 			imageName = "0" + std::to_string(i);
-		else		
+		else
 			imageName = std::to_string(i);
-		
+
 		String pathImage = "../testset/rgb/" + imageName + ".jpg";
 		String pathGt = "../testset/det/" + imageName + ".txt";
 
@@ -258,12 +277,12 @@ int mainFinale(int argc, char* argv[])
 
 		//Compute bounding boxes
 		vector<Rect> boundingBoxes = detector.detectHands();
-		
+
 		String outputPathIous = "../ious/";
 		String outputPathDetections = "../detections/";
 
 		//Save results
 		detector.saveDetections(outputPathDetections, boundingBoxes);
-		detector.saveIntersectionsOverUnions(outputPathIous, boundingBoxes);		
+		detector.saveIntersectionsOverUnions(outputPathIous, boundingBoxes);
 	}
 }*/
