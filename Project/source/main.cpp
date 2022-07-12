@@ -132,8 +132,11 @@ int main(int argc, char* argv[])
 				cout << "Error, You need to execute this file by adding into the command line either -ops or -oppa or both";
 				return 1;
 			}
-			//TODO: Show the final image here with hands segmentated
 
+			//Show image with segmentations
+			Mat image = segmentator.getImageWithSegmentations(bwMask);
+			imshow("Image", image);
+			waitKey();
 			break;
 		}
 		case MODE::DETECT: //This part was entirly written by Francesco Caldivezzi
