@@ -15,8 +15,8 @@ Overview :
     * [Model Conversion](#converting-the-h5-into-the-model-supported-by-opencv-library)
     * [Inference](#detect-hands-on-images)
 * [Hand Segmentation](#hand-segmentation)
-	* [Dataset] (#Dataset)
-	* [Training] (#Training)
+	* [Dataset] (#dataset)
+	* [Training] (#training)
 	* [Inference](#segment-hands-on-images)
 
 ## Compiling the C++ Code
