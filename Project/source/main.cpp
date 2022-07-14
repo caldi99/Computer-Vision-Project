@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 {
 	/*segmentAllImages();
 	return 0;*/
-
+		
 	//one dash in front if single letters, two dashes if words
 	const String KEYS =
 		//COMMON
