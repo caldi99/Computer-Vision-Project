@@ -1,9 +1,9 @@
-
 //MY IMPORTS
 #include "../include/Segmentator.h"
 #include "../include/Utils.h"
 
 #include <iostream>
+
 /**
 * This file represent the Segmentator module
 * @author : Daniela Cuza, Simone D'antimo
