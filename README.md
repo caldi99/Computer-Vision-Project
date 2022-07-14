@@ -136,7 +136,7 @@ For training the model, you can use the script present inside `matlab_scripts/` 
 
 First of all, in order to find out what are the hands inside an image you need to either :
 - for each image that you what to segment, compute the output mask with the model previously trained
-- if the testset is the one that can be downloa from here : https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing , then, just dowload the mask directly from : TODO ADD LINK
+- if the testset is the one that can be downloaded from here : https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing , then, just dowload the mask directly from : TODO ADD LINK
 
 In order to segment hands on an image, you need to execute the `C++` code i.e. `./projectGroup05` with the following, possibiles parameters :
 - `-s` or `--segment` : to activativate the segmentation mode
