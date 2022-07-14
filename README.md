@@ -122,7 +122,7 @@ we have converted the model (.mat) file into the open neural network exchage for
 	 
 Notice that : the mentioned problem was encountered with opencv version 4.5.x compiled from source and also version 4.6.0 pre-compiled for C++, while, the opencv version of python used was 4.6.0
 
-Therefore, the solution was implemented with the matlab model, with masks pre-computed for the testset (https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing) provided by the following link : (as mentioned here : LINK)
+Therefore, with masks pre-computed for the testset (https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing) provided by the following link : (as mentioned here : LINK)
 
 ### Dataset
 
