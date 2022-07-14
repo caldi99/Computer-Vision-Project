@@ -1,3 +1,7 @@
+"""
+    This file was entirely written by Francesco Caldivezzi
+"""
+
 import cv2
 
 #Load model

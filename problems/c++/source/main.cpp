@@ -11,6 +11,8 @@ using namespace std;
 using namespace cv;
 using namespace dnn;
 
+//This File was written by Francesco Caldivezzi
+
 int main(int argc, char* argv[])
 {
 	//Load Model
