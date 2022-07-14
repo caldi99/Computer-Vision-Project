@@ -1,6 +1,5 @@
 # COMPUTER VISION PROJECT
 
-
 In this project the goal is to detect and segment hands inside images.
 In order to achieve this, the main idea was to use for the :
 
@@ -15,8 +14,9 @@ Overview :
     * [Model Conversion](#converting-the-h5-into-the-model-supported-by-opencv-library)
     * [Inference](#detect-hands-on-images)
 * [Hand Segmentation](#hand-segmentation)
-	* [Dataset] (#dataset)
-	* [Training] (#training)
+	* [Information before usage](#disclaimer)
+	* [Dataset](#dataset)
+	* [Training](#training)
 	* [Inference](#segment-hands-on-images)
 
 ## Compiling the C++ Code
@@ -90,15 +90,13 @@ The last step is to convert the `model.h5` into .pb file in order to be able to 
 
 Notice that, you can skip this process and download immediatly the `model.pb` file from : https://drive.google.com/file/d/12nhBovdFL4O7X1d0FZbZOiSmgfYZnWmj/view?usp=sharing
 
-
 ### Detect Hands on images
 
 In order to detect hands on an image, you need to execute the `C++` code i.e. `./projectGroup05` with the following, possibiles parameters :
-
+- `-d` or `--detect` : to activativate the detection mode
 - `-m` or `--model` : to specify the path of the model for detection
 - `-i` or `--image` : to specify the path of the image for which detecting hands, default value : `../testset/rgb/01.jpg`
 - `-a` or `--annotation` : to specify the path of the annotation for the image for which detecting hands
-- `-d` or `--detect` : to activativate the detection mode
 - Optional `--opd` : to specify the output path where to store the image with the bounding boxes drawn
 - Optional `--opius` : to specify the output path where to store the ious results of the image
 
@@ -106,32 +104,49 @@ Notice that, at least one of the two optional parameters, must be included into 
 
 Example of a command :
 
-`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_annotations" -d --opd="path_save_detection_result" --opious="path_save_ious"`
+`./projectGroup05 -d -m="path_to_model" -i="path_to_image" -a="path_to_annotations" --opd="path_save_detection_result" --opious="path_save_ious"`
 
 ## Hand Segmentation
 
+### Disclaimer
+
+The segmentation process is carried out with the usage of pre-computed masks from a matlab model (*that we have developed ourselves and fine tuned it*) for the following reasons :
+
+- The process of inference through the usage of opencv library require the usage of the conversion of the model (MATLAB), into one of the supported formats, as pointed out here : https://docs.opencv.org/3.4/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422 , so,
+we have converted the model (.mat) file into the open neural network exchage format (.onnx), you can in fact, download the model in such a format from here : TODO LINK
+
+- However, when we try to use the model with *cv::readNetFromOnnx* or *cv::readNet* and then we set input with *net.setInput(..)*, a we compute the output *net.forward(..)* a strange behaviour happens in particular :
+	- The output computed with the usage of C++ code is different from the one computed with python.
+	- In particular, using python, the ouput is correct while using C++ is not. The proof of such a strange result can be found in the `problems` directory in particular, *because we not inventing nothing*, just observe the difference of the contents between the two files : `problems/python/results.txt` and `problems/c++/source/results.txt`. 
+	So, what we can conclude is that with python everything works while on C++ not. Moreover, here also the link of similar problem to ours one : https://discuss.tvm.apache.org/t/different-output-for-large-yolo-onnx-model-in-python-correct-and-c-incorrect/11537
+	 
+Notice that : the mentioned problem was encountered with opencv version 4.5.x compiled from source and also version 4.6.0 pre-compiled for C++, while, the opencv version of python used was 4.6.0
+
+Therefore, with masks pre-computed for the testset (https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing) provided by the following link : (as mentioned here : LINK)
+
 ### Dataset
-TODO COMPLETE
+
+The dataset used to train the model for segment hands can be downloaded from this link : TODO ADD LINK.
 
 ### Training
-TODO : FINISH
 
+For training the model, you can use the script present inside `matlab_scripts/` TODO ADD NAME
 
 ### Segment Hands on images
 
+First of all, in order to find out what are the hands inside an image you need to either :
+- for each image that you what to segment, compute the output mask with the model previously trained
+- if the testset is the one that can be downloaded from here : https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing , then, just dowload the mask directly from : TODO ADD LINK
+
 In order to segment hands on an image, you need to execute the `C++` code i.e. `./projectGroup05` with the following, possibiles parameters :
-- `-m` or `--model` : to specify the path of the model for segmentation
+- `-s` or `--segment` : to activativate the segmentation mode
 - `-i` or `--image` : to specify the path of the image for which detecting hands, default value : `../testset/rgb/01.jpg`
 - `-a` or `--annotation` : to specify the path of the annotation for the image, i.e. the path to the ground truth mask
-- `-s` or `--segment` : to activativate the segmentation mode
+- `--bwm` : to specify the path where is the raw mask provided in output by the model
 - Optional `--ops` : to specify the output path where to store the image with hands segmented drawn
 - Optional `--oppa` : to specify the output path where to store the pixel accuracy results of the image
 - Optional `--opbwm` : to specify the output path where to store the B&W mask
 Notice that, at least one of the three optional parameters, must be included into the command line execution instruction.
 
 Example of a command :
-`./projectGroup05 -m="path_to_model" -i="path_to_image" -a="path_to_masks" -s --ops="path_save_segmentation_result" --oppa="path_save_pixelaccuracy" --opbwm="path_save_b&w_mask"`
-
-
-
-
+`./projectGroup05 -s -i="path_to_image" -a="path_to_mask" --bwm="path_bw_mask_model" --ops="path_save_segmentation_result" --oppa="path_save_pixelaccuracy" --opbwm="path_save_b&w_mask"`

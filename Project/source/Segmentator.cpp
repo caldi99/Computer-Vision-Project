@@ -1,114 +1,25 @@
-
 //MY IMPORTS
 #include "../include/Segmentator.h"
 #include "../include/Utils.h"
 
+#include <iostream>
+
 /**
 * This file represent the Segmentator module
-* @author : Daniela Cuza, Simone D'antimo and Francesco Caldivezzi
+* @author : Daniela Cuza, Simone D'antimo
 */
-/*
-void Segmentator::segment_1(cv::String pathImage)
-{
-	// **********  read the image ************** //
-	cv::Mat img = cv::imread(pathImage, cv::IMREAD_COLOR);
-
-
-    
-    // ************** definition of variables ************** //
-    cv::Mat out_bf;
-    cv::Mat skin_region;
-    cv::Mat src;
-
-
-	// ********** step 1) apply bilateral filter ************** //
-    cv::bilateralFilter(img,out_bf, 5, 150, 150);
-
-    
-	// ********** step 2) apply threshold *************
-
-    for (int i = 0; i < out_bf.rows; i++) {
-        for (int j = 0; j < out_bf.cols; j++) {
-
-            int R = out_bf.at<cv::Vec3b>(i, j)[0];
-            int G = out_bf.at<cv::Vec3b>(i, j)[1];
-            int B = out_bf.at<cv::Vec3b>(i, j)[2];
-            int max_value;
-            int min_value;
-
-            // search max value among R, G, B
-            if (R >= G && R >= B) {
-                max_value = R;
-            }
-            else if (G >= R && G >= B) {
-                max_value = G;
-            }
-            else {
-                max_value = B;
-            }
-
-            // search min value among R, G, B
-            if (R <= G && R <= B) {
-                min_value = R;
-            }
-            else if (G <= R && G <= B) {
-                min_value = G;
-            }
-            else {
-                min_value = B;
-            }
-
-            if ((B > 75 && G > 20 && R > 5 && (max_value - min_value > 5) && abs(B - G) > 5 && B > G && B > R) || (B > 180 && G > 180 && R > 130 && abs(B - G) <= 35 && B > R && G > R)) {
-                
-                out_bf.at<cv::Vec3b>(i, j)[0] = R;
-                out_bf.at<cv::Vec3b>(i, j)[1] = G;
-                out_bf.at<cv::Vec3b>(i, j)[2] = B;
-            }
-            else {
-                out_bf.at<cv::Vec3b>(i, j)[0] = 0;
-                out_bf.at<cv::Vec3b>(i, j)[1] = 0;
-                out_bf.at<cv::Vec3b>(i, j)[2] = 0;
-            }
-        }
-    }
-    
-    
-            
-    cv::cvtColor(out_bf, out_bf, cv::COLOR_BGR2YCrCb); // covert from BGR to YCrCb
-    cv::inRange(out_bf, cv::Scalar(0, 133, 77), cv::Scalar(255, 173, 127), skin_region); //compute mask
-    out_bf.copyTo(src, skin_region); //apply mask
-    cv::cvtColor(src, src, cv::COLOR_YCrCb2BGR); // covert from YCrCb TO BGR
-    
-    
-    cv::imshow("Image after bilateral filter and threshold", src);
-
-    
-    
-}*/
 
 cv::Mat Segmentator::getSegmentationMaskBW()
 {
-    //Read Model
-    cv::dnn::Net network = cv::dnn::readNetFromONNX(pathModel);
+    //Resize BW mask provided by the model
+    cv::Mat resized;        
+    cv::resize(bwRawMask, resized, cv::Size(std::get<0>(image).cols, std::get<0>(image).rows), cv::INTER_CUBIC);
 
-    //Set input
-    network.setInput(cv::dnn::blobFromImage(std::get<0>(image), 1.0, cv::Size(WIDTH_INPUT_CNN, HEIGHT_INPUT_CNN), true, false));
-
-    //Forward
-    std::vector<cv::Mat> output = network.forward();
-    
-    //Get Raw Mask
-    cv::Mat rawMaskBW = convertOutputCNNToBWMask(output.at(0));
-
-    //Resize the Raw Mask
-    cv::Mat rawMaskResized;
-    cv::resize(rawMaskBW, rawMaskResized,cv::Size(std::get<0>(image).cols, std::get<0>(image).rows), cv::INTER_CUBIC);
-
-    //Threshold the resized image
+    //Threshold the upscalded image
     cv::Mat thresholded;
-    cv::threshold(rawMaskResized, thresholded, 1, HIGHEST_VALUE, cv::THRESH_BINARY);
+    cv::threshold(resized, thresholded, HIGHEST_VALUE / 2, HIGHEST_VALUE, cv::THRESH_BINARY);
     
-    return thresholded;    
+    return thresholded;
 }
 
 cv::Mat Segmentator::getImageWithSegmentations(const cv::Mat& bwMask)
@@ -221,24 +132,18 @@ void Segmentator::readGroundTruth(cv::String pathGroundTruth)
     groundTruth = imageRead;
 }
 
-void Segmentator::setModel(cv::String pathModel)
+void Segmentator::readBWMaskRaw(cv::String pathBWMaskRaw)
 {
-    this->pathModel = pathModel;
-}
+    //Read the image
+    cv::String actualPath = cv::samples::findFile(pathBWMaskRaw);
+    cv::Mat imageRead = cv::imread(actualPath, cv::IMREAD_GRAYSCALE);
 
-cv::Mat Segmentator::convertOutputCNNToBWMask(const cv::Mat& outputCNN)
-{
-    cv::Mat ret(outputCNN.rows, outputCNN.cols, CV_8UC1);
-    
-    //Convert probabilities into pixels Black and White
-    for (int r = 0; r < outputCNN.rows; r++)    
-        for (int c = 0; c < outputCNN.cols; c++)        
-            if (outputCNN.at<float>(r, c) > THRESHOLD_CNN)
-                ret.at<unsigned char>(r, c) = HIGHEST_VALUE;
-            else 
-                ret.at<unsigned char>(r, c) = 0;
-    
-    return ret;
+    //Test if the image is correct
+    if (imageRead.empty())
+        throw std::invalid_argument("The B&W raw mask provided is not correct !");
+
+    //Save "bwRawMask"
+    bwRawMask = imageRead;
 }
 
 Segmentator::EvaluationData Segmentator::computePixelAccuracy(const cv::Mat& bwMask)
@@ -249,31 +154,35 @@ Segmentator::EvaluationData Segmentator::computePixelAccuracy(const cv::Mat& bwM
     unsigned char tmp = 0;
 
     //For every pixel calculate false positive, false negatives, true positive, true negatives
-    for (int i = 0; i < bwMask.rows; i++)    
-        for (int j = 0; j < bwMask.cols; j++) 
+    for (int i = 0; i < bwMask.rows; i++)
+    {
+        for (int j = 0; j < bwMask.cols; j++)
         {
             intensity = bwMask.at<unsigned char>(i, j);
             intensityTrue = groundTruth.at<unsigned char>(i, j);
             if (intensityTrue == HIGHEST_VALUE)
+            {
                 if (intensity == HIGHEST_VALUE)
                     maskEvaluation.tp++; //both pixel white -> true positive
                 else
                     maskEvaluation.fn++; //pixel should be white but is black -> false negative
-            
-            else             
+            }
+            else 
+            {
                 if (intensity == HIGHEST_VALUE)
                     maskEvaluation.fp++; //Pixel should be black, but is white --> false positive
                 else
                     maskEvaluation.tn++; // both pixel black --> true negative    
-            
-        }    
+            }
+        }
+    }
 
     //Compute recall, precision and pixel accuracy
-    maskEvaluation.recall = static_cast<float> (maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fn));
+    maskEvaluation.recall = (maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fn));
     
-    maskEvaluation.precision = static_cast<float>(maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fp));
+    maskEvaluation.precision = (maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fp));
     
-    maskEvaluation.pixelAccuracy = static_cast<float> ((maskEvaluation.tn + maskEvaluation.tp) /
+    maskEvaluation.pixelAccuracy =  ((maskEvaluation.tn + maskEvaluation.tp) /
         (maskEvaluation.tn + maskEvaluation.tp + maskEvaluation.fn + maskEvaluation.fp));
 
     return maskEvaluation;

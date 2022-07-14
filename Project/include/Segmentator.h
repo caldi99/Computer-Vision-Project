@@ -13,27 +13,21 @@
 
 /**
 * This class represent the Segmentator Module 
-* @author : Daniela Cuza, Simone D'antimo and Francesco Caldivezzi
+* @author : Daniela Cuza, Simone D'antimo
 */
 class Segmentator
 {
 public:
 
 	/**
-	* This function will read the images inside pathImages
-	* @param pathImages : The path were the images are
-	*/
-	//void segment_1(cv::String pathImage);
-
-	/**
-	* This function computes the B&W mask.
-	* @return : The B&W Mask
+	* This function computes the true B&W  mask.
+	* @return : The true B&W Mask
 	*/
 	cv::Mat getSegmentationMaskBW();
 
 	/**
 	* This function compute the image with segmented hands of different colors
-	* param bwMask : The BW mask
+	* param bwMask : The true BW mask
 	* @return : The image with segmented hands of different colors
 	*/
 	cv::Mat getImageWithSegmentations(const cv::Mat& bwMask);
@@ -41,21 +35,21 @@ public:
 	/**
 	* This function computes the Pixel Accuracies, given the B&W mask and save the result inside pathPixelAccuarcy
 	* @param pathPixelAccuarcy : The path of the file where to save the Pixel Accuracies 
-	* @param bwMask : The B&W mask
+	* @param bwMask : The true B&W mask
 	*/
 	void savePixelAccuracies(cv::String pathPixelAccuarcy, const cv::Mat& bwMask);
 
 	/**
 	* This function save the image with segmented hands of different colors inside pathSegmentation, given the B&W mask
 	* @param pathSegmentation : The path where to save the image with segmentations
-	* @param bwMask : The B&W mask
+	* @param bwMask : The true B&W mask
 	*/
 	void saveSegmentations(cv::String pathSegmentation, const cv::Mat& bwMask);
 
 	/**
 	* This function is used to save the B&W in pathSegmentationMaskBW
 	* @param pathSegmentationMaskBW : Path where to save the B&W mask
-	* @param bwMask : B&W mask to save
+	* @param bwMask : true B&W mask to save
 	*/
 	void saveSegmentationMaskBW(cv::String pathSegmentationMaskBW, const cv::Mat& bwMask);
 
@@ -72,10 +66,10 @@ public:
 	void readGroundTruth(cv::String pathGroundTruth);
 
 	/**
-	* This function will set the path of the model
-	* @param : Path where the model is
+	* This function will read the Raw B&W mask provided by the CNN model
+	* @param : Path where Raw B&W mask is
 	*/
-	void setModel(cv::String pathModel);
+	void readBWMaskRaw(cv::String pathBWMaskRaw);
 
 
 private:	
@@ -85,8 +79,8 @@ private:
 	//Image to process
 	std::tuple<cv::Mat, cv::String> image;
 
-	//Path to the CNN model
-	cv::String pathModel;
+	//BW mask raw
+	cv::Mat bwRawMask;
 
 	//Ground Truth Mask
 	cv::Mat groundTruth;
@@ -95,16 +89,16 @@ private:
 	struct EvaluationData {
 
 		//false positive
-		int fp = 0;
+		float fp = 0;
 
 		//false negative
-		int fn = 0;
+		float fn = 0;
 
 		//true positive
-		int tp = 0;
+		float tp = 0;
 
 		//true negative
-		int tn = 0;
+		float tn = 0;
 
 		//Recall = TruePositives / (TruePositives + FalseNegatives)
 		float recall = 0.0f;
@@ -117,13 +111,6 @@ private:
 	};
 
 	//FUNCTIONS
-	
-	/**
-	* This function converts the output of the CNN to a B&W mask
-	* @param outputCNN : The ouput of the CNN
-	* @return : The B&W mask
-	*/
-	cv::Mat convertOutputCNNToBWMask(const cv::Mat& outputCNN);
 		
 	/**
 	* This function compute the Pixel Accuracy given the mask and ground thruth
@@ -134,13 +121,6 @@ private:
 		
 	//CONSTANTS
 	
-	//Input CNN
-	const int WIDTH_INPUT_CNN = 224;
-	const int HEIGHT_INPUT_CNN = 224;
-
-	//Threshold CNN
-	const float THRESHOLD_CNN = 0.5f;
-
 	//255 value pixel
 	const int HIGHEST_VALUE = 255;
 };
