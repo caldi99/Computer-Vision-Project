@@ -64,3 +64,6 @@ __pycache__
 #Other stuff
 detections/
 ious/
+pixelaccuracy/
+segmentations/
+bwmask/
