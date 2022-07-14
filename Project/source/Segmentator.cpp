@@ -177,11 +177,6 @@ Segmentator::EvaluationData Segmentator::computePixelAccuracy(const cv::Mat& bwM
         }
     }
 
-    std::cout << "TP : " << maskEvaluation.tp << std::endl;
-    std::cout << "TN : " << maskEvaluation.tn << std::endl;
-    std::cout << "FP : " << maskEvaluation.fp << std::endl;
-    std::cout << "FN : " << maskEvaluation.fn << std::endl;
-
     //Compute recall, precision and pixel accuracy
     maskEvaluation.recall = (maskEvaluation.tp / (maskEvaluation.tp + maskEvaluation.fn));
     

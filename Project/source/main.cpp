@@ -11,7 +11,7 @@ using namespace cv;
 using namespace std;
 
 //void detectAllImages();
-void segmentAllImages();
+//void segmentAllImages();
 
 enum MODE {
 	DETECT, SEGMENT, ERROR
@@ -19,8 +19,8 @@ enum MODE {
 
 int main(int argc, char* argv[])
 {
-	segmentAllImages();
-	return 0;
+	/*segmentAllImages();
+	return 0;*/
 
 	//one dash in front if single letters, two dashes if words
 	const String KEYS =
@@ -32,15 +32,15 @@ int main(int argc, char* argv[])
 
 		//Detection Parameters		
 		"{d detect || run detection mode}"
-		"{opd || path where the image with inside the detections will be stored }" //output path detections ../detections/
-		"{opious || path where the ious results for the image will be stored }"		//output path ious ../ious/
+		"{opd || path where the image with inside the detections will be stored }" //output path detections ../results/detections/
+		"{opious || path where the ious results for the image will be stored }"		//output path ious ../results/ious/
 
 		//Segmentation Paramaeters
 		"{s segment || run segmentation mode}"
 		"{bwr || path where the B&W raw mask provided by the model is }" // ../bwmaskraw/01.jpg
-		"{ops || path where the image with inside segmentations will be stored }" // output path segmentations ../segmentations/
-		"{oppa || path where pixel accuracy results for the image will be stored }" // output path pixel accuracies ../pixelaccuracies/
-		"{opbwm || path where the B&W mask will be stored }" //output path black and white mask ../mask/
+		"{ops || path where the image with inside segmentations will be stored }" // output path segmentations ../results/segmentations/
+		"{oppa || path where pixel accuracy results for the image will be stored }" // output path pixel accuracies ../results/pixelaccuracies/
+		"{opbwm || path where the B&W mask will be stored }" //output path black and white mask ../results/bwmasks/
 		;
 
 	//Parse command line
@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
 
 }
 
-
+/*
 void segmentAllImages()
 {
 	//Create Segmentator
@@ -219,7 +219,7 @@ void segmentAllImages()
 
 		
 
-	for (int i = 1; i <= 1; i++)
+	for (int i = 1; i <= 30; i++)
 	{
 		//Create Image Name
 		String imageName;
@@ -230,7 +230,7 @@ void segmentAllImages()
 
 		String pathImage = "../testset/rgb/" + imageName + ".jpg";
 		String pathGt = "../testset/mask/" + imageName + ".png";
-		String pathRawBw = "../bwmask/" + imageName + ".jpg";
+		String pathRawBw = "../bwmaskraw/" + imageName + ".jpg";
 
 		//Read image and gt
 		segmentator.readImage(pathImage);
@@ -242,16 +242,16 @@ void segmentAllImages()
 		//Get B&W mask
 		cv::Mat bwMask = segmentator.getSegmentationMaskBW();
 
-		String outputPathPixelAccuracy = "../pixelaccuracy/";
-		String outputPathSegmentations = "../segmentations/";
-		String outputPathBWMask = "../bwmask/";
+		String outputPathPixelAccuracy = "../results/pixelaccuracy/";
+		String outputPathSegmentations = "../results/segmentations/";
+		String outputPathBWMask = "../results/bwmask/";
 		
 		//Save Results
 		segmentator.saveSegmentations(outputPathSegmentations, bwMask);
 		segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
 		segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
 	}
-}
+}*/
 
 
 /*void detectAllImages()
@@ -283,8 +283,8 @@ void segmentAllImages()
 		//Compute bounding boxes
 		vector<Rect> boundingBoxes = detector.detectHands();
 
-		String outputPathIous = "../ious/";
-		String outputPathDetections = "../detections/";
+		String outputPathIous = "../results/ious/";
+		String outputPathDetections = "../results/detections/";
 
 		//Save results
 		detector.saveDetections(outputPathDetections, boundingBoxes);
