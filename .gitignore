@@ -67,3 +67,5 @@ ious/
 pixelaccuracy/
 segmentations/
 bwmask/
+bwmaskraw/
+results/
