@@ -16,8 +16,8 @@ using namespace dnn;
 int main(int argc, char* argv[])
 {
 	//Load Model
-	Net net = dnn::readNet("model_matlab.onnx");
-	Mat blob = dnn::blobFromImage(cv::imread("image.jpg"), 1.0, Size(224, 224), true, false);
+	Net net = dnn::readNet("../../model.onnx");
+	Mat blob = dnn::blobFromImage(cv::imread("../../image.jpg"), 1.0, Size(224, 224), true, false);
 
 	//Set Input
 	net.setInput(blob);

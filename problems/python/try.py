@@ -5,7 +5,7 @@
 import cv2
 
 #Load model
-net = cv2.dnn.readNet("../model_matlab.onnx")
+net = cv2.dnn.readNet("../model.onnx")
 blob = cv2.dnn.blobFromImage(cv2.imread("../image.jpg"), scalefactor = 1.0, size=(224, 224), swapRB = True, crop = False)
 
 #Set Input
