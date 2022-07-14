@@ -11,7 +11,7 @@ using namespace cv;
 using namespace std;
 
 //void detectAllImages();
-//void segmentAllImages();
+void segmentAllImages();
 
 enum MODE {
 	DETECT, SEGMENT, ERROR
@@ -19,6 +19,9 @@ enum MODE {
 
 int main(int argc, char* argv[])
 {
+	segmentAllImages();
+	return 0;
+
 	//one dash in front if single letters, two dashes if words
 	const String KEYS =
 		//COMMON
@@ -34,6 +37,7 @@ int main(int argc, char* argv[])
 
 		//Segmentation Paramaeters
 		"{s segment || run segmentation mode}"
+		"{bwr || path where the B&W raw mask provided by the model is }" // ../bwmaskraw/01.jpg
 		"{ops || path where the image with inside segmentations will be stored }" // output path segmentations ../segmentations/
 		"{oppa || path where pixel accuracy results for the image will be stored }" // output path pixel accuracies ../pixelaccuracies/
 		"{opbwm || path where the B&W mask will be stored }" //output path black and white mask ../mask/
@@ -67,11 +71,11 @@ int main(int argc, char* argv[])
 	{
 		switch (mode)
 		{
-		case MODE::SEGMENT: //This part was entirly written by Francesco Caldivezzi
+		case MODE::SEGMENT: //This part was entirly written by Simone D'antimo
 		{
 			cout << "YOU SELECTED SEGMENTATION MODE " << endl;
 
-			segmentator.setModel(parser.get<String>("m"));
+			segmentator.readBWMaskRaw(parser.get<String>("bwr"));
 			segmentator.readGroundTruth(parser.get<String>("a"));
 			segmentator.readImage(parser.get<String>("i"));
 
@@ -207,16 +211,15 @@ int main(int argc, char* argv[])
 
 }
 
-/*
+
 void segmentAllImages()
 {
 	//Create Segmentator
 	Segmentator segmentator;
 
-	//Set Model
-	segmentator.setModel("../model/model.onnx");
+		
 
-	for (int i = 1; i <= 30; i++)
+	for (int i = 1; i <= 1; i++)
 	{
 		//Create Image Name
 		String imageName;
@@ -227,10 +230,12 @@ void segmentAllImages()
 
 		String pathImage = "../testset/rgb/" + imageName + ".jpg";
 		String pathGt = "../testset/mask/" + imageName + ".png";
+		String pathRawBw = "../bwmask/" + imageName + ".jpg";
 
 		//Read image and gt
 		segmentator.readImage(pathImage);
 		segmentator.readGroundTruth(pathGt);
+		segmentator.readBWMaskRaw(pathRawBw);
 
 		cout << "SEGMENTATOR IS RUNNING FOR : " << std::to_string(i) << endl;
 
@@ -246,7 +251,7 @@ void segmentAllImages()
 		segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
 		segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
 	}
-}*/
+}
 
 
 /*void detectAllImages()
