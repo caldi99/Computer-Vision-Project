@@ -122,7 +122,7 @@ we have converted the model (.mat) file into the open neural network exchage for
 	 
 Notice that : the mentioned problem was encountered with opencv version 4.5.x compiled from source and also version 4.6.0 pre-compiled for C++, while, the opencv version of python used was 4.6.0
 
-Therefore, with masks pre-computed for the testset (https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing) provided by the following link : (as mentioned here : LINK)
+Therefore, the pre-computed masks for the testset (https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing)can be downloaded from : TODO ADD LINK, as mentioned [here](#segment-hands-on-images)
 
 ### Dataset
 
@@ -146,6 +146,7 @@ In order to segment hands on an image, you need to execute the `C++` code i.e. `
 - Optional `--ops` : to specify the output path where to store the image with hands segmented drawn
 - Optional `--oppa` : to specify the output path where to store the pixel accuracy results of the image
 - Optional `--opbwm` : to specify the output path where to store the B&W mask
+
 Notice that, at least one of the three optional parameters, must be included into the command line execution instruction.
 
 Example of a command :
