@@ -4,7 +4,7 @@ In this project the goal is to detect and segment hands inside images.
 In order to achieve this, the main idea was to use for the :
 
 - detection : Sliding Window approach with a Resnet50V2 CNN pre trained able to distinguish between hands and not hands. Moreover, to avoid several overlappings a non maxima suppression is also implemented
-- segmentation : A Resenet50 CNN with the a deeplab encoder/decoder architecture and, some post processing operations in order to segment properly hands inside the images
+- segmentation : A Resenet18 CNN with the a deeplab encoder/decoder architecture and, some post processing operations in order to segment properly hands inside the images
 
 Overview :
 * [C++ Code Compilation](#compiling-the-c-code)
