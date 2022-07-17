@@ -24,8 +24,6 @@ cv::Mat Segmentator::getSegmentationMaskBW()
 
 cv::Mat Segmentator::getImageWithSegmentations(const cv::Mat& bwMask)
 {
-    //TODO : APPLY DILATION EROSION BEFORE AND AFTER ??
-
     //Get Connected components of the B&W image
     cv::Mat labelImage(bwMask.rows, bwMask.cols, CV_32S);
     int nLabels = cv::connectedComponents(bwMask, labelImage, 8, CV_32S);

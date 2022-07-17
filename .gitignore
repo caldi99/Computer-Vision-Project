@@ -69,3 +69,4 @@ segmentations/
 bwmask/
 bwmaskraw/
 results/
+raw_masks/

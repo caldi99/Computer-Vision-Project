@@ -398,7 +398,7 @@ std::vector<cv::Rect> Detector::nonMaximaSuppression(const std::vector<cv::Rect>
 		Utils::deleteElementPositions(idxs, thresholded);		
 		
 		
-		/* TODO : OLD MANTAIN
+		/*
 		//Compute Overlapping
 		std::vector<float> wH = Utils::elementWiseProduct(w, h);
 		std::vector<float> overlap = Utils::elementWiseDivision(wH, areaSliced);

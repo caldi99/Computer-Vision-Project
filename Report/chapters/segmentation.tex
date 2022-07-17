@@ -1,0 +1,75 @@
+We based our segmentation approach on DeepLabV3+ using ResNet18 as a backbone and perform the traininig in matlab. 
+We combine four existing datasets: hand gesture dataset, hand over face dataset, egohand dataset and GTEA dataset. The resulting dataset was cleaned by removing images containing arm parts and test set images. Our final dataset is composed by 1003 images.
+The loss function employed in this project is the dice loss.
+\section{Data Augmentation}
+We use a data augmentation technique with the aim of increasing the size of the starting dataset and therefore increasing the performance of the classification system. We use both shape-based and color-based transformation and in particular eleven artificial images are created for each image in the dataset. \newline The operations performed are:
+\begin{enumerate}
+    \item The image is displaced to the right or the left.
+    \item The image is displaced up or down.
+    \item The image is rotated by an angle randomly selected from the range [0° 180°].
+    \item Horizontal or vertical shear by using the function \textit{randomAffine2d}.
+    \item Horizontal or vertical flip.
+    \item Change in the brightness levels by adding the same value to each RGB channel.
+    \item Change in the brightness levels by adding different values to each RGB channel.
+    \item Add speckle noise by using the function \textit{imnoise}.
+    \item Application of the technique “Contrast and Motion Blur”, described below. 
+    \item Application of the technique “Shadows”, described below. 
+    \item  Convertion of the truecolor image RGB to the grayscale image.
+\end{enumerate}
+\subsection{Contrast and Motion Blur}
+This transformation is the composition of two alterations: firstly, it is necessary to modify the contrast of the original image, increasing or decreasing it, then a filter that simulates the movement of the camera is applied. Two functions to modify the contrast are implemented, but only one randomly chosen between the two is applied to the image.
+The first contrast function is based on the following equation:
+\[
+	\frac{(x-\frac{1}{2})\sqrt{1-\frac{k}{4}}}{\sqrt{1-k(x-\frac{1}{2}})^2} + 0.5,  k\leq4
+	\]
+The parameter $k$ controls the contrast, there is an increase in contrast if $k<0$, a decrease in contrast if $0<k\leq4$, the image remains the same when 
+$k=0$.
+In the code, k is chosen randomly from a specific range, randomly chosen among the following four:
+\begin{itemize}
+    \item U(2.8, 3.8) $\to$ Hard decrease in contrast.
+    \item U(1.5, 2.5) $\to$ Soft decrease in contrast.
+    \item U(-2, -1) $\to$ Soft increase in contrast.
+    \item U(-5, -3) $\to$ Hard increase in contrast.
+\end{itemize}
+The second contrast function is based on the following equation:
+
+\[
+y =
+\left\{
+\begin{array}{
+  @{}% no padding
+  l@{\quad}% some padding
+  r@{}% no padding
+  >{{}}r@{}% no padding
+  >{{}}l@{}% no padding
+}
+  \frac{1}{2} (\frac{x}{0.5})\alpha,    &   0\leq x <\frac{1}{2}\\
+  1 - \frac{1}{2} (\frac{1-x}{0.5})\alpha,    &   \frac{1}{2} \leq x \leq 1\\
+\end{array}
+\right.
+\]
+The parameter $\alpha$ controls the contrast, there is an increase in contrast if $\alpha > 1$ , a decrease in contrast if $0 < \alpha < 1$ and the image remains the same when $\alpha = 1$. This parameter is chosen randomly from four possible ranges:
+\begin{itemize}
+    \item U(0.25, 0.5) $\to$ Hard decrease in contrast.
+    \item U(0.6, 0.9) $\to$ Soft decrease in contrast.
+    \item U(1.2, 1.7) $\to$ Soft increase in contrast.
+    \item U(1.8, 2.3) $\to$ Hard increase in contrast.
+\end{itemize}
+
+\subsection{Shadows}
+The final image is obtained by applying a shadow  to the left or the right of the original image. In particular, the intensities of the columns are multiplied by the following equation:
+\[
+y =
+\left\{
+\begin{array}{
+  @{}% no padding
+  l@{\quad}% some padding
+  r@{}% no padding
+  >{{}}r@{}% no padding
+  >{{}}l@{}% no padding
+}
+  \text{min}\left\{0.2 + 0.8 \sqrt{\frac{x}{0.5}}, 1\right\}    &   direction = 1\\
+  \text{min}\left\{0.2 + 0.8 \sqrt{\frac{1- x}{0.5}}, 1\right\}    &   direction = 0\\
+\end{array}
+\right.
+\]

@@ -11,7 +11,7 @@ using namespace cv;
 using namespace std;
 
 //void detectAllImages();
-//void segmentAllImages();
+void segmentAllImages();
 
 enum MODE {
 	DETECT, SEGMENT, ERROR
@@ -19,8 +19,8 @@ enum MODE {
 
 int main(int argc, char* argv[])
 {
-	/*segmentAllImages();
-	return 0;*/
+	segmentAllImages();
+	return 0;
 		
 	//one dash in front if single letters, two dashes if words
 	const String KEYS =
@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
 
 }
 
-/*
+
 void segmentAllImages()
 {
 	//Create Segmentator
@@ -230,7 +230,7 @@ void segmentAllImages()
 
 		String pathImage = "../testset/rgb/" + imageName + ".jpg";
 		String pathGt = "../testset/mask/" + imageName + ".png";
-		String pathRawBw = "../bwmaskraw/" + imageName + ".jpg";
+		String pathRawBw = "../raw_masks/" + imageName + ".bmp";
 
 		//Read image and gt
 		segmentator.readImage(pathImage);
@@ -244,14 +244,14 @@ void segmentAllImages()
 
 		String outputPathPixelAccuracy = "../results/pixelaccuracy/";
 		String outputPathSegmentations = "../results/segmentations/";
-		String outputPathBWMask = "../results/bwmask/";
+		String outputPathBWMask = "../results/bwmasks/";
 		
 		//Save Results
 		segmentator.saveSegmentations(outputPathSegmentations, bwMask);
 		segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
 		segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
 	}
-}*/
+}
 
 
 /*void detectAllImages()
