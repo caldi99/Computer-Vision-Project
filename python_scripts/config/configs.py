@@ -9,7 +9,7 @@
 #Zip folders and files
 ZIP_EGOHANDS = "../egohands_data.zip"
 TARGZ_HANDSOVERFACE = "../hand_over_face_corrected.tar.gz"
-ZIP_TESTSET = "../drive-download-20220530T161656Z-001.zip"
+ZIP_TESTSET = "../testset.zip"
 
 #Destinations zips
 DESTINATION_ZIP_EGOHANDS = "../egohands_dataset/"
