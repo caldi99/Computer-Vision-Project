@@ -2,7 +2,7 @@
 
 In order to execute the code present inside the `c++` and `python` folders, you need to :
 
-- download the `model.onnx` file from : TODO ADD LINK
+- download the `model.onnx` file from : https://drive.google.com/file/d/1DBnwFXbM1EwNn0TdItu6iNYisZzA4nbZ/view?usp=sharing
 
 For python :
 - execute the `try.py` file i.e. `python try.py`

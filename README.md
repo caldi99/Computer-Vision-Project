@@ -114,7 +114,7 @@ Example of a command :
 The segmentation process is carried out with the usage of pre-computed masks from a matlab model (*that we have developed ourselves and fine tuned it*) for the following reasons :
 
 - The process of inference through the usage of opencv library require the usage of the conversion of the model (MATLAB), into one of the supported formats, as pointed out here : https://docs.opencv.org/3.4/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422 , so,
-we have converted the model (.mat) file into the open neural network exchage format (.onnx), you can in fact, download the model in such a format from here : TODO LINK
+we have converted the model (.mat) file into the open neural network exchage format (.onnx), you can in fact, download the model in such a format from here : https://drive.google.com/file/d/1DBnwFXbM1EwNn0TdItu6iNYisZzA4nbZ/view?usp=sharing
 
 - However, when we try to use the model with *cv::readNetFromOnnx* or *cv::readNet* and then we set input with *net.setInput(..)*, a we compute the output *net.forward(..)* a strange behaviour happens in particular :
 	- The output computed with the usage of C++ code is different from the one computed with python.
@@ -127,11 +127,11 @@ Therefore, the pre-computed masks for the testset (https://drive.google.com/driv
 
 ### Dataset
 
-The dataset used to train the model for segment hands can be downloaded from this link : TODO ADD LINK.
+The dataset used to train the model for segment hands can be downloaded from this link : https://drive.google.com/file/d/17MidLfiswgdpIYQDlg3EcwZP8KzbDzXc/view?usp=sharing
 
 ### Training
 
-For training the model, you can use the script present inside `matlab_scripts/` TODO ADD NAME
+For training the model, follow the instructions specified inside the file : `matlab_scripts/segmentation/README.MD`
 
 ### Segment Hands on images
 
