@@ -4,7 +4,7 @@ In this project the goal is to detect and segment hands inside images.
 In order to achieve this, the main idea was to use for the :
 
 - detection : Sliding Window approach with a Resnet50V2 CNN pre trained able to distinguish between hands and not hands. Moreover, to avoid several overlappings a non maxima suppression is also implemented
-- segmentation : A Resenet50 CNN with the a deeplab encoder/decoder architecture and, some post processing operations in order to segment properly hands inside the images
+- segmentation : A Resenet18 CNN with the a deeplab encoder/decoder architecture and, some post processing operations in order to segment properly hands inside the images
 
 Overview :
 * [C++ Code Compilation](#compiling-the-c-code)
@@ -34,6 +34,7 @@ To create the dataset in order to train our model we need to follow the steps li
 - Dowload the EgoHands Dataset from : http://vision.soic.indiana.edu/egohands_files/egohands_data.zip
 - Dowload the hand_over_face Dataset from : https://drive.google.com/file/d/1hHUvINGICvOGcaDgA5zMbzAIUv7ewDd3
 - Dowload the TestSet from : https://drive.google.com/drive/folders/1ORmMRRxfLHGLKgqHG-1PKx1ZUCIAJYoa?usp=sharing
+- Rename the `.zip` file downloaded for the testset into `testset.zip`
 - Put all of those files in the root directory 
 - Execute `python_scripts/build.py` i.e. : `python python_scripts/build.py` or `cd python_scripts` and then `python build.py` and follow the *instructions* you will asked to execute some matlab code, please do it!!
 - Go inside the directory `dataset/dataset/` and type `ctrl + a` on the keyboad, and rigth click and compress as a `.zip` file.
