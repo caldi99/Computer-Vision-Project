@@ -1,7 +1,6 @@
 //MYLIB
 #include "../include/Detector.h"
 #include "../include/Segmentator.h"
-#include "../include/PreProcSegmentator.h"
 
 //STL
 #include <iostream>
@@ -11,7 +10,7 @@ using namespace cv;
 using namespace std;
 
 //void detectAllImages();
-void segmentAllImages();
+//void segmentAllImages();
 
 enum MODE {
 	DETECT, SEGMENT, ERROR
@@ -19,8 +18,6 @@ enum MODE {
 
 int main(int argc, char* argv[])
 {
-	segmentAllImages();
-	return 0;
 		
 	//one dash in front if single letters, two dashes if words
 	const String KEYS =
@@ -211,7 +208,7 @@ int main(int argc, char* argv[])
 
 }
 
-
+/*
 void segmentAllImages()
 {
 	//Create Segmentator
@@ -251,7 +248,7 @@ void segmentAllImages()
 		segmentator.savePixelAccuracies(outputPathPixelAccuracy, bwMask);
 		segmentator.saveSegmentationMaskBW(outputPathBWMask, bwMask);
 	}
-}
+}*/
 
 
 /*void detectAllImages()
