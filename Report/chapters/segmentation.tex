@@ -12,9 +12,9 @@ We use a data augmentation technique with the aim of increasing the size of the 
     \item Change in the brightness levels by adding the same value to each RGB channel.
     \item Change in the brightness levels by adding different values to each RGB channel.
     \item Add speckle noise by using the function \textit{imnoise}.
+    \item  Convertion of the truecolor image RGB to the grayscale image.
     \item Application of the technique “Contrast and Motion Blur”, described below. 
     \item Application of the technique “Shadows”, described below. 
-    \item  Convertion of the truecolor image RGB to the grayscale image.
 \end{enumerate}
 \subsection{Contrast and Motion Blur}
 This transformation is the composition of two alterations: firstly, it is necessary to modify the contrast of the original image, increasing or decreasing it, then a filter that simulates the movement of the camera is applied. Two functions to modify the contrast are implemented, but only one randomly chosen between the two is applied to the image.
@@ -73,3 +73,13 @@ y =
 \end{array}
 \right.
 \]
+\begin{figure}
+  \centering
+  \includegraphics[width=13cm]{images/Immagine.png}
+  \caption{The original image (top left) and the artificial images.}
+  \label{fig:f01}
+\end{figure}
+\pagebreak
+\section{Unused segmentation}
+
+\input{chapters/unusedSegmentation}
